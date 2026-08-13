@@ -135,7 +135,7 @@ storage formats, model providers, formulas, or field names.
     duplicate banned phrase case-folding, art-style reference.
   - Accept: models reject unknown fields and serialize enums/UTC exactly as documented.
 
-- [ ] **SCHEMA-03 — Implement world and faction models**
+- [x] **SCHEMA-03 — Implement world and faction models**
   - Depends: SCHEMA-01
   - Read: campaign schema `world.json` section and worldbuilding design.
   - Create: `src/domain/models/world.py`, `tests/unit/domain/test_world_models.py`.
