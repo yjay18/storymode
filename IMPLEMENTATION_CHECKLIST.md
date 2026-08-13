@@ -154,7 +154,7 @@ storage formats, model providers, formulas, or field names.
   - Test: smallest one-area root and each boundary/duplicate/empty core clue failure.
   - Accept: no cross-file existence checks are hidden in these local models.
 
-- [ ] **SCHEMA-05 — Implement character and companion campaign models**
+- [x] **SCHEMA-05 — Implement character and companion campaign models**
   - Depends: SCHEMA-01
   - Read: campaign schema characters section; party and progression docs.
   - Create: `src/domain/models/character.py`, `tests/unit/domain/test_character_models.py`.
