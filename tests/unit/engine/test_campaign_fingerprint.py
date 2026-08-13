@@ -1,6 +1,5 @@
 """Tests for campaign loading and fingerprinting."""
 
-import json
 from engine.campaign import calculate_fingerprint
 
 

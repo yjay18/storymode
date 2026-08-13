@@ -1,7 +1,7 @@
 """Campaign file validation."""
 
 from collections.abc import Mapping
-from typing import Any
+from typing import Any, cast
 
 from pydantic import ValidationError
 

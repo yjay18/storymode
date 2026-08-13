@@ -1,7 +1,6 @@
 """Party and companion runtime state models."""
 
 import enum
-from typing import Annotated
 
 from pydantic import Field, model_validator
 

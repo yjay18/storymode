@@ -1,7 +1,6 @@
 """Plot and clock runtime models."""
 
 import enum
-from typing import Annotated
 
 from pydantic import Field
 

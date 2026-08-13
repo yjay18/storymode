@@ -1,7 +1,7 @@
 """Audit models (journal and roll logs)."""
 
 import datetime
-from typing import Annotated, Literal
+from typing import Literal
 
 from pydantic import Field, model_validator
 

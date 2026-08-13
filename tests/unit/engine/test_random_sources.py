@@ -1,6 +1,7 @@
 """Tests for random sources."""
 
 from unittest.mock import patch
+
 import pytest
 
 from engine.dice.secure import SecureRandomSource

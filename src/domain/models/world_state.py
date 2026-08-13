@@ -1,6 +1,6 @@
 """World, location, and entity override models."""
 
-from pydantic import Field, model_validator
+from pydantic import Field
 
 from domain.models.common import DisplayString, EntityId, FrozenModel
 from domain.models.party_state import LifeState

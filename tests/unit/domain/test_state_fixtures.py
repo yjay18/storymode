@@ -1,7 +1,7 @@
 """Test that state models correctly load generated fixtures."""
 
-import json
 from pathlib import Path
+
 import pytest
 from pydantic import ValidationError
 

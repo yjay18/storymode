@@ -1,6 +1,7 @@
 """Tests for runtime state roots."""
 
 import datetime
+
 import pytest
 
 from domain.models.audit import JournalEvent, RollRecord
@@ -12,7 +13,6 @@ from domain.models.player_state import PlayerState
 from domain.models.plot_state import PlotState
 from domain.models.runtime_common import ResourceValue
 from domain.models.runtime_state import CommandReceipt, RuntimeState
-from domain.models.save_meta import SaveMeta
 from domain.models.world_state import LocationState
 
 

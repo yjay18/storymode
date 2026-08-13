@@ -4,7 +4,7 @@ import pytest
 
 from domain.models.party_state import CompanionRuntimeState, LifeState, PartyState
 from domain.models.runtime_common import ResourceValue
-from domain.models.world_state import LocationState, NpcOverride, ObjectOverride
+from domain.models.world_state import LocationState, NpcOverride
 
 
 def make_companion(
