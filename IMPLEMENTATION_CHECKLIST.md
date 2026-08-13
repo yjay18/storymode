@@ -124,7 +124,7 @@ storage formats, model providers, formulas, or field names.
     denominator, extra fields, non-finite/boolean numeric values.
   - Accept: focused tests and schema representation are deterministic; no I/O imports.
 
-- [ ] **SCHEMA-02 — Implement campaign meta and style-bible models**
+- [x] **SCHEMA-02 — Implement campaign meta and style-bible models**
   - Depends: SCHEMA-01
   - Read: `docs/schemas/campaign-pack.md` meta/style sections and worldbuilding doc.
   - Create: `src/domain/models/{campaign_meta,style_bible}.py`,
