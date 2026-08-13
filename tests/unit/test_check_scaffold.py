@@ -4,7 +4,6 @@ import shutil
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 from scripts.check_scaffold import check_markdown_links, check_required_docs
 

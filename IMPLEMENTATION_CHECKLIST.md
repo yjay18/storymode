@@ -574,7 +574,7 @@ storage formats, model providers, formulas, or field names.
 
 ## Milestone 1E — Minimal local API (still no Ollama)
 
-- [ ] **API-01 — Implement settings, error envelopes, and application factory**
+- [x] **API-01 — Implement settings, error envelopes, and application factory**
   - Depends: BOOT-01, SAVE-03
   - Read: app/api contexts, component HTTP mapping, threat model.
   - Create: `src/app/{config,dependencies,main}.py`, `src/api/schemas/common.py`,
