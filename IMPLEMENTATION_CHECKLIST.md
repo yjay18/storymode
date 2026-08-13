@@ -86,7 +86,7 @@ storage formats, model providers, formulas, or field names.
   - Accept: valid repo passes; tmp copied scaffold missing one required file fails with
     that relative path; broken local link fails deterministically.
 
-- [ ] **ARCH-01 — Enforce backend import boundaries without a new dependency**
+- [x] **ARCH-01 — Enforce backend import boundaries without a new dependency**
   - Depends: BOOT-02
   - Read: `docs/architecture/component-boundaries.md`, all `src/*/CONTEXT.md` files.
   - Create: `tests/unit/test_architecture_imports.py`.
