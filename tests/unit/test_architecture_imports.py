@@ -41,7 +41,7 @@ def check_violations(package_dir: Path, src_root: Path, forbidden: list[str]) ->
     violations: list[str] = []
     if not package_dir.exists():
         return violations
-        
+
     for filepath in package_dir.rglob("*.py"):
         imports = get_imports(filepath, src_root)
         for imp in imports:
@@ -95,14 +95,14 @@ def test_parser_detects_violations(tmp_path: Path) -> None:
     src = tmp_path / "src"
     domain = src / "domain"
     domain.mkdir(parents=True)
-    
+
     # Write a file with a forbidden import
     bad_file = domain / "bad.py"
     bad_file.write_text(
         "import fastapi\nfrom api.routes import user\nfrom ..engine import core\n",
         encoding="utf-8",
     )
-    
+
     violations = check_violations(domain, src, ["fastapi", "api", "engine"])
     assert len(violations) == 3, f"Expected 3 violations, got {len(violations)}"
     assert any("imports fastapi" in v for v in violations)

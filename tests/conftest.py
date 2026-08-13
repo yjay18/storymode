@@ -16,6 +16,7 @@ def fixed_clock() -> datetime.datetime:
 @pytest.fixture
 def sequential_id_generator() -> Callable[[], str]:
     """Return a function that generates sequential predictable IDs."""
+
     def generator() -> Generator[str, None, None]:
         counter = 1
         while True:

@@ -19,19 +19,17 @@ def test_check_scaffold_valid_repo() -> None:
 def test_tmp_copied_scaffold_missing_file(tmp_path: Path) -> None:
     """Tmp copied scaffold missing one required file fails with that relative path."""
     root = Path(__file__).parent.parent.parent
-    
+
     for d in ["docs", "scripts", "src", "tests"]:
         shutil.copytree(
-            root / d,
-            tmp_path / d,
-            ignore=shutil.ignore_patterns("*.pyc", "__pycache__", ".git*")
+            root / d, tmp_path / d, ignore=shutil.ignore_patterns("*.pyc", "__pycache__", ".git*")
         )
     for f in ["CONTEXT.md", "AGENT.md", "README.md", "IMPLEMENTATION_CHECKLIST.md"]:
         shutil.copy(root / f, tmp_path / f)
-        
+
     target = tmp_path / "src" / "CONTEXT.md"
     target.unlink()
-    
+
     errors = check_required_docs(tmp_path)
     assert any(str(Path("src/CONTEXT.md")) in e for e in errors)
 
@@ -40,6 +38,6 @@ def test_broken_local_link_fails(tmp_path: Path) -> None:
     """Broken local link fails deterministically."""
     doc = tmp_path / "broken.md"
     doc.write_text("[bad link](does_not_exist.md)")
-    
+
     errors = check_markdown_links(tmp_path)
     assert any("does_not_exist.md" in e for e in errors)

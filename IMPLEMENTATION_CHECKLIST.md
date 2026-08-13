@@ -97,7 +97,7 @@ storage formats, model providers, formulas, or field names.
   - Test: `uv run pytest tests/unit/test_architecture_imports.py -q`.
   - Accept: current tree passes and isolated sample violations for domain and engine fail.
 
-- [ ] **BOOT-04 — Add setup-only CI**
+- [x] **BOOT-04 — Add setup-only CI**
   - Depends: BOOT-03, ARCH-01
   - Read: `README.md`, ADR-011.
   - Create: `.github/workflows/test.yml`.
