@@ -79,6 +79,7 @@ state transaction.
 - Contracts: all files under `docs/schemas/`
 - Model behavior: all files under `docs/prompts/`
 - UI behavior: all files under `docs/ux/`
+- Deviations: `DEVIATIONS.md`
 - Execution order: `IMPLEMENTATION_CHECKLIST.md`
 
 If two documents conflict, the more specific canonical document wins; record the
