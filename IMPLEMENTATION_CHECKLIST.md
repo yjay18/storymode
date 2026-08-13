@@ -112,7 +112,7 @@ storage formats, model providers, formulas, or field names.
 
 ## Milestone 1A — Campaign schema contracts
 
-- [ ] **SCHEMA-01 — Implement strict common values and diagnostics**
+- [x] **SCHEMA-01 — Implement strict common values and diagnostics**
   - Depends: BOOT-02
   - Read: `docs/schemas/CONTEXT.md`, `campaign-pack.md` common conventions.
   - Create: `src/domain/models/{__init__,common,diagnostics}.py` and
