@@ -1,0 +1,1 @@
+{"schema_version":1,"event_id":"evt-1","transaction_id":"tx-1","revision":0,"event_index":0,"recorded_at":"2026-08-12T12:00:00Z","command_id":"cmd-1","event_type":"test","actor_ids":[],"entity_ids":[],"resolved_intent":null,"roll_ids":[],"effects":[],"discovered_fact_ids":[]}
