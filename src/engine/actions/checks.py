@@ -6,10 +6,10 @@ from typing import Any
 from domain.models.check_state import CheckOutcomes, PendingCheck
 from domain.models.common import EntityId
 from domain.models.runtime_state import RuntimeState
-from llm.contracts.action import ActionProposal
+from engine.actions.protocols import ActionProposalLike
 
 
-def decide_check_necessity(proposal: ActionProposal) -> bool:
+def decide_check_necessity(proposal: ActionProposalLike) -> bool:
     """Decide if a proposal requires a check based on challenge label."""
     return proposal.challenge_label != "none"
 
@@ -17,7 +17,7 @@ def decide_check_necessity(proposal: ActionProposal) -> bool:
 def build_pending_check(
     command_id: EntityId,
     state: RuntimeState,
-    proposal: ActionProposal,
+    proposal: ActionProposalLike,
     base_dc: int,
     difficulty_adjustment: int,
     actor_id: EntityId,

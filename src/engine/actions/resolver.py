@@ -1,7 +1,7 @@
 """Entity resolver."""
 
 from engine.actions.candidates import Candidate, CandidateSet
-from llm.contracts.action import EntityMention
+from engine.actions.protocols import EntityMentionLike
 
 
 class ResolverError(Exception):
@@ -23,7 +23,7 @@ class InvalidOrdinalError(ResolverError):
 class EntityResolver:
     """Resolves LLM entity mentions against a bounded CandidateSet."""
     
-    def resolve_mention(self, mention: EntityMention, candidates: CandidateSet) -> Candidate:
+    def resolve_mention(self, mention: EntityMentionLike, candidates: CandidateSet) -> Candidate:
         """Resolve a single entity mention."""
         if mention.candidate_ordinal is not None:
             candidate = candidates.get_by_ordinal(mention.candidate_ordinal)
