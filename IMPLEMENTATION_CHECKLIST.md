@@ -216,7 +216,7 @@ storage formats, model providers, formulas, or field names.
 
 ## Milestone 1B — Campaign validation and tiny fixture
 
-- [ ] **VALID-01 — Add individual file parse diagnostics and aggregate identity checks**
+- [x] **VALID-01 — Add individual file parse diagnostics and aggregate identity checks**
   - Depends: SCHEMA-09
   - Read: campaign schema cross-file validation; campaign folder rules.
   - Create: `src/engine/validation/{__init__,campaign_files}.py`,

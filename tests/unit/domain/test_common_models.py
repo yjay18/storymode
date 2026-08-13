@@ -157,10 +157,10 @@ def test_frozen_model_is_immutable() -> None:
 
 def test_diagnostic_sort_key() -> None:
     """Diagnostic sort key is stable."""
-    d1 = Diagnostic(pointer="/a", code="ERR1", message="A")
-    d2 = Diagnostic(pointer="/a", code="ERR2", message="A")
-    d3 = Diagnostic(pointer="/b", code="ERR1", message="A")
-    d4 = Diagnostic(pointer="/a", code="ERR1", message="B")
+    d1 = Diagnostic(file="a.json", json_pointer="/a", code="ERR1", message="A")
+    d2 = Diagnostic(file="a.json", json_pointer="/a", code="ERR2", message="A")
+    d3 = Diagnostic(file="b.json", json_pointer="/a", code="ERR1", message="A")
+    d4 = Diagnostic(file="a.json", json_pointer="/a", code="ERR1", message="B")
 
     lst = [d3, d2, d4, d1]
     lst.sort()
