@@ -34,3 +34,25 @@ class SaveRepository(Protocol):
     ) -> SaveLoadResult:
         """Load a save and verify its campaign identity."""
         ...
+        
+    def write_state(self, state: RuntimeState, meta: SaveMeta, memory: NarrativeMemory | None) -> None:
+        """Write authoritative state, meta, and optional memory atomically."""
+        ...
+        
+    def append_journal(self, campaign_id: EntityId, save_id: EntityId, events: list[JournalEvent]) -> None:
+        """Append events to the journal log."""
+        ...
+        
+    def append_rolls(self, campaign_id: EntityId, save_id: EntityId, rolls: list[RollRecord]) -> None:
+        """Append rolls to the roll log."""
+        ...
+        
+    def flush_prepared_rows(
+        self,
+        campaign_id: EntityId,
+        save_id: EntityId,
+        journal_events: list[JournalEvent],
+        roll_records: list[RollRecord],
+    ) -> None:
+        """Flush prepared journal events and roll records to their respective logs."""
+        ...
