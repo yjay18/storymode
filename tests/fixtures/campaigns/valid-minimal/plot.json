@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "campaign_id": "minimal-campaign",
+  "campaign_version": "1.0.0",
+  "start_milestone_ids": [
+    "milestone-1"
+  ],
+  "milestones": [
+    {
+      "id": "milestone-1",
+      "canonical_truth": "Truth",
+      "narrative_purpose": "Narrative",
+      "required_outcome_ids": [],
+      "allowed_approach_tags": [
+        "tag1"
+      ],
+      "forbidden_changes": [],
+      "preconditions": [],
+      "valid_next_milestone_ids": [
+        "milestone-2"
+      ],
+      "difficulty_band": "easy",
+      "pacing_weight": 1,
+      "cycle_allowed": false
+    },
+    {
+      "id": "milestone-2",
+      "canonical_truth": "Truth",
+      "narrative_purpose": "Narrative",
+      "required_outcome_ids": [],
+      "allowed_approach_tags": [
+        "tag1"
+      ],
+      "forbidden_changes": [],
+      "preconditions": [],
+      "valid_next_milestone_ids": [],
+      "difficulty_band": "expert",
+      "pacing_weight": 1,
+      "cycle_allowed": false
+    }
+  ],
+  "authored_opportunities": [
+    {
+      "id": "opp-1",
+      "parent_milestone_id": "milestone-1",
+      "title": "Opp",
+      "description": "Opp",
+      "referenced_entity_ids": [],
+      "allowed_outcome_ids": [],
+      "preconditions": [],
+      "expiry_conditions": [],
+      "balance_rating": 1
+    }
+  ],
+  "ending_milestone_ids": [
+    "milestone-2"
+  ],
+  "clock_definitions": []
+}

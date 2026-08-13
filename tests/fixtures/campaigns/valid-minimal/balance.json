@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "campaign_id": "minimal-campaign",
+  "campaign_version": "1.0.0",
+  "difficulty_profiles": {
+    "story": {
+      "dc_adjustment": -2,
+      "enemy_hp_ratio": {
+        "numerator": 7,
+        "denominator": 10
+      },
+      "enemy_damage_ratio": {
+        "numerator": 1,
+        "denominator": 2
+      },
+      "enemy_armour_ratio": {
+        "numerator": 1,
+        "denominator": 1
+      },
+      "luck_capacity": 3
+    },
+    "normal": {
+      "dc_adjustment": 0,
+      "enemy_hp_ratio": {
+        "numerator": 1,
+        "denominator": 1
+      },
+      "enemy_damage_ratio": {
+        "numerator": 1,
+        "denominator": 1
+      },
+      "enemy_armour_ratio": {
+        "numerator": 1,
+        "denominator": 1
+      },
+      "luck_capacity": 2
+    },
+    "hard": {
+      "dc_adjustment": 2,
+      "enemy_hp_ratio": {
+        "numerator": 5,
+        "denominator": 4
+      },
+      "enemy_damage_ratio": {
+        "numerator": 3,
+        "denominator": 2
+      },
+      "enemy_armour_ratio": {
+        "numerator": 1,
+        "denominator": 1
+      },
+      "luck_capacity": 1
+    }
+  },
+  "level_xp_thresholds": {
+    "1": 0,
+    "2": 10
+  },
+  "dc_bands": {
+    "easy": 8,
+    "standard": 12,
+    "difficult": 15,
+    "expert": 18,
+    "exceptional": 22,
+    "near_impossible": 25
+  },
+  "modifier_limits": {
+    "max_companion_stat_cost": 35
+  },
+  "effect_limits": {},
+  "enemy_power_formula": {
+    "max_loot_weight_ratio": 1.0
+  },
+  "encounter_targets": {},
+  "fusion_limits": {
+    "max_power_budget": 100
+  },
+  "boss_allowances": {}
+}

@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "campaign_id": "minimal-campaign",
+  "campaign_version": "1.0.0",
+  "protagonist_backgrounds": [
+    {
+      "id": "bg-1",
+      "name": "Bg",
+      "description": "Bg",
+      "stat_bonus": "strength",
+      "stat_bonus_value": 2,
+      "starting_skill_ids": [
+        "skill-1"
+      ],
+      "starting_item_ids": [
+        "item-1"
+      ],
+      "starting_fact_ids": [
+        "fact-1"
+      ]
+    }
+  ],
+  "major_npcs": [],
+  "companions": [
+    {
+      "id": "comp-1",
+      "name": "Comp",
+      "role": "Role",
+      "faction_id": null,
+      "home_area_id": "area-1",
+      "knowledge_tags": [
+        "tag1"
+      ],
+      "goal": "Goal",
+      "interaction_hooks": [
+        "Hook"
+      ],
+      "combat_role": "Combat Role",
+      "base_stats": {
+        "strength": 8,
+        "dexterity": 8,
+        "intelligence": 8,
+        "charisma": 8,
+        "constitution": 8,
+        "wisdom": 8
+      },
+      "skill_tree_id": "tree-1",
+      "starting_skill_ids": [
+        "skill-1"
+      ],
+      "starting_loadout": [
+        "skill-1"
+      ],
+      "relationship_rules": [
+        "Rule"
+      ],
+      "story_hook_ids": [
+        "milestone-1"
+      ],
+      "availability_rules": [
+        "Rule"
+      ],
+      "minimum_usable_actions": 1
+    }
+  ]
+}

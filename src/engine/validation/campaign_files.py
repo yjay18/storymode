@@ -33,7 +33,7 @@ REQUIRED_FILES = {
 
 
 def validate_campaign_files(
-    file_contents: Mapping[str, Any],
+    file_contents: Mapping[str, str],
 ) -> tuple[CampaignPack | None, list[Diagnostic]]:
     """Validate already-decoded file contents and return pack or diagnostics."""
     diagnostics: list[Diagnostic] = []
@@ -71,19 +71,8 @@ def validate_campaign_files(
 
     for filename, model_cls in REQUIRED_FILES.items():
         data = file_contents[filename]
-        if not isinstance(data, dict):
-            diagnostics.append(
-                Diagnostic(
-                    code="type_error",
-                    file=filename,
-                    json_pointer="/",
-                    message="Root must be a JSON object",
-                )
-            )
-            continue
-
         try:
-            parsed_models[filename] = model_cls(**data)
+            parsed_models[filename] = model_cls.model_validate_json(data)
         except ValidationError as exc:
             for err in exc.errors():
                 loc = "/" + "/".join(str(x) for x in err["loc"])

@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "campaign_id": "minimal-campaign",
+  "campaign_version": "1.0.0",
+  "title": "Minimal",
+  "theme": "fantasy",
+  "source_type": "custom",
+  "source_summary": "Summary",
+  "default_difficulty": "normal",
+  "campaign_length": "short",
+  "art_style_ref": "style-1",
+  "created_at": "2026-08-13T13:40:39.774616Z",
+  "content_fingerprint": null,
+  "status": "draft"
+}

@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "campaign_id": "minimal-campaign",
+  "campaign_version": "1.0.0",
+  "style_bible": {
+    "style_id": "style-1",
+    "tone": "Tone",
+    "narrative_voice": "Voice",
+    "sensory_palette": {
+      "sounds": [
+        "sound"
+      ],
+      "smells": [
+        "smell"
+      ],
+      "materials": [
+        "mat"
+      ],
+      "lighting": [
+        "light"
+      ],
+      "textures": [
+        "tex"
+      ]
+    },
+    "faction_language_notes": "Note",
+    "naming_conventions": "Note",
+    "banned_phrases": [
+      "Phrase"
+    ],
+    "description_requirements": "Desc",
+    "examples": [
+      "Example"
+    ],
+    "anti_examples": [
+      "Example"
+    ],
+    "art_direction": "Art"
+  }
+}

@@ -1,0 +1,111 @@
+{
+  "schema_version": 1,
+  "campaign_id": "minimal-campaign",
+  "campaign_version": "1.0.0",
+  "point_buy": {
+    "budget": 27,
+    "minimum": 8,
+    "maximum_before_bonus": 15,
+    "maximum_after_bonus": 17,
+    "cost_map": {
+      "8": 0,
+      "9": 1,
+      "10": 2,
+      "11": 3,
+      "12": 4,
+      "13": 5,
+      "14": 7,
+      "15": 9
+    }
+  },
+  "non_combat_skills": [
+    {
+      "id": "eskill-1",
+      "name": "E",
+      "description": "E",
+      "stat": "strength",
+      "rank_min": 0,
+      "rank_max": 5,
+      "availability_tags": [
+        "tag1"
+      ],
+      "capability_tags": [
+        "tag2"
+      ]
+    }
+  ],
+  "combat_skills": [
+    {
+      "id": "skill-1",
+      "name": "Skill",
+      "description": "Skill",
+      "tags": [
+        "tag1"
+      ],
+      "acquisition_source_ids": [
+        "fac-1"
+      ],
+      "levels": [
+        {
+          "level": 1,
+          "mana_cost": 0,
+          "target_rule": "single_enemy",
+          "base_effects": [],
+          "effect_die": null,
+          "prerequisite": null
+        },
+        {
+          "level": 2,
+          "mana_cost": 0,
+          "target_rule": "single_enemy",
+          "base_effects": [],
+          "effect_die": null,
+          "prerequisite": null
+        },
+        {
+          "level": 3,
+          "mana_cost": 0,
+          "target_rule": "single_enemy",
+          "base_effects": [],
+          "effect_die": null,
+          "prerequisite": null
+        },
+        {
+          "level": 4,
+          "mana_cost": 0,
+          "target_rule": "single_enemy",
+          "base_effects": [],
+          "effect_die": null,
+          "prerequisite": null
+        },
+        {
+          "level": 5,
+          "mana_cost": 0,
+          "target_rule": "single_enemy",
+          "base_effects": [],
+          "effect_die": null,
+          "prerequisite": null
+        }
+      ],
+      "allowed_actor_types": [
+        "protagonist",
+        "companion"
+      ]
+    }
+  ],
+  "skill_trees": [
+    {
+      "id": "tree-1",
+      "owner_companion_id": null,
+      "nodes": [
+        {
+          "id": "node-1",
+          "skill_id": "skill-1",
+          "cost": 1
+        }
+      ],
+      "edges": []
+    }
+  ],
+  "fusion_recipes": []
+}

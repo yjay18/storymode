@@ -1,7 +1,10 @@
 """Tests for campaign file validation."""
 
+import json
+from collections.abc import Mapping
 from typing import Any
 
+from domain.models.diagnostics import Diagnostic
 from engine.validation.campaign_files import validate_campaign_files
 
 
@@ -21,39 +24,39 @@ def test_missing_and_extra_files() -> None:
 def test_malformed_root() -> None:
     # Provide arrays instead of dicts for all required files to bypass missing checks
     # but fail the type check
-    file_contents: dict[str, Any] = {
-        "campaign.json": [],
-        "style.json": [],
-        "world.json": [],
-        "areas.json": [],
-        "characters.json": [],
-        "skills.json": [],
-        "items.json": [],
-        "enemies.json": [],
-        "plot.json": [],
-        "balance.json": [],
-    }
+    file_contents = {k: "[]" for k in [
+        "campaign.json",
+        "style.json",
+        "world.json",
+        "areas.json",
+        "characters.json",
+        "skills.json",
+        "items.json",
+        "enemies.json",
+        "plot.json",
+        "balance.json",
+    ]}
 
     pack, diagnostics = validate_campaign_files(file_contents)
     assert pack is None
     assert len(diagnostics) == 10
-    assert all(d.code == "type_error" for d in diagnostics)
+    assert all(d.code == "model_type" for d in diagnostics)
 
 
 def test_pydantic_errors_collected() -> None:
     # Provide empty dicts for all required files, triggering Pydantic ValidationErrors
-    file_contents: dict[str, Any] = {
-        "campaign.json": {},
-        "style.json": {},
-        "world.json": {},
-        "areas.json": {},
-        "characters.json": {},
-        "skills.json": {},
-        "items.json": {},
-        "enemies.json": {},
-        "plot.json": {},
-        "balance.json": {},
-    }
+    file_contents = {k: "{}" for k in [
+        "campaign.json",
+        "style.json",
+        "world.json",
+        "areas.json",
+        "characters.json",
+        "skills.json",
+        "items.json",
+        "enemies.json",
+        "plot.json",
+        "balance.json",
+    ]}
 
     pack, diagnostics = validate_campaign_files(file_contents)
     assert pack is None
@@ -124,7 +127,10 @@ def test_mismatched_campaign_version() -> None:
         "engine.validation.campaign_files.REQUIRED_FILES",
         {"campaign.json": CampaignMeta, "style.json": StyleBibleFile},
     ):
-        pack, diagnostics = validate_campaign_files({"campaign.json": meta, "style.json": style})
+        pack, diagnostics = validate_campaign_files({
+            "campaign.json": json.dumps(meta, default=str),
+            "style.json": json.dumps(style, default=str)
+        })
 
         assert pack is None
         assert len(diagnostics) == 1
@@ -190,7 +196,10 @@ def test_mismatched_campaign_id() -> None:
         "engine.validation.campaign_files.REQUIRED_FILES",
         {"campaign.json": CampaignMeta, "style.json": StyleBibleFile},
     ):
-        pack, diagnostics = validate_campaign_files({"campaign.json": meta, "style.json": style})
+        pack, diagnostics = validate_campaign_files({
+            "campaign.json": json.dumps(meta, default=str),
+            "style.json": json.dumps(style, default=str)
+        })
 
         assert pack is None
         assert len(diagnostics) == 1

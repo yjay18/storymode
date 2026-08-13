@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "campaign_id": "minimal-campaign",
+  "campaign_version": "1.0.0",
+  "enemy_archetypes": [
+    {
+      "id": "enemy-1",
+      "name": "Enemy",
+      "description": "Enemy",
+      "faction_id": "fac-1",
+      "base_hp": 1,
+      "base_armour": 0,
+      "speed": 1,
+      "dexterity": 8,
+      "base_mana": 0,
+      "mana_regen": 1,
+      "combat_skill_ids": [
+        "skill-1"
+      ],
+      "behavior_profile": "Behavior",
+      "escape_policy_id": "milestone-1",
+      "power_rating": 1,
+      "loot_table": [
+        {
+          "item_id": "item-1",
+          "minimum_quantity": 1,
+          "maximum_quantity": 1,
+          "weight": 1
+        }
+      ],
+      "portrait_prompt": "Portrait",
+      "art_style_ref": "Art"
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "campaign_id": "minimal-campaign",
+  "campaign_version": "1.0.0",
+  "world": {
+    "name": "World",
+    "core_conflict": "Conflict",
+    "power_system": {
+      "rules": [
+        "Rule"
+      ],
+      "costs": [
+        "Cost"
+      ],
+      "access_restrictions": [
+        "Access"
+      ],
+      "side_effects": [
+        "Side Effect"
+      ]
+    },
+    "values": [
+      "Value"
+    ],
+    "factions": [
+      {
+        "id": "fac-1",
+        "name": "Fac",
+        "goals": [
+          "Goal"
+        ],
+        "resources": [
+          "Resource"
+        ],
+        "hypocrisy": "Hypocrisy",
+        "language_style": "Style",
+        "visual_markings": "Markings",
+        "relationship_edges": []
+      }
+    ],
+    "major_locations": [
+      {
+        "id": "loc-1",
+        "name": "Loc",
+        "summary": "Summary"
+      }
+    ],
+    "material_conditions": [
+      "Condition"
+    ]
+  }
+}
