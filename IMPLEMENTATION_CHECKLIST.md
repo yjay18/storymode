@@ -227,7 +227,7 @@ storage formats, model providers, formulas, or field names.
     simultaneous errors sorted by file/pointer/code.
   - Accept: returns all diagnostics and no filesystem/model operations.
 
-- [ ] **VALID-02 — Build global typed ID index and validate references**
+- [x] **VALID-02 — Build global typed ID index and validate references**
   - Depends: VALID-01
   - Read: every reference rule in campaign schema and component boundaries.
   - Create: `src/engine/validation/references.py`,
