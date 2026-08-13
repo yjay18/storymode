@@ -18,3 +18,13 @@ class UnsafePathError(SaveError):
 class CampaignMismatchError(SaveError):
     """Raised when the save belongs to a different campaign or fingerprint."""
     pass
+
+
+class StaleRevisionError(SaveError):
+    """Raised when expected revision does not match current state."""
+    pass
+
+
+class IdempotentCommandError(SaveError):
+    """Raised when command payload conflicts with a previously executed command."""
+    pass
