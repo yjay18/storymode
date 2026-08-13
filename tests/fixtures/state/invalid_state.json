@@ -1,0 +1,83 @@
+{
+  "schema_version": 1,
+  "campaign_id": "camp-1",
+  "campaign_version": "1.0.0",
+  "campaign_fingerprint": "fp",
+  "save_id": "save-1",
+  "revision": 0,
+  "last_command_receipts": [
+    {
+      "command_id": "cmd-1",
+      "canonical_request_hash": "hash",
+      "committed_revision": 5,
+      "result_kind": "success",
+      "safe_result_summary": "ok",
+      "roll_ids": []
+    }
+  ],
+  "difficulty": "normal",
+  "play_seconds": 0,
+  "player": {
+    "id": "hero",
+    "name": "Hero",
+    "background_id": "bg-1",
+    "stats": {
+      "strength": 10,
+      "dexterity": 10,
+      "intelligence": 10,
+      "charisma": 10,
+      "constitution": 10,
+      "wisdom": 10
+    },
+    "level": 1,
+    "xp": 0,
+    "hp": {
+      "current": 10,
+      "maximum": 10
+    },
+    "armour": {
+      "current": 0,
+      "maximum": 5
+    },
+    "mana": {
+      "current": 10,
+      "maximum": 10
+    },
+    "mana_regen": 2,
+    "speed": 30,
+    "luck_current": 0,
+    "luck_capacity": 3,
+    "inventory": [],
+    "equipment": [],
+    "non_combat_skill_ranks": {},
+    "known_combat_skills": [],
+    "combat_loadout": [],
+    "upgrade_tokens": 0,
+    "fusion_history": [],
+    "statuses": []
+  },
+  "party": {
+    "protagonist_id": "hero",
+    "active_companion_ids": [],
+    "companions": {}
+  },
+  "location": {
+    "area_id": "town",
+    "zone_anchor": null,
+    "discovered_area_ids": []
+  },
+  "plot": {
+    "milestones": {},
+    "opportunities": {},
+    "current_milestone_ids": [],
+    "ending_state": null
+  },
+  "known_fact_ids": [],
+  "world_flags": {},
+  "npc_overrides": {},
+  "area_object_overrides": {},
+  "clocks": {},
+  "encounter_history": [],
+  "pending_check": null,
+  "combat": null
+}

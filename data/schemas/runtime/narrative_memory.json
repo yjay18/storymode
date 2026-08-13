@@ -1,0 +1,92 @@
+{
+  "additionalProperties": false,
+  "description": "Memory representation for the LLM interpreter.",
+  "properties": {
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "campaign_id": {
+      "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+      "title": "Campaign Id",
+      "type": "string"
+    },
+    "campaign_version": {
+      "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$",
+      "title": "Campaign Version",
+      "type": "string"
+    },
+    "save_id": {
+      "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+      "title": "Save Id",
+      "type": "string"
+    },
+    "derived_from_revision": {
+      "minimum": 0,
+      "title": "Derived From Revision",
+      "type": "integer"
+    },
+    "recent_events": {
+      "items": {
+        "maxLength": 120,
+        "minLength": 1,
+        "type": "string"
+      },
+      "maxItems": 5,
+      "minItems": 3,
+      "title": "Recent Events",
+      "type": "array"
+    },
+    "current_objective": {
+      "maxLength": 120,
+      "minLength": 1,
+      "title": "Current Objective",
+      "type": "string"
+    },
+    "relationship_summaries": {
+      "patternProperties": {
+        "^[a-z][a-z0-9_-]{2,63}$": {
+          "maxLength": 120,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "title": "Relationship Summaries",
+      "type": "object"
+    },
+    "unresolved_thread_ids_summaries": {
+      "patternProperties": {
+        "^[a-z][a-z0-9_-]{2,63}$": {
+          "maxLength": 120,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "title": "Unresolved Thread Ids Summaries",
+      "type": "object"
+    },
+    "active_threat_ids_summaries": {
+      "patternProperties": {
+        "^[a-z][a-z0-9_-]{2,63}$": {
+          "maxLength": 120,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "title": "Active Threat Ids Summaries",
+      "type": "object"
+    }
+  },
+  "required": [
+    "campaign_id",
+    "campaign_version",
+    "save_id",
+    "derived_from_revision",
+    "recent_events",
+    "current_objective"
+  ],
+  "title": "NarrativeMemory",
+  "type": "object"
+}

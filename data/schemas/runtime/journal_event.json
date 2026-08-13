@@ -1,0 +1,192 @@
+{
+  "$defs": {
+    "EffectDefinition": {
+      "additionalProperties": false,
+      "description": "An atomic combat effect.",
+      "properties": {
+        "effect_id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Effect Id",
+          "type": "string"
+        },
+        "kind": {
+          "$ref": "#/$defs/EffectKind"
+        },
+        "magnitude": {
+          "title": "Magnitude",
+          "type": "integer"
+        },
+        "duration": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Duration"
+        },
+        "status_id": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status Id"
+        },
+        "stacking_key": {
+          "anyOf": [
+            {
+              "maxLength": 120,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Stacking Key"
+        }
+      },
+      "required": [
+        "effect_id",
+        "kind",
+        "magnitude"
+      ],
+      "title": "EffectDefinition",
+      "type": "object"
+    },
+    "EffectKind": {
+      "description": "Closed set of allowed combat effects.",
+      "enum": [
+        "damage",
+        "heal",
+        "buff",
+        "debuff",
+        "status",
+        "resource_drain",
+        "resource_restore"
+      ],
+      "title": "EffectKind",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "description": "A narrative/system event appended to the journal.",
+  "properties": {
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "event_id": {
+      "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+      "title": "Event Id",
+      "type": "string"
+    },
+    "transaction_id": {
+      "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+      "title": "Transaction Id",
+      "type": "string"
+    },
+    "revision": {
+      "minimum": 0,
+      "title": "Revision",
+      "type": "integer"
+    },
+    "event_index": {
+      "minimum": 0,
+      "title": "Event Index",
+      "type": "integer"
+    },
+    "recorded_at": {
+      "format": "date-time",
+      "title": "Recorded At",
+      "type": "string"
+    },
+    "command_id": {
+      "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+      "title": "Command Id",
+      "type": "string"
+    },
+    "event_type": {
+      "maxLength": 120,
+      "minLength": 1,
+      "title": "Event Type",
+      "type": "string"
+    },
+    "actor_ids": {
+      "items": {
+        "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+        "type": "string"
+      },
+      "title": "Actor Ids",
+      "type": "array"
+    },
+    "entity_ids": {
+      "items": {
+        "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+        "type": "string"
+      },
+      "title": "Entity Ids",
+      "type": "array"
+    },
+    "resolved_intent": {
+      "anyOf": [
+        {
+          "maxLength": 120,
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Resolved Intent"
+    },
+    "roll_ids": {
+      "items": {
+        "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+        "type": "string"
+      },
+      "title": "Roll Ids",
+      "type": "array"
+    },
+    "effects": {
+      "items": {
+        "$ref": "#/$defs/EffectDefinition"
+      },
+      "title": "Effects",
+      "type": "array"
+    },
+    "discovered_fact_ids": {
+      "items": {
+        "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+        "type": "string"
+      },
+      "title": "Discovered Fact Ids",
+      "type": "array"
+    }
+  },
+  "required": [
+    "event_id",
+    "transaction_id",
+    "revision",
+    "event_index",
+    "recorded_at",
+    "command_id",
+    "event_type"
+  ],
+  "title": "JournalEvent",
+  "type": "object"
+}

@@ -1,0 +1,121 @@
+{
+  "$defs": {
+    "DefaultDifficulty": {
+      "enum": [
+        "story",
+        "normal",
+        "hard"
+      ],
+      "title": "DefaultDifficulty",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Display metadata for a save slot.",
+  "properties": {
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "campaign_id": {
+      "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+      "title": "Campaign Id",
+      "type": "string"
+    },
+    "campaign_version": {
+      "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$",
+      "title": "Campaign Version",
+      "type": "string"
+    },
+    "save_id": {
+      "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+      "title": "Save Id",
+      "type": "string"
+    },
+    "derived_from_revision": {
+      "minimum": 0,
+      "title": "Derived From Revision",
+      "type": "integer"
+    },
+    "slot_kind": {
+      "maxLength": 120,
+      "minLength": 1,
+      "title": "Slot Kind",
+      "type": "string"
+    },
+    "slot_name": {
+      "maxLength": 120,
+      "minLength": 1,
+      "title": "Slot Name",
+      "type": "string"
+    },
+    "player_display_name": {
+      "maxLength": 120,
+      "minLength": 1,
+      "title": "Player Display Name",
+      "type": "string"
+    },
+    "player_level": {
+      "minimum": 1,
+      "title": "Player Level",
+      "type": "integer"
+    },
+    "campaign_title": {
+      "maxLength": 120,
+      "minLength": 1,
+      "title": "Campaign Title",
+      "type": "string"
+    },
+    "current_area_display_name": {
+      "maxLength": 120,
+      "minLength": 1,
+      "title": "Current Area Display Name",
+      "type": "string"
+    },
+    "difficulty": {
+      "$ref": "#/$defs/DefaultDifficulty"
+    },
+    "play_seconds": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Play Seconds",
+      "type": "integer"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "updated_at": {
+      "format": "date-time",
+      "title": "Updated At",
+      "type": "string"
+    },
+    "recovery_status": {
+      "maxLength": 120,
+      "minLength": 1,
+      "title": "Recovery Status",
+      "type": "string"
+    }
+  },
+  "required": [
+    "campaign_id",
+    "campaign_version",
+    "save_id",
+    "derived_from_revision",
+    "slot_kind",
+    "slot_name",
+    "player_display_name",
+    "player_level",
+    "campaign_title",
+    "current_area_display_name",
+    "difficulty",
+    "created_at",
+    "updated_at",
+    "recovery_status"
+  ],
+  "title": "SaveMeta",
+  "type": "object"
+}

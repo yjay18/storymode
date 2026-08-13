@@ -1,0 +1,159 @@
+{
+  "$defs": {
+    "DefaultDifficulty": {
+      "enum": [
+        "story",
+        "normal",
+        "hard"
+      ],
+      "title": "DefaultDifficulty",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "description": "An audited die roll.",
+  "properties": {
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "roll_id": {
+      "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+      "title": "Roll Id",
+      "type": "string"
+    },
+    "transaction_id": {
+      "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+      "title": "Transaction Id",
+      "type": "string"
+    },
+    "revision": {
+      "minimum": 0,
+      "title": "Revision",
+      "type": "integer"
+    },
+    "recorded_at": {
+      "format": "date-time",
+      "title": "Recorded At",
+      "type": "string"
+    },
+    "command_id": {
+      "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+      "title": "Command Id",
+      "type": "string"
+    },
+    "reason": {
+      "maxLength": 120,
+      "minLength": 1,
+      "title": "Reason",
+      "type": "string"
+    },
+    "die_sides": {
+      "minimum": 2,
+      "title": "Die Sides",
+      "type": "integer"
+    },
+    "raw_rolls": {
+      "items": {
+        "type": "integer"
+      },
+      "minItems": 1,
+      "title": "Raw Rolls",
+      "type": "array"
+    },
+    "selected_roll_index": {
+      "minimum": 0,
+      "title": "Selected Roll Index",
+      "type": "integer"
+    },
+    "named_modifiers": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "propertyNames": {
+        "maxLength": 120,
+        "minLength": 1
+      },
+      "title": "Named Modifiers",
+      "type": "object"
+    },
+    "total": {
+      "title": "Total",
+      "type": "integer"
+    },
+    "dc": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Dc"
+    },
+    "difficulty": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/DefaultDifficulty"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "outcome": {
+      "anyOf": [
+        {
+          "maxLength": 120,
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Outcome"
+    },
+    "confirmed_effect_ids": {
+      "items": {
+        "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+        "type": "string"
+      },
+      "title": "Confirmed Effect Ids",
+      "type": "array"
+    },
+    "supersedes_roll_id": {
+      "anyOf": [
+        {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Supersedes Roll Id"
+    }
+  },
+  "required": [
+    "roll_id",
+    "transaction_id",
+    "revision",
+    "recorded_at",
+    "command_id",
+    "reason",
+    "die_sides",
+    "raw_rolls",
+    "selected_roll_index",
+    "total"
+  ],
+  "title": "RollRecord",
+  "type": "object"
+}
