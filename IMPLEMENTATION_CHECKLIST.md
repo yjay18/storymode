@@ -145,7 +145,7 @@ storage formats, model providers, formulas, or field names.
     duplicate IDs, unknown fields, campaign ID validation.
   - Accept: local validation catches self/duplicate edges without loading other files.
 
-- [ ] **SCHEMA-04 — Implement area, resident, object, encounter, and secret models**
+- [x] **SCHEMA-04 — Implement area, resident, object, encounter, and secret models**
   - Depends: SCHEMA-01
   - Read: campaign schema `areas.json` section; freeform action design.
   - Create: `src/domain/models/area.py`, `tests/unit/domain/test_area_models.py`.

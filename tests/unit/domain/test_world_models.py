@@ -117,18 +117,22 @@ def test_world_duplicate_location_ids() -> None:
 
 
 def test_world_file_valid() -> None:
-    WorldFile(**{  # type: ignore
-        "campaign_id": "test-campaign",
-        "campaign_version": "1.0.0",
-        "world": make_valid_world(),
-    })
+    WorldFile(
+        **{  # type: ignore
+            "campaign_id": "test-campaign",
+            "campaign_version": "1.0.0",
+            "world": make_valid_world(),
+        }
+    )
 
 
 def test_world_file_rejects_unknown_fields() -> None:
     with pytest.raises(ValidationError):
-        WorldFile(**{  # type: ignore
-            "campaign_id": "test-campaign",
-            "campaign_version": "1.0.0",
-            "world": make_valid_world(),
-            "extra": "bad",
-        })
+        WorldFile(
+            **{  # type: ignore
+                "campaign_id": "test-campaign",
+                "campaign_version": "1.0.0",
+                "world": make_valid_world(),
+                "extra": "bad",
+            }
+        )
