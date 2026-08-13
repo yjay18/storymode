@@ -238,7 +238,7 @@ storage formats, model providers, formulas, or field names.
     wrong-type reference, and duplicate global ID cases.
   - Accept: validator never resolves by display name and reports source + target details.
 
-- [ ] **VALID-03 — Validate area, skill-tree, and milestone graphs**
+- [x] **VALID-03 — Validate area, skill-tree, and milestone graphs**
   - Depends: VALID-02
   - Read: campaign schema graph rules and plot design.
   - Create: `src/engine/validation/graphs.py`,
