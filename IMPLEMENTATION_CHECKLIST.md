@@ -188,7 +188,7 @@ storage formats, model providers, formulas, or field names.
     reversed loot quantities, empty enemy action set, extra fields.
   - Accept: enemy power rating remains an asserted value to validate later, not computed.
 
-- [ ] **SCHEMA-08 — Implement plot, opportunity, clock, and balance campaign models**
+- [x] **SCHEMA-08 — Implement plot, opportunity, clock, and balance campaign models**
   - Depends: SCHEMA-01
   - Read: campaign schema plot/balance sections; plot and difficulty docs.
   - Create: `src/domain/models/{plot,balance}.py`,
