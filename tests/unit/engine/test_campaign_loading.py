@@ -3,7 +3,6 @@
 import json
 from pathlib import Path
 
-from domain.models.diagnostics import Diagnostic
 from engine.campaign import calculate_fingerprint, load_campaign
 
 

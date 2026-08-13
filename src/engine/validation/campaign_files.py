@@ -72,7 +72,7 @@ def validate_campaign_files(
     for filename, model_cls in REQUIRED_FILES.items():
         data = file_contents[filename]
         try:
-            parsed_models[filename] = model_cls.model_validate_json(data)
+            parsed_models[filename] = cast(Any, model_cls).model_validate_json(data)
         except ValidationError as exc:
             for err in exc.errors():
                 loc = "/" + "/".join(str(x) for x in err["loc"])

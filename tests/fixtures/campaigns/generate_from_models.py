@@ -1,27 +1,63 @@
 """Generate minimal valid campaign using the actual models."""
-import json
 import sys
+from datetime import UTC, datetime
 from pathlib import Path
-from datetime import datetime, timezone
-from pydantic import __version__
 
 # Add src to path
 sys.path.insert(0, str(Path("src").resolve()))
 
-from domain.models.area import AreasFile, AreaDefinition, ResidentNpc, AreaObject, EncounterEntry, AreaSecret, Availability
+from domain.models.area import (
+    AreaDefinition,
+    AreaObject,
+    AreaSecret,
+    AreasFile,
+    Availability,
+    EncounterEntry,
+    ResidentNpc,
+)
+from domain.models.balance import BalanceFile, DcBands, DifficultyProfile, DifficultyProfiles
+from domain.models.campaign_meta import (
+    CampaignLength,
+    CampaignMeta,
+    CampaignStatus,
+    DefaultDifficulty,
+    SourceType,
+    Theme,
+)
+from domain.models.character import (
+    BackgroundDefinition,
+    CharactersFile,
+    CompanionDefinition,
+    StatBlock,
+    StatName,
+)
 from domain.models.common import Rational
-from domain.models.balance import BalanceFile, DifficultyProfiles, DifficultyProfile, DcBands
-from domain.models.campaign_meta import CampaignMeta, Theme, SourceType, DefaultDifficulty, CampaignLength, CampaignStatus
-from domain.models.character import CharactersFile, BackgroundDefinition, CompanionDefinition, StatBlock, StatName
 from domain.models.enemy import EnemiesFile, EnemyArchetype, LootEntry
-from domain.models.item import ItemsFile, ItemDefinition, ItemRarity, ItemType
-from domain.models.plot import PlotFile, MilestoneDefinition, OpportunityDefinition
-from domain.models.skill import SkillsFile, CombatSkill, CombatSkillLevel, TargetRule, NonCombatSkill, PointBuyDefinition, SkillTree, SkillTreeNode, EffectDefinition, EffectKind
-from domain.models.style_bible import StyleBibleFile, StyleBible, SensoryPalette
-from domain.models.world import WorldFile, WorldDefinition, FactionDefinition, MajorLocation, PowerSystem
+from domain.models.item import ItemDefinition, ItemRarity, ItemsFile, ItemType
+from domain.models.plot import MilestoneDefinition, OpportunityDefinition, PlotFile
+from domain.models.skill import (
+    CombatSkill,
+    CombatSkillLevel,
+    EffectDefinition,
+    EffectKind,
+    NonCombatSkill,
+    PointBuyDefinition,
+    SkillsFile,
+    SkillTree,
+    SkillTreeNode,
+    TargetRule,
+)
+from domain.models.style_bible import SensoryPalette, StyleBible, StyleBibleFile
+from domain.models.world import (
+    FactionDefinition,
+    MajorLocation,
+    PowerSystem,
+    WorldDefinition,
+    WorldFile,
+)
 
 
-def generate():
+def generate() -> None:
     meta = CampaignMeta(
         campaign_id="minimal-campaign",
         campaign_version="1.0.0",
@@ -32,7 +68,7 @@ def generate():
         source_type=SourceType.CUSTOM,
         source_summary="Summary",
         status=CampaignStatus.DRAFT,
-        created_at=datetime.now(timezone.utc),
+        created_at=datetime.now(UTC),
         art_style_ref="style-1"
     )
 

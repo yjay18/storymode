@@ -1,9 +1,9 @@
 """Generate a minimal valid campaign pack."""
 import json
 from pathlib import Path
-from decimal import Decimal
 
-def main():
+
+def main() -> None:
     base_dir = Path("tests/fixtures/campaigns/valid-minimal")
     base_dir.mkdir(parents=True, exist_ok=True)
     

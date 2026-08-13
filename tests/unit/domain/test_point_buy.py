@@ -97,7 +97,7 @@ def test_validate_point_buy_malformed_stats(point_buy_def: PointBuyDefinition) -
         StatName.INTELLIGENCE: 12,
         StatName.WISDOM: 10,
     }
-    result = validate_point_buy(stats, point_buy_def) # type: ignore
+    result = validate_point_buy(stats, point_buy_def)
     assert not result.is_valid
     assert any("Missing stats" in err for err in result.errors)
 

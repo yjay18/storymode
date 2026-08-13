@@ -60,7 +60,7 @@ def load_campaign(campaign_dir: Path) -> tuple[CampaignPack | None, list[Diagnos
     # Phase 1: Load files
     for file_path in campaign_dir.glob("*.json"):
         try:
-            with open(file_path, "r", encoding="utf-8") as f:
+            with open(file_path, encoding="utf-8") as f:
                 file_contents[file_path.name] = f.read()
         except OSError as e:
             diagnostics.append(
