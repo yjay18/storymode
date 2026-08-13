@@ -3,7 +3,6 @@
 import pytest
 from pydantic import ValidationError
 
-from llm.contracts.action import ActionProposal
 from llm.orchestration.json_parser import parse_llm_response
 
 
