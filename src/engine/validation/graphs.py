@@ -22,9 +22,7 @@ def _detect_cycle(
         if neighbor in visiting:
             cycle_path.append(neighbor)
             return True
-        if neighbor not in visited and _detect_cycle(
-            neighbor, adj, visiting, visited, cycle_path
-        ):
+        if neighbor not in visited and _detect_cycle(neighbor, adj, visiting, visited, cycle_path):
             return True
 
     cycle_path.pop()
@@ -55,9 +53,9 @@ def validate_areas(pack: CampaignPack) -> list[Diagnostic]:
                         json_pointer=f"/areas/{i}/connected_area_ids",
                         code="missing_reciprocal_connection",
                         message=(
-                        f"Area '{area.id}' connects to '{connected_id}', "
-                        f"but '{connected_id}' does not connect back."
-                    ),
+                            f"Area '{area.id}' connects to '{connected_id}', "
+                            f"but '{connected_id}' does not connect back."
+                        ),
                         related_ids=[area.id, connected_id],
                     )
                 )

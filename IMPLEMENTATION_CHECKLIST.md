@@ -249,7 +249,7 @@ storage formats, model providers, formulas, or field names.
     milestone cycle, unknown parent (even if reference validator also catches it).
   - Accept: diagnostics identify every involved ID; traversal order is stable.
 
-- [ ] **VALID-04 — Validate balance, combat viability, and fusion safeguards**
+- [x] **VALID-04 — Validate balance, combat viability, and fusion safeguards**
   - Depends: VALID-02
   - Read: balance schema, difficulty/combat/progression/party docs.
   - Create: `src/engine/validation/balance.py`,
