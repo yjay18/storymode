@@ -200,7 +200,7 @@ storage formats, model providers, formulas, or field names.
     XP, missing profile, wrong difficulty constant, unknown predicate type.
   - Accept: graph reachability/cross-file checks remain for validation slices.
 
-- [ ] **SCHEMA-09 — Assemble CampaignPack and generate checked-in JSON Schemas**
+- [x] **SCHEMA-09 — Assemble CampaignPack and generate checked-in JSON Schemas**
   - Depends: SCHEMA-02, SCHEMA-03, SCHEMA-04, SCHEMA-05, SCHEMA-06, SCHEMA-07, SCHEMA-08
   - Read: all `docs/schemas/campaign-pack.md`; ADR-009.
   - Create: `src/domain/models/campaign_pack.py`, `scripts/generate_schemas.py`,

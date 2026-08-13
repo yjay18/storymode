@@ -1,0 +1,410 @@
+{
+  "$defs": {
+    "BackgroundDefinition": {
+      "additionalProperties": false,
+      "description": "A selectable protagonist background.",
+      "properties": {
+        "id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        },
+        "stat_bonus": {
+          "$ref": "#/$defs/StatName"
+        },
+        "stat_bonus_value": {
+          "maximum": 2,
+          "minimum": 1,
+          "title": "Stat Bonus Value",
+          "type": "integer"
+        },
+        "starting_skill_ids": {
+          "items": {
+            "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+            "type": "string"
+          },
+          "title": "Starting Skill Ids",
+          "type": "array"
+        },
+        "starting_item_ids": {
+          "items": {
+            "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+            "type": "string"
+          },
+          "title": "Starting Item Ids",
+          "type": "array"
+        },
+        "starting_fact_ids": {
+          "items": {
+            "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+            "type": "string"
+          },
+          "title": "Starting Fact Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "description",
+        "stat_bonus",
+        "stat_bonus_value",
+        "starting_skill_ids",
+        "starting_item_ids",
+        "starting_fact_ids"
+      ],
+      "title": "BackgroundDefinition",
+      "type": "object"
+    },
+    "CompanionDefinition": {
+      "additionalProperties": false,
+      "description": "A recruitable companion extending major NPC data.",
+      "properties": {
+        "id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "role": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Role",
+          "type": "string"
+        },
+        "faction_id": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Faction Id"
+        },
+        "home_area_id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Home Area Id",
+          "type": "string"
+        },
+        "knowledge_tags": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Knowledge Tags",
+          "type": "array"
+        },
+        "goal": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Goal",
+          "type": "string"
+        },
+        "interaction_hooks": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Interaction Hooks",
+          "type": "array"
+        },
+        "combat_role": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Combat Role",
+          "type": "string"
+        },
+        "base_stats": {
+          "$ref": "#/$defs/StatBlock"
+        },
+        "skill_tree_id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Skill Tree Id",
+          "type": "string"
+        },
+        "starting_skill_ids": {
+          "items": {
+            "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+            "type": "string"
+          },
+          "title": "Starting Skill Ids",
+          "type": "array"
+        },
+        "starting_loadout": {
+          "items": {
+            "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+            "type": "string"
+          },
+          "title": "Starting Loadout",
+          "type": "array"
+        },
+        "relationship_rules": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Relationship Rules",
+          "type": "array"
+        },
+        "story_hook_ids": {
+          "items": {
+            "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+            "type": "string"
+          },
+          "title": "Story Hook Ids",
+          "type": "array"
+        },
+        "availability_rules": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Availability Rules",
+          "type": "array"
+        },
+        "minimum_usable_actions": {
+          "maximum": 4,
+          "minimum": 1,
+          "title": "Minimum Usable Actions",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "role",
+        "home_area_id",
+        "knowledge_tags",
+        "goal",
+        "interaction_hooks",
+        "combat_role",
+        "base_stats",
+        "skill_tree_id",
+        "starting_skill_ids",
+        "starting_loadout",
+        "relationship_rules",
+        "story_hook_ids",
+        "availability_rules",
+        "minimum_usable_actions"
+      ],
+      "title": "CompanionDefinition",
+      "type": "object"
+    },
+    "MajorNpcDefinition": {
+      "additionalProperties": false,
+      "description": "A major NPC with persistence beyond a single area.",
+      "properties": {
+        "id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "role": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Role",
+          "type": "string"
+        },
+        "faction_id": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Faction Id"
+        },
+        "home_area_id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Home Area Id",
+          "type": "string"
+        },
+        "knowledge_tags": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Knowledge Tags",
+          "type": "array"
+        },
+        "goal": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Goal",
+          "type": "string"
+        },
+        "interaction_hooks": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Interaction Hooks",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "role",
+        "home_area_id",
+        "knowledge_tags",
+        "goal",
+        "interaction_hooks"
+      ],
+      "title": "MajorNpcDefinition",
+      "type": "object"
+    },
+    "StatBlock": {
+      "additionalProperties": false,
+      "description": "Exact six statistics for a character.",
+      "properties": {
+        "strength": {
+          "maximum": 30,
+          "minimum": 1,
+          "title": "Strength",
+          "type": "integer"
+        },
+        "dexterity": {
+          "maximum": 30,
+          "minimum": 1,
+          "title": "Dexterity",
+          "type": "integer"
+        },
+        "intelligence": {
+          "maximum": 30,
+          "minimum": 1,
+          "title": "Intelligence",
+          "type": "integer"
+        },
+        "charisma": {
+          "maximum": 30,
+          "minimum": 1,
+          "title": "Charisma",
+          "type": "integer"
+        },
+        "constitution": {
+          "maximum": 30,
+          "minimum": 1,
+          "title": "Constitution",
+          "type": "integer"
+        },
+        "wisdom": {
+          "maximum": 30,
+          "minimum": 1,
+          "title": "Wisdom",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "strength",
+        "dexterity",
+        "intelligence",
+        "charisma",
+        "constitution",
+        "wisdom"
+      ],
+      "title": "StatBlock",
+      "type": "object"
+    },
+    "StatName": {
+      "description": "The six core statistics.",
+      "enum": [
+        "strength",
+        "dexterity",
+        "intelligence",
+        "charisma",
+        "constitution",
+        "wisdom"
+      ],
+      "title": "StatName",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "description": "The root characters file structure.",
+  "properties": {
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "campaign_id": {
+      "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+      "title": "Campaign Id",
+      "type": "string"
+    },
+    "campaign_version": {
+      "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$",
+      "title": "Campaign Version",
+      "type": "string"
+    },
+    "protagonist_backgrounds": {
+      "items": {
+        "$ref": "#/$defs/BackgroundDefinition"
+      },
+      "title": "Protagonist Backgrounds",
+      "type": "array"
+    },
+    "major_npcs": {
+      "items": {
+        "$ref": "#/$defs/MajorNpcDefinition"
+      },
+      "title": "Major Npcs",
+      "type": "array"
+    },
+    "companions": {
+      "items": {
+        "$ref": "#/$defs/CompanionDefinition"
+      },
+      "title": "Companions",
+      "type": "array"
+    }
+  },
+  "required": [
+    "campaign_id",
+    "campaign_version",
+    "protagonist_backgrounds",
+    "major_npcs",
+    "companions"
+  ],
+  "title": "CharactersFile",
+  "type": "object"
+}

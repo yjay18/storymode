@@ -1,0 +1,235 @@
+{
+  "$defs": {
+    "EffectDefinition": {
+      "additionalProperties": false,
+      "description": "An atomic combat effect.",
+      "properties": {
+        "effect_id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Effect Id",
+          "type": "string"
+        },
+        "kind": {
+          "$ref": "#/$defs/EffectKind"
+        },
+        "magnitude": {
+          "title": "Magnitude",
+          "type": "integer"
+        },
+        "duration": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Duration"
+        },
+        "status_id": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status Id"
+        },
+        "stacking_key": {
+          "anyOf": [
+            {
+              "maxLength": 120,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Stacking Key"
+        }
+      },
+      "required": [
+        "effect_id",
+        "kind",
+        "magnitude"
+      ],
+      "title": "EffectDefinition",
+      "type": "object"
+    },
+    "EffectKind": {
+      "description": "Closed set of allowed combat effects.",
+      "enum": [
+        "damage",
+        "heal",
+        "buff",
+        "debuff",
+        "status",
+        "resource_drain",
+        "resource_restore"
+      ],
+      "title": "EffectKind",
+      "type": "string"
+    },
+    "ItemDefinition": {
+      "additionalProperties": false,
+      "description": "An item definition.",
+      "properties": {
+        "id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "type": {
+          "$ref": "#/$defs/ItemType"
+        },
+        "rarity": {
+          "$ref": "#/$defs/ItemRarity"
+        },
+        "mechanics": {
+          "items": {
+            "$ref": "#/$defs/EffectDefinition"
+          },
+          "title": "Mechanics",
+          "type": "array"
+        },
+        "requirements": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Requirements",
+          "type": "array"
+        },
+        "capability_tags": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Capability Tags",
+          "type": "array"
+        },
+        "stacking_key": {
+          "anyOf": [
+            {
+              "maxLength": 120,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Stacking Key"
+        },
+        "flavour_text": {
+          "maxLength": 400,
+          "minLength": 1,
+          "title": "Flavour Text",
+          "type": "string"
+        },
+        "provenance": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Provenance",
+          "type": "string"
+        },
+        "max_stack": {
+          "minimum": 1,
+          "title": "Max Stack",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "type",
+        "rarity",
+        "mechanics",
+        "requirements",
+        "capability_tags",
+        "flavour_text",
+        "provenance",
+        "max_stack"
+      ],
+      "title": "ItemDefinition",
+      "type": "object"
+    },
+    "ItemRarity": {
+      "description": "The allowed item rarities.",
+      "enum": [
+        "common",
+        "uncommon",
+        "rare",
+        "exceptional",
+        "unique"
+      ],
+      "title": "ItemRarity",
+      "type": "string"
+    },
+    "ItemType": {
+      "description": "The allowed types of items.",
+      "enum": [
+        "weapon",
+        "armour",
+        "consumable",
+        "tool",
+        "catalyst",
+        "quest",
+        "accessory"
+      ],
+      "title": "ItemType",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "description": "The root items file structure.",
+  "properties": {
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "campaign_id": {
+      "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+      "title": "Campaign Id",
+      "type": "string"
+    },
+    "campaign_version": {
+      "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$",
+      "title": "Campaign Version",
+      "type": "string"
+    },
+    "items": {
+      "items": {
+        "$ref": "#/$defs/ItemDefinition"
+      },
+      "title": "Items",
+      "type": "array"
+    }
+  },
+  "required": [
+    "campaign_id",
+    "campaign_version",
+    "items"
+  ],
+  "title": "ItemsFile",
+  "type": "object"
+}

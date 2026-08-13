@@ -1,0 +1,413 @@
+{
+  "$defs": {
+    "AreaDefinition": {
+      "additionalProperties": false,
+      "description": "An area or zone within the campaign world.",
+      "properties": {
+        "id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "major_location_id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Major Location Id",
+          "type": "string"
+        },
+        "description": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        },
+        "art_prompt": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Art Prompt",
+          "type": "string"
+        },
+        "danger_level": {
+          "maximum": 10,
+          "minimum": 1,
+          "title": "Danger Level",
+          "type": "integer"
+        },
+        "connected_area_ids": {
+          "items": {
+            "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+            "type": "string"
+          },
+          "title": "Connected Area Ids",
+          "type": "array"
+        },
+        "local_faction_ids": {
+          "items": {
+            "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+            "type": "string"
+          },
+          "title": "Local Faction Ids",
+          "type": "array"
+        },
+        "residents": {
+          "items": {
+            "$ref": "#/$defs/ResidentNpc"
+          },
+          "title": "Residents",
+          "type": "array"
+        },
+        "objects": {
+          "items": {
+            "$ref": "#/$defs/AreaObject"
+          },
+          "title": "Objects",
+          "type": "array"
+        },
+        "encounters": {
+          "items": {
+            "$ref": "#/$defs/EncounterEntry"
+          },
+          "title": "Encounters",
+          "type": "array"
+        },
+        "secrets": {
+          "items": {
+            "$ref": "#/$defs/AreaSecret"
+          },
+          "title": "Secrets",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "major_location_id",
+        "description",
+        "art_prompt",
+        "danger_level",
+        "connected_area_ids",
+        "local_faction_ids",
+        "residents",
+        "objects",
+        "encounters",
+        "secrets"
+      ],
+      "title": "AreaDefinition",
+      "type": "object"
+    },
+    "AreaObject": {
+      "additionalProperties": false,
+      "description": "An interactable object in an area.",
+      "properties": {
+        "id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        },
+        "location_anchor": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Location Anchor",
+          "type": "string"
+        },
+        "state": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "State",
+          "type": "string"
+        },
+        "interactable_tags": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Interactable Tags",
+          "type": "array"
+        },
+        "capability_requirements": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Capability Requirements",
+          "type": "array"
+        },
+        "allowed_effect_ids": {
+          "items": {
+            "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+            "type": "string"
+          },
+          "title": "Allowed Effect Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "description",
+        "location_anchor",
+        "state",
+        "interactable_tags",
+        "capability_requirements",
+        "allowed_effect_ids"
+      ],
+      "title": "AreaObject",
+      "type": "object"
+    },
+    "AreaSecret": {
+      "additionalProperties": false,
+      "description": "A secret or clue hidden in an area.",
+      "properties": {
+        "id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "summary": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Summary",
+          "type": "string"
+        },
+        "lead_fact_ids": {
+          "items": {
+            "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+            "type": "string"
+          },
+          "title": "Lead Fact Ids",
+          "type": "array"
+        },
+        "reveal_conditions": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Reveal Conditions",
+          "type": "array"
+        },
+        "core_clue": {
+          "title": "Core Clue",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "summary",
+        "lead_fact_ids",
+        "reveal_conditions",
+        "core_clue"
+      ],
+      "title": "AreaSecret",
+      "type": "object"
+    },
+    "Availability": {
+      "description": "Availability status for residents and companions.",
+      "enum": [
+        "available",
+        "unavailable",
+        "hidden",
+        "dead"
+      ],
+      "title": "Availability",
+      "type": "string"
+    },
+    "EncounterEntry": {
+      "additionalProperties": false,
+      "description": "A combat encounter definition for an area.",
+      "properties": {
+        "id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "enemy_archetype_ids": {
+          "items": {
+            "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+            "type": "string"
+          },
+          "title": "Enemy Archetype Ids",
+          "type": "array"
+        },
+        "condition": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Condition",
+          "type": "string"
+        },
+        "weight": {
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Weight",
+          "type": "integer"
+        },
+        "escape_policy_id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Escape Policy Id",
+          "type": "string"
+        },
+        "consequence_ids": {
+          "items": {
+            "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+            "type": "string"
+          },
+          "title": "Consequence Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "enemy_archetype_ids",
+        "condition",
+        "weight",
+        "escape_policy_id",
+        "consequence_ids"
+      ],
+      "title": "EncounterEntry",
+      "type": "object"
+    },
+    "ResidentNpc": {
+      "additionalProperties": false,
+      "description": "A resident NPC found in an area.",
+      "properties": {
+        "id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "role": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Role",
+          "type": "string"
+        },
+        "faction_id": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Faction Id"
+        },
+        "availability": {
+          "$ref": "#/$defs/Availability"
+        },
+        "location_anchor": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Location Anchor",
+          "type": "string"
+        },
+        "initial_disposition": {
+          "maximum": 100,
+          "minimum": -100,
+          "title": "Initial Disposition",
+          "type": "integer"
+        },
+        "knowledge_tags": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Knowledge Tags",
+          "type": "array"
+        },
+        "personal_goal": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Personal Goal",
+          "type": "string"
+        },
+        "interaction_hooks": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Interaction Hooks",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "role",
+        "availability",
+        "location_anchor",
+        "initial_disposition",
+        "knowledge_tags",
+        "personal_goal",
+        "interaction_hooks"
+      ],
+      "title": "ResidentNpc",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "The root areas file structure.",
+  "properties": {
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "campaign_id": {
+      "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+      "title": "Campaign Id",
+      "type": "string"
+    },
+    "campaign_version": {
+      "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$",
+      "title": "Campaign Version",
+      "type": "string"
+    },
+    "areas": {
+      "items": {
+        "$ref": "#/$defs/AreaDefinition"
+      },
+      "maxItems": 500,
+      "minItems": 1,
+      "title": "Areas",
+      "type": "array"
+    }
+  },
+  "required": [
+    "campaign_id",
+    "campaign_version",
+    "areas"
+  ],
+  "title": "AreasFile",
+  "type": "object"
+}

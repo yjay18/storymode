@@ -1,0 +1,209 @@
+{
+  "$defs": {
+    "EnemyArchetype": {
+      "additionalProperties": false,
+      "description": "An enemy archetype definition.",
+      "properties": {
+        "id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        },
+        "faction_id": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Faction Id"
+        },
+        "base_hp": {
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Base Hp",
+          "type": "integer"
+        },
+        "base_armour": {
+          "maximum": 10000,
+          "minimum": 0,
+          "title": "Base Armour",
+          "type": "integer"
+        },
+        "speed": {
+          "maximum": 100,
+          "minimum": 0,
+          "title": "Speed",
+          "type": "integer"
+        },
+        "dexterity": {
+          "maximum": 30,
+          "minimum": 1,
+          "title": "Dexterity",
+          "type": "integer"
+        },
+        "base_mana": {
+          "maximum": 1000,
+          "minimum": 0,
+          "title": "Base Mana",
+          "type": "integer"
+        },
+        "mana_regen": {
+          "maximum": 100,
+          "minimum": 0,
+          "title": "Mana Regen",
+          "type": "integer"
+        },
+        "combat_skill_ids": {
+          "items": {
+            "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Combat Skill Ids",
+          "type": "array"
+        },
+        "behavior_profile": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Behavior Profile",
+          "type": "string"
+        },
+        "escape_policy_id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Escape Policy Id",
+          "type": "string"
+        },
+        "power_rating": {
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Power Rating",
+          "type": "integer"
+        },
+        "loot_table": {
+          "items": {
+            "$ref": "#/$defs/LootEntry"
+          },
+          "title": "Loot Table",
+          "type": "array"
+        },
+        "portrait_prompt": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Portrait Prompt",
+          "type": "string"
+        },
+        "art_style_ref": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Art Style Ref",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "description",
+        "base_hp",
+        "base_armour",
+        "speed",
+        "dexterity",
+        "base_mana",
+        "mana_regen",
+        "combat_skill_ids",
+        "behavior_profile",
+        "escape_policy_id",
+        "power_rating",
+        "loot_table",
+        "portrait_prompt",
+        "art_style_ref"
+      ],
+      "title": "EnemyArchetype",
+      "type": "object"
+    },
+    "LootEntry": {
+      "additionalProperties": false,
+      "description": "A row in a loot table.",
+      "properties": {
+        "item_id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Item Id",
+          "type": "string"
+        },
+        "minimum_quantity": {
+          "minimum": 0,
+          "title": "Minimum Quantity",
+          "type": "integer"
+        },
+        "maximum_quantity": {
+          "minimum": 0,
+          "title": "Maximum Quantity",
+          "type": "integer"
+        },
+        "weight": {
+          "minimum": 1,
+          "title": "Weight",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "item_id",
+        "minimum_quantity",
+        "maximum_quantity",
+        "weight"
+      ],
+      "title": "LootEntry",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "The root enemies file structure.",
+  "properties": {
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "campaign_id": {
+      "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+      "title": "Campaign Id",
+      "type": "string"
+    },
+    "campaign_version": {
+      "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$",
+      "title": "Campaign Version",
+      "type": "string"
+    },
+    "enemy_archetypes": {
+      "items": {
+        "$ref": "#/$defs/EnemyArchetype"
+      },
+      "title": "Enemy Archetypes",
+      "type": "array"
+    }
+  },
+  "required": [
+    "campaign_id",
+    "campaign_version",
+    "enemy_archetypes"
+  ],
+  "title": "EnemiesFile",
+  "type": "object"
+}

@@ -1,0 +1,314 @@
+{
+  "$defs": {
+    "ClockDefinition": {
+      "additionalProperties": false,
+      "description": "A threat or progression clock.",
+      "properties": {
+        "id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "maximum": {
+          "maximum": 12,
+          "minimum": 3,
+          "title": "Maximum",
+          "type": "integer"
+        },
+        "visibility": {
+          "$ref": "#/$defs/ClockVisibility"
+        },
+        "trigger_event_types": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Trigger Event Types",
+          "type": "array"
+        },
+        "completion_effect_ids": {
+          "items": {
+            "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+            "type": "string"
+          },
+          "title": "Completion Effect Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "maximum",
+        "visibility",
+        "trigger_event_types",
+        "completion_effect_ids"
+      ],
+      "title": "ClockDefinition",
+      "type": "object"
+    },
+    "ClockVisibility": {
+      "description": "Visibility of a threat clock.",
+      "enum": [
+        "public",
+        "hidden"
+      ],
+      "title": "ClockVisibility",
+      "type": "string"
+    },
+    "MilestoneDefinition": {
+      "additionalProperties": false,
+      "description": "A major plot node.",
+      "properties": {
+        "id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "canonical_truth": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Canonical Truth",
+          "type": "string"
+        },
+        "narrative_purpose": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Narrative Purpose",
+          "type": "string"
+        },
+        "required_outcome_ids": {
+          "items": {
+            "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+            "type": "string"
+          },
+          "title": "Required Outcome Ids",
+          "type": "array"
+        },
+        "allowed_approach_tags": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Allowed Approach Tags",
+          "type": "array"
+        },
+        "forbidden_changes": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Forbidden Changes",
+          "type": "array"
+        },
+        "preconditions": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Preconditions",
+          "type": "array"
+        },
+        "valid_next_milestone_ids": {
+          "items": {
+            "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+            "type": "string"
+          },
+          "title": "Valid Next Milestone Ids",
+          "type": "array"
+        },
+        "difficulty_band": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Difficulty Band",
+          "type": "string"
+        },
+        "pacing_weight": {
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Pacing Weight",
+          "type": "integer"
+        },
+        "cycle_allowed": {
+          "title": "Cycle Allowed",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "canonical_truth",
+        "narrative_purpose",
+        "required_outcome_ids",
+        "allowed_approach_tags",
+        "forbidden_changes",
+        "preconditions",
+        "valid_next_milestone_ids",
+        "difficulty_band",
+        "pacing_weight",
+        "cycle_allowed"
+      ],
+      "title": "MilestoneDefinition",
+      "type": "object"
+    },
+    "OpportunityDefinition": {
+      "additionalProperties": false,
+      "description": "An authored opportunity available during a milestone.",
+      "properties": {
+        "id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "parent_milestone_id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Parent Milestone Id",
+          "type": "string"
+        },
+        "title": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "description": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        },
+        "referenced_entity_ids": {
+          "items": {
+            "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+            "type": "string"
+          },
+          "title": "Referenced Entity Ids",
+          "type": "array"
+        },
+        "allowed_outcome_ids": {
+          "items": {
+            "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+            "type": "string"
+          },
+          "title": "Allowed Outcome Ids",
+          "type": "array"
+        },
+        "preconditions": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Preconditions",
+          "type": "array"
+        },
+        "expiry_conditions": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Expiry Conditions",
+          "type": "array"
+        },
+        "balance_rating": {
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Balance Rating",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "parent_milestone_id",
+        "title",
+        "description",
+        "referenced_entity_ids",
+        "allowed_outcome_ids",
+        "preconditions",
+        "expiry_conditions",
+        "balance_rating"
+      ],
+      "title": "OpportunityDefinition",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "The root plot file structure.",
+  "properties": {
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "campaign_id": {
+      "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+      "title": "Campaign Id",
+      "type": "string"
+    },
+    "campaign_version": {
+      "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$",
+      "title": "Campaign Version",
+      "type": "string"
+    },
+    "start_milestone_ids": {
+      "items": {
+        "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Start Milestone Ids",
+      "type": "array"
+    },
+    "milestones": {
+      "items": {
+        "$ref": "#/$defs/MilestoneDefinition"
+      },
+      "title": "Milestones",
+      "type": "array"
+    },
+    "authored_opportunities": {
+      "items": {
+        "$ref": "#/$defs/OpportunityDefinition"
+      },
+      "title": "Authored Opportunities",
+      "type": "array"
+    },
+    "ending_milestone_ids": {
+      "items": {
+        "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Ending Milestone Ids",
+      "type": "array"
+    },
+    "clock_definitions": {
+      "items": {
+        "$ref": "#/$defs/ClockDefinition"
+      },
+      "title": "Clock Definitions",
+      "type": "array"
+    }
+  },
+  "required": [
+    "campaign_id",
+    "campaign_version",
+    "start_milestone_ids",
+    "milestones",
+    "authored_opportunities",
+    "ending_milestone_ids",
+    "clock_definitions"
+  ],
+  "title": "PlotFile",
+  "type": "object"
+}

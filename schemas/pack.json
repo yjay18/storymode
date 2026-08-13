@@ -1,0 +1,2971 @@
+{
+  "$defs": {
+    "AreaDefinition": {
+      "additionalProperties": false,
+      "description": "An area or zone within the campaign world.",
+      "properties": {
+        "id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "major_location_id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Major Location Id",
+          "type": "string"
+        },
+        "description": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        },
+        "art_prompt": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Art Prompt",
+          "type": "string"
+        },
+        "danger_level": {
+          "maximum": 10,
+          "minimum": 1,
+          "title": "Danger Level",
+          "type": "integer"
+        },
+        "connected_area_ids": {
+          "items": {
+            "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+            "type": "string"
+          },
+          "title": "Connected Area Ids",
+          "type": "array"
+        },
+        "local_faction_ids": {
+          "items": {
+            "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+            "type": "string"
+          },
+          "title": "Local Faction Ids",
+          "type": "array"
+        },
+        "residents": {
+          "items": {
+            "$ref": "#/$defs/ResidentNpc"
+          },
+          "title": "Residents",
+          "type": "array"
+        },
+        "objects": {
+          "items": {
+            "$ref": "#/$defs/AreaObject"
+          },
+          "title": "Objects",
+          "type": "array"
+        },
+        "encounters": {
+          "items": {
+            "$ref": "#/$defs/EncounterEntry"
+          },
+          "title": "Encounters",
+          "type": "array"
+        },
+        "secrets": {
+          "items": {
+            "$ref": "#/$defs/AreaSecret"
+          },
+          "title": "Secrets",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "major_location_id",
+        "description",
+        "art_prompt",
+        "danger_level",
+        "connected_area_ids",
+        "local_faction_ids",
+        "residents",
+        "objects",
+        "encounters",
+        "secrets"
+      ],
+      "title": "AreaDefinition",
+      "type": "object"
+    },
+    "AreaObject": {
+      "additionalProperties": false,
+      "description": "An interactable object in an area.",
+      "properties": {
+        "id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        },
+        "location_anchor": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Location Anchor",
+          "type": "string"
+        },
+        "state": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "State",
+          "type": "string"
+        },
+        "interactable_tags": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Interactable Tags",
+          "type": "array"
+        },
+        "capability_requirements": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Capability Requirements",
+          "type": "array"
+        },
+        "allowed_effect_ids": {
+          "items": {
+            "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+            "type": "string"
+          },
+          "title": "Allowed Effect Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "description",
+        "location_anchor",
+        "state",
+        "interactable_tags",
+        "capability_requirements",
+        "allowed_effect_ids"
+      ],
+      "title": "AreaObject",
+      "type": "object"
+    },
+    "AreaSecret": {
+      "additionalProperties": false,
+      "description": "A secret or clue hidden in an area.",
+      "properties": {
+        "id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "summary": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Summary",
+          "type": "string"
+        },
+        "lead_fact_ids": {
+          "items": {
+            "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+            "type": "string"
+          },
+          "title": "Lead Fact Ids",
+          "type": "array"
+        },
+        "reveal_conditions": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Reveal Conditions",
+          "type": "array"
+        },
+        "core_clue": {
+          "title": "Core Clue",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "summary",
+        "lead_fact_ids",
+        "reveal_conditions",
+        "core_clue"
+      ],
+      "title": "AreaSecret",
+      "type": "object"
+    },
+    "AreasFile": {
+      "additionalProperties": false,
+      "description": "The root areas file structure.",
+      "properties": {
+        "schema_version": {
+          "const": 1,
+          "default": 1,
+          "title": "Schema Version",
+          "type": "integer"
+        },
+        "campaign_id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Campaign Id",
+          "type": "string"
+        },
+        "campaign_version": {
+          "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$",
+          "title": "Campaign Version",
+          "type": "string"
+        },
+        "areas": {
+          "items": {
+            "$ref": "#/$defs/AreaDefinition"
+          },
+          "maxItems": 500,
+          "minItems": 1,
+          "title": "Areas",
+          "type": "array"
+        }
+      },
+      "required": [
+        "campaign_id",
+        "campaign_version",
+        "areas"
+      ],
+      "title": "AreasFile",
+      "type": "object"
+    },
+    "Availability": {
+      "description": "Availability status for residents and companions.",
+      "enum": [
+        "available",
+        "unavailable",
+        "hidden",
+        "dead"
+      ],
+      "title": "Availability",
+      "type": "string"
+    },
+    "BackgroundDefinition": {
+      "additionalProperties": false,
+      "description": "A selectable protagonist background.",
+      "properties": {
+        "id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        },
+        "stat_bonus": {
+          "$ref": "#/$defs/StatName"
+        },
+        "stat_bonus_value": {
+          "maximum": 2,
+          "minimum": 1,
+          "title": "Stat Bonus Value",
+          "type": "integer"
+        },
+        "starting_skill_ids": {
+          "items": {
+            "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+            "type": "string"
+          },
+          "title": "Starting Skill Ids",
+          "type": "array"
+        },
+        "starting_item_ids": {
+          "items": {
+            "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+            "type": "string"
+          },
+          "title": "Starting Item Ids",
+          "type": "array"
+        },
+        "starting_fact_ids": {
+          "items": {
+            "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+            "type": "string"
+          },
+          "title": "Starting Fact Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "description",
+        "stat_bonus",
+        "stat_bonus_value",
+        "starting_skill_ids",
+        "starting_item_ids",
+        "starting_fact_ids"
+      ],
+      "title": "BackgroundDefinition",
+      "type": "object"
+    },
+    "BalanceFile": {
+      "additionalProperties": false,
+      "description": "The root balance file structure.",
+      "properties": {
+        "schema_version": {
+          "const": 1,
+          "default": 1,
+          "title": "Schema Version",
+          "type": "integer"
+        },
+        "campaign_id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Campaign Id",
+          "type": "string"
+        },
+        "campaign_version": {
+          "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$",
+          "title": "Campaign Version",
+          "type": "string"
+        },
+        "difficulty_profiles": {
+          "$ref": "#/$defs/DifficultyProfiles"
+        },
+        "level_xp_thresholds": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "title": "Level Xp Thresholds",
+          "type": "object"
+        },
+        "dc_bands": {
+          "$ref": "#/$defs/DcBands"
+        },
+        "modifier_limits": {
+          "additionalProperties": true,
+          "title": "Modifier Limits",
+          "type": "object"
+        },
+        "effect_limits": {
+          "additionalProperties": true,
+          "title": "Effect Limits",
+          "type": "object"
+        },
+        "enemy_power_formula": {
+          "additionalProperties": true,
+          "title": "Enemy Power Formula",
+          "type": "object"
+        },
+        "encounter_targets": {
+          "additionalProperties": true,
+          "title": "Encounter Targets",
+          "type": "object"
+        },
+        "fusion_limits": {
+          "additionalProperties": true,
+          "title": "Fusion Limits",
+          "type": "object"
+        },
+        "boss_allowances": {
+          "additionalProperties": true,
+          "title": "Boss Allowances",
+          "type": "object"
+        }
+      },
+      "required": [
+        "campaign_id",
+        "campaign_version",
+        "difficulty_profiles",
+        "level_xp_thresholds",
+        "dc_bands",
+        "modifier_limits",
+        "effect_limits",
+        "enemy_power_formula",
+        "encounter_targets",
+        "fusion_limits",
+        "boss_allowances"
+      ],
+      "title": "BalanceFile",
+      "type": "object"
+    },
+    "CampaignLength": {
+      "enum": [
+        "short",
+        "medium",
+        "long",
+        "custom"
+      ],
+      "title": "CampaignLength",
+      "type": "string"
+    },
+    "CampaignMeta": {
+      "additionalProperties": false,
+      "description": "Metadata representing a campaign's state and configuration.",
+      "properties": {
+        "schema_version": {
+          "const": 1,
+          "default": 1,
+          "title": "Schema Version",
+          "type": "integer"
+        },
+        "campaign_id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Campaign Id",
+          "type": "string"
+        },
+        "campaign_version": {
+          "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$",
+          "title": "Campaign Version",
+          "type": "string"
+        },
+        "title": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "theme": {
+          "$ref": "#/$defs/Theme"
+        },
+        "source_type": {
+          "$ref": "#/$defs/SourceType"
+        },
+        "source_summary": {
+          "maxLength": 4000,
+          "minLength": 1,
+          "title": "Source Summary",
+          "type": "string"
+        },
+        "default_difficulty": {
+          "$ref": "#/$defs/DefaultDifficulty"
+        },
+        "campaign_length": {
+          "$ref": "#/$defs/CampaignLength"
+        },
+        "art_style_ref": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Art Style Ref",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "content_fingerprint": {
+          "anyOf": [
+            {
+              "pattern": "^[a-f0-9]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Content Fingerprint"
+        },
+        "status": {
+          "$ref": "#/$defs/CampaignStatus"
+        }
+      },
+      "required": [
+        "campaign_id",
+        "campaign_version",
+        "title",
+        "theme",
+        "source_type",
+        "source_summary",
+        "default_difficulty",
+        "campaign_length",
+        "art_style_ref",
+        "created_at",
+        "status"
+      ],
+      "title": "CampaignMeta",
+      "type": "object"
+    },
+    "CampaignStatus": {
+      "enum": [
+        "draft",
+        "published"
+      ],
+      "title": "CampaignStatus",
+      "type": "string"
+    },
+    "CharactersFile": {
+      "additionalProperties": false,
+      "description": "The root characters file structure.",
+      "properties": {
+        "schema_version": {
+          "const": 1,
+          "default": 1,
+          "title": "Schema Version",
+          "type": "integer"
+        },
+        "campaign_id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Campaign Id",
+          "type": "string"
+        },
+        "campaign_version": {
+          "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$",
+          "title": "Campaign Version",
+          "type": "string"
+        },
+        "protagonist_backgrounds": {
+          "items": {
+            "$ref": "#/$defs/BackgroundDefinition"
+          },
+          "title": "Protagonist Backgrounds",
+          "type": "array"
+        },
+        "major_npcs": {
+          "items": {
+            "$ref": "#/$defs/MajorNpcDefinition"
+          },
+          "title": "Major Npcs",
+          "type": "array"
+        },
+        "companions": {
+          "items": {
+            "$ref": "#/$defs/CompanionDefinition"
+          },
+          "title": "Companions",
+          "type": "array"
+        }
+      },
+      "required": [
+        "campaign_id",
+        "campaign_version",
+        "protagonist_backgrounds",
+        "major_npcs",
+        "companions"
+      ],
+      "title": "CharactersFile",
+      "type": "object"
+    },
+    "ClockDefinition": {
+      "additionalProperties": false,
+      "description": "A threat or progression clock.",
+      "properties": {
+        "id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "maximum": {
+          "maximum": 12,
+          "minimum": 3,
+          "title": "Maximum",
+          "type": "integer"
+        },
+        "visibility": {
+          "$ref": "#/$defs/ClockVisibility"
+        },
+        "trigger_event_types": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Trigger Event Types",
+          "type": "array"
+        },
+        "completion_effect_ids": {
+          "items": {
+            "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+            "type": "string"
+          },
+          "title": "Completion Effect Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "maximum",
+        "visibility",
+        "trigger_event_types",
+        "completion_effect_ids"
+      ],
+      "title": "ClockDefinition",
+      "type": "object"
+    },
+    "ClockVisibility": {
+      "description": "Visibility of a threat clock.",
+      "enum": [
+        "public",
+        "hidden"
+      ],
+      "title": "ClockVisibility",
+      "type": "string"
+    },
+    "CombatSkill": {
+      "additionalProperties": false,
+      "description": "A combat skill definition.",
+      "properties": {
+        "id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        },
+        "tags": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Tags",
+          "type": "array"
+        },
+        "acquisition_source_ids": {
+          "items": {
+            "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+            "type": "string"
+          },
+          "title": "Acquisition Source Ids",
+          "type": "array"
+        },
+        "levels": {
+          "items": {
+            "$ref": "#/$defs/CombatSkillLevel"
+          },
+          "title": "Levels",
+          "type": "array"
+        },
+        "allowed_actor_types": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Allowed Actor Types",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "description",
+        "tags",
+        "acquisition_source_ids",
+        "levels",
+        "allowed_actor_types"
+      ],
+      "title": "CombatSkill",
+      "type": "object"
+    },
+    "CombatSkillLevel": {
+      "additionalProperties": false,
+      "description": "One of the 5 levels of a combat skill.",
+      "properties": {
+        "level": {
+          "maximum": 5,
+          "minimum": 1,
+          "title": "Level",
+          "type": "integer"
+        },
+        "mana_cost": {
+          "maximum": 10,
+          "minimum": 0,
+          "title": "Mana Cost",
+          "type": "integer"
+        },
+        "target_rule": {
+          "$ref": "#/$defs/TargetRule"
+        },
+        "base_effects": {
+          "items": {
+            "$ref": "#/$defs/EffectDefinition"
+          },
+          "title": "Base Effects",
+          "type": "array"
+        },
+        "effect_die": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/EffectDieTable"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "prerequisite": {
+          "anyOf": [
+            {
+              "maxLength": 120,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Prerequisite"
+        }
+      },
+      "required": [
+        "level",
+        "mana_cost",
+        "target_rule",
+        "base_effects"
+      ],
+      "title": "CombatSkillLevel",
+      "type": "object"
+    },
+    "CompanionDefinition": {
+      "additionalProperties": false,
+      "description": "A recruitable companion extending major NPC data.",
+      "properties": {
+        "id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "role": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Role",
+          "type": "string"
+        },
+        "faction_id": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Faction Id"
+        },
+        "home_area_id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Home Area Id",
+          "type": "string"
+        },
+        "knowledge_tags": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Knowledge Tags",
+          "type": "array"
+        },
+        "goal": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Goal",
+          "type": "string"
+        },
+        "interaction_hooks": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Interaction Hooks",
+          "type": "array"
+        },
+        "combat_role": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Combat Role",
+          "type": "string"
+        },
+        "base_stats": {
+          "$ref": "#/$defs/StatBlock"
+        },
+        "skill_tree_id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Skill Tree Id",
+          "type": "string"
+        },
+        "starting_skill_ids": {
+          "items": {
+            "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+            "type": "string"
+          },
+          "title": "Starting Skill Ids",
+          "type": "array"
+        },
+        "starting_loadout": {
+          "items": {
+            "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+            "type": "string"
+          },
+          "title": "Starting Loadout",
+          "type": "array"
+        },
+        "relationship_rules": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Relationship Rules",
+          "type": "array"
+        },
+        "story_hook_ids": {
+          "items": {
+            "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+            "type": "string"
+          },
+          "title": "Story Hook Ids",
+          "type": "array"
+        },
+        "availability_rules": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Availability Rules",
+          "type": "array"
+        },
+        "minimum_usable_actions": {
+          "maximum": 4,
+          "minimum": 1,
+          "title": "Minimum Usable Actions",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "role",
+        "home_area_id",
+        "knowledge_tags",
+        "goal",
+        "interaction_hooks",
+        "combat_role",
+        "base_stats",
+        "skill_tree_id",
+        "starting_skill_ids",
+        "starting_loadout",
+        "relationship_rules",
+        "story_hook_ids",
+        "availability_rules",
+        "minimum_usable_actions"
+      ],
+      "title": "CompanionDefinition",
+      "type": "object"
+    },
+    "DcBands": {
+      "additionalProperties": false,
+      "description": "The expected DC bands.",
+      "properties": {
+        "easy": {
+          "const": 8,
+          "default": 8,
+          "title": "Easy",
+          "type": "integer"
+        },
+        "standard": {
+          "const": 12,
+          "default": 12,
+          "title": "Standard",
+          "type": "integer"
+        },
+        "difficult": {
+          "const": 15,
+          "default": 15,
+          "title": "Difficult",
+          "type": "integer"
+        },
+        "expert": {
+          "const": 18,
+          "default": 18,
+          "title": "Expert",
+          "type": "integer"
+        },
+        "exceptional": {
+          "const": 22,
+          "default": 22,
+          "title": "Exceptional",
+          "type": "integer"
+        },
+        "near_impossible": {
+          "minimum": 25,
+          "title": "Near Impossible",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "near_impossible"
+      ],
+      "title": "DcBands",
+      "type": "object"
+    },
+    "DefaultDifficulty": {
+      "enum": [
+        "story",
+        "normal",
+        "hard"
+      ],
+      "title": "DefaultDifficulty",
+      "type": "string"
+    },
+    "DifficultyProfile": {
+      "additionalProperties": false,
+      "description": "Exact difficulty multipliers.",
+      "properties": {
+        "dc_adjustment": {
+          "title": "Dc Adjustment",
+          "type": "integer"
+        },
+        "enemy_hp_ratio": {
+          "$ref": "#/$defs/Rational"
+        },
+        "enemy_damage_ratio": {
+          "$ref": "#/$defs/Rational"
+        },
+        "enemy_armour_ratio": {
+          "$ref": "#/$defs/Rational"
+        },
+        "luck_capacity": {
+          "title": "Luck Capacity",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "dc_adjustment",
+        "enemy_hp_ratio",
+        "enemy_damage_ratio",
+        "enemy_armour_ratio",
+        "luck_capacity"
+      ],
+      "title": "DifficultyProfile",
+      "type": "object"
+    },
+    "DifficultyProfiles": {
+      "additionalProperties": false,
+      "description": "The three required difficulty profiles.",
+      "properties": {
+        "story": {
+          "$ref": "#/$defs/DifficultyProfile"
+        },
+        "normal": {
+          "$ref": "#/$defs/DifficultyProfile"
+        },
+        "hard": {
+          "$ref": "#/$defs/DifficultyProfile"
+        }
+      },
+      "required": [
+        "story",
+        "normal",
+        "hard"
+      ],
+      "title": "DifficultyProfiles",
+      "type": "object"
+    },
+    "EffectDefinition": {
+      "additionalProperties": false,
+      "description": "An atomic combat effect.",
+      "properties": {
+        "effect_id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Effect Id",
+          "type": "string"
+        },
+        "kind": {
+          "$ref": "#/$defs/EffectKind"
+        },
+        "magnitude": {
+          "title": "Magnitude",
+          "type": "integer"
+        },
+        "duration": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Duration"
+        },
+        "status_id": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status Id"
+        },
+        "stacking_key": {
+          "anyOf": [
+            {
+              "maxLength": 120,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Stacking Key"
+        }
+      },
+      "required": [
+        "effect_id",
+        "kind",
+        "magnitude"
+      ],
+      "title": "EffectDefinition",
+      "type": "object"
+    },
+    "EffectDieTable": {
+      "additionalProperties": false,
+      "description": "Effect bands for a d20 roll.",
+      "properties": {
+        "natural_1": {
+          "items": {
+            "$ref": "#/$defs/EffectDefinition"
+          },
+          "title": "Natural 1",
+          "type": "array"
+        },
+        "low": {
+          "items": {
+            "$ref": "#/$defs/EffectDefinition"
+          },
+          "title": "Low",
+          "type": "array"
+        },
+        "standard": {
+          "items": {
+            "$ref": "#/$defs/EffectDefinition"
+          },
+          "title": "Standard",
+          "type": "array"
+        },
+        "strong": {
+          "items": {
+            "$ref": "#/$defs/EffectDefinition"
+          },
+          "title": "Strong",
+          "type": "array"
+        },
+        "natural_20": {
+          "items": {
+            "$ref": "#/$defs/EffectDefinition"
+          },
+          "title": "Natural 20",
+          "type": "array"
+        }
+      },
+      "required": [
+        "natural_1",
+        "low",
+        "standard",
+        "strong",
+        "natural_20"
+      ],
+      "title": "EffectDieTable",
+      "type": "object"
+    },
+    "EffectKind": {
+      "description": "Closed set of allowed combat effects.",
+      "enum": [
+        "damage",
+        "heal",
+        "buff",
+        "debuff",
+        "status",
+        "resource_drain",
+        "resource_restore"
+      ],
+      "title": "EffectKind",
+      "type": "string"
+    },
+    "EncounterEntry": {
+      "additionalProperties": false,
+      "description": "A combat encounter definition for an area.",
+      "properties": {
+        "id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "enemy_archetype_ids": {
+          "items": {
+            "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+            "type": "string"
+          },
+          "title": "Enemy Archetype Ids",
+          "type": "array"
+        },
+        "condition": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Condition",
+          "type": "string"
+        },
+        "weight": {
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Weight",
+          "type": "integer"
+        },
+        "escape_policy_id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Escape Policy Id",
+          "type": "string"
+        },
+        "consequence_ids": {
+          "items": {
+            "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+            "type": "string"
+          },
+          "title": "Consequence Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "enemy_archetype_ids",
+        "condition",
+        "weight",
+        "escape_policy_id",
+        "consequence_ids"
+      ],
+      "title": "EncounterEntry",
+      "type": "object"
+    },
+    "EnemiesFile": {
+      "additionalProperties": false,
+      "description": "The root enemies file structure.",
+      "properties": {
+        "schema_version": {
+          "const": 1,
+          "default": 1,
+          "title": "Schema Version",
+          "type": "integer"
+        },
+        "campaign_id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Campaign Id",
+          "type": "string"
+        },
+        "campaign_version": {
+          "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$",
+          "title": "Campaign Version",
+          "type": "string"
+        },
+        "enemy_archetypes": {
+          "items": {
+            "$ref": "#/$defs/EnemyArchetype"
+          },
+          "title": "Enemy Archetypes",
+          "type": "array"
+        }
+      },
+      "required": [
+        "campaign_id",
+        "campaign_version",
+        "enemy_archetypes"
+      ],
+      "title": "EnemiesFile",
+      "type": "object"
+    },
+    "EnemyArchetype": {
+      "additionalProperties": false,
+      "description": "An enemy archetype definition.",
+      "properties": {
+        "id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        },
+        "faction_id": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Faction Id"
+        },
+        "base_hp": {
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Base Hp",
+          "type": "integer"
+        },
+        "base_armour": {
+          "maximum": 10000,
+          "minimum": 0,
+          "title": "Base Armour",
+          "type": "integer"
+        },
+        "speed": {
+          "maximum": 100,
+          "minimum": 0,
+          "title": "Speed",
+          "type": "integer"
+        },
+        "dexterity": {
+          "maximum": 30,
+          "minimum": 1,
+          "title": "Dexterity",
+          "type": "integer"
+        },
+        "base_mana": {
+          "maximum": 1000,
+          "minimum": 0,
+          "title": "Base Mana",
+          "type": "integer"
+        },
+        "mana_regen": {
+          "maximum": 100,
+          "minimum": 0,
+          "title": "Mana Regen",
+          "type": "integer"
+        },
+        "combat_skill_ids": {
+          "items": {
+            "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Combat Skill Ids",
+          "type": "array"
+        },
+        "behavior_profile": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Behavior Profile",
+          "type": "string"
+        },
+        "escape_policy_id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Escape Policy Id",
+          "type": "string"
+        },
+        "power_rating": {
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Power Rating",
+          "type": "integer"
+        },
+        "loot_table": {
+          "items": {
+            "$ref": "#/$defs/LootEntry"
+          },
+          "title": "Loot Table",
+          "type": "array"
+        },
+        "portrait_prompt": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Portrait Prompt",
+          "type": "string"
+        },
+        "art_style_ref": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Art Style Ref",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "description",
+        "base_hp",
+        "base_armour",
+        "speed",
+        "dexterity",
+        "base_mana",
+        "mana_regen",
+        "combat_skill_ids",
+        "behavior_profile",
+        "escape_policy_id",
+        "power_rating",
+        "loot_table",
+        "portrait_prompt",
+        "art_style_ref"
+      ],
+      "title": "EnemyArchetype",
+      "type": "object"
+    },
+    "FactionDefinition": {
+      "additionalProperties": false,
+      "description": "A macro faction in the world.",
+      "properties": {
+        "id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "goals": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Goals",
+          "type": "array"
+        },
+        "resources": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Resources",
+          "type": "array"
+        },
+        "hypocrisy": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Hypocrisy",
+          "type": "string"
+        },
+        "language_style": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Language Style",
+          "type": "string"
+        },
+        "visual_markings": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Visual Markings",
+          "type": "string"
+        },
+        "relationship_edges": {
+          "items": {
+            "$ref": "#/$defs/FactionRelationship"
+          },
+          "title": "Relationship Edges",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "goals",
+        "resources",
+        "hypocrisy",
+        "language_style",
+        "visual_markings",
+        "relationship_edges"
+      ],
+      "title": "FactionDefinition",
+      "type": "object"
+    },
+    "FactionRelationship": {
+      "additionalProperties": false,
+      "description": "An edge between factions.",
+      "properties": {
+        "target_faction_id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Target Faction Id",
+          "type": "string"
+        },
+        "stance": {
+          "maximum": 100,
+          "minimum": -100,
+          "title": "Stance",
+          "type": "integer"
+        },
+        "summary": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Summary",
+          "type": "string"
+        }
+      },
+      "required": [
+        "target_faction_id",
+        "stance",
+        "summary"
+      ],
+      "title": "FactionRelationship",
+      "type": "object"
+    },
+    "FusionRecipe": {
+      "additionalProperties": false,
+      "description": "A recipe to combine two level-5 skills.",
+      "properties": {
+        "id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "source_skill_ids": {
+          "items": {
+            "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+            "type": "string"
+          },
+          "maxItems": 2,
+          "minItems": 2,
+          "title": "Source Skill Ids",
+          "type": "array"
+        },
+        "result_skill_id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Result Skill Id",
+          "type": "string"
+        },
+        "catalyst_item_id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Catalyst Item Id",
+          "type": "string"
+        },
+        "catalyst_quantity": {
+          "title": "Catalyst Quantity",
+          "type": "integer"
+        },
+        "unlock_conditions": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Unlock Conditions",
+          "type": "array"
+        },
+        "location_or_specialist_ids": {
+          "items": {
+            "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+            "type": "string"
+          },
+          "title": "Location Or Specialist Ids",
+          "type": "array"
+        },
+        "companion_backup_skill_id": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Companion Backup Skill Id"
+        },
+        "power_budget": {
+          "title": "Power Budget",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "source_skill_ids",
+        "result_skill_id",
+        "catalyst_item_id",
+        "catalyst_quantity",
+        "unlock_conditions",
+        "location_or_specialist_ids",
+        "power_budget"
+      ],
+      "title": "FusionRecipe",
+      "type": "object"
+    },
+    "ItemDefinition": {
+      "additionalProperties": false,
+      "description": "An item definition.",
+      "properties": {
+        "id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "type": {
+          "$ref": "#/$defs/ItemType"
+        },
+        "rarity": {
+          "$ref": "#/$defs/ItemRarity"
+        },
+        "mechanics": {
+          "items": {
+            "$ref": "#/$defs/EffectDefinition"
+          },
+          "title": "Mechanics",
+          "type": "array"
+        },
+        "requirements": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Requirements",
+          "type": "array"
+        },
+        "capability_tags": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Capability Tags",
+          "type": "array"
+        },
+        "stacking_key": {
+          "anyOf": [
+            {
+              "maxLength": 120,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Stacking Key"
+        },
+        "flavour_text": {
+          "maxLength": 400,
+          "minLength": 1,
+          "title": "Flavour Text",
+          "type": "string"
+        },
+        "provenance": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Provenance",
+          "type": "string"
+        },
+        "max_stack": {
+          "minimum": 1,
+          "title": "Max Stack",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "type",
+        "rarity",
+        "mechanics",
+        "requirements",
+        "capability_tags",
+        "flavour_text",
+        "provenance",
+        "max_stack"
+      ],
+      "title": "ItemDefinition",
+      "type": "object"
+    },
+    "ItemRarity": {
+      "description": "The allowed item rarities.",
+      "enum": [
+        "common",
+        "uncommon",
+        "rare",
+        "exceptional",
+        "unique"
+      ],
+      "title": "ItemRarity",
+      "type": "string"
+    },
+    "ItemType": {
+      "description": "The allowed types of items.",
+      "enum": [
+        "weapon",
+        "armour",
+        "consumable",
+        "tool",
+        "catalyst",
+        "quest",
+        "accessory"
+      ],
+      "title": "ItemType",
+      "type": "string"
+    },
+    "ItemsFile": {
+      "additionalProperties": false,
+      "description": "The root items file structure.",
+      "properties": {
+        "schema_version": {
+          "const": 1,
+          "default": 1,
+          "title": "Schema Version",
+          "type": "integer"
+        },
+        "campaign_id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Campaign Id",
+          "type": "string"
+        },
+        "campaign_version": {
+          "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$",
+          "title": "Campaign Version",
+          "type": "string"
+        },
+        "items": {
+          "items": {
+            "$ref": "#/$defs/ItemDefinition"
+          },
+          "title": "Items",
+          "type": "array"
+        }
+      },
+      "required": [
+        "campaign_id",
+        "campaign_version",
+        "items"
+      ],
+      "title": "ItemsFile",
+      "type": "object"
+    },
+    "LootEntry": {
+      "additionalProperties": false,
+      "description": "A row in a loot table.",
+      "properties": {
+        "item_id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Item Id",
+          "type": "string"
+        },
+        "minimum_quantity": {
+          "minimum": 0,
+          "title": "Minimum Quantity",
+          "type": "integer"
+        },
+        "maximum_quantity": {
+          "minimum": 0,
+          "title": "Maximum Quantity",
+          "type": "integer"
+        },
+        "weight": {
+          "minimum": 1,
+          "title": "Weight",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "item_id",
+        "minimum_quantity",
+        "maximum_quantity",
+        "weight"
+      ],
+      "title": "LootEntry",
+      "type": "object"
+    },
+    "MajorLocation": {
+      "additionalProperties": false,
+      "description": "A macro location in the world.",
+      "properties": {
+        "id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "summary": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Summary",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "summary"
+      ],
+      "title": "MajorLocation",
+      "type": "object"
+    },
+    "MajorNpcDefinition": {
+      "additionalProperties": false,
+      "description": "A major NPC with persistence beyond a single area.",
+      "properties": {
+        "id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "role": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Role",
+          "type": "string"
+        },
+        "faction_id": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Faction Id"
+        },
+        "home_area_id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Home Area Id",
+          "type": "string"
+        },
+        "knowledge_tags": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Knowledge Tags",
+          "type": "array"
+        },
+        "goal": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Goal",
+          "type": "string"
+        },
+        "interaction_hooks": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Interaction Hooks",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "role",
+        "home_area_id",
+        "knowledge_tags",
+        "goal",
+        "interaction_hooks"
+      ],
+      "title": "MajorNpcDefinition",
+      "type": "object"
+    },
+    "MilestoneDefinition": {
+      "additionalProperties": false,
+      "description": "A major plot node.",
+      "properties": {
+        "id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "canonical_truth": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Canonical Truth",
+          "type": "string"
+        },
+        "narrative_purpose": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Narrative Purpose",
+          "type": "string"
+        },
+        "required_outcome_ids": {
+          "items": {
+            "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+            "type": "string"
+          },
+          "title": "Required Outcome Ids",
+          "type": "array"
+        },
+        "allowed_approach_tags": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Allowed Approach Tags",
+          "type": "array"
+        },
+        "forbidden_changes": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Forbidden Changes",
+          "type": "array"
+        },
+        "preconditions": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Preconditions",
+          "type": "array"
+        },
+        "valid_next_milestone_ids": {
+          "items": {
+            "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+            "type": "string"
+          },
+          "title": "Valid Next Milestone Ids",
+          "type": "array"
+        },
+        "difficulty_band": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Difficulty Band",
+          "type": "string"
+        },
+        "pacing_weight": {
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Pacing Weight",
+          "type": "integer"
+        },
+        "cycle_allowed": {
+          "title": "Cycle Allowed",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "canonical_truth",
+        "narrative_purpose",
+        "required_outcome_ids",
+        "allowed_approach_tags",
+        "forbidden_changes",
+        "preconditions",
+        "valid_next_milestone_ids",
+        "difficulty_band",
+        "pacing_weight",
+        "cycle_allowed"
+      ],
+      "title": "MilestoneDefinition",
+      "type": "object"
+    },
+    "NonCombatSkill": {
+      "additionalProperties": false,
+      "description": "An exploration or social skill.",
+      "properties": {
+        "id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        },
+        "stat": {
+          "$ref": "#/$defs/StatName"
+        },
+        "rank_min": {
+          "const": 0,
+          "default": 0,
+          "title": "Rank Min",
+          "type": "integer"
+        },
+        "rank_max": {
+          "const": 5,
+          "default": 5,
+          "title": "Rank Max",
+          "type": "integer"
+        },
+        "availability_tags": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Availability Tags",
+          "type": "array"
+        },
+        "capability_tags": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Capability Tags",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "description",
+        "stat",
+        "availability_tags",
+        "capability_tags"
+      ],
+      "title": "NonCombatSkill",
+      "type": "object"
+    },
+    "OpportunityDefinition": {
+      "additionalProperties": false,
+      "description": "An authored opportunity available during a milestone.",
+      "properties": {
+        "id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "parent_milestone_id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Parent Milestone Id",
+          "type": "string"
+        },
+        "title": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "description": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        },
+        "referenced_entity_ids": {
+          "items": {
+            "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+            "type": "string"
+          },
+          "title": "Referenced Entity Ids",
+          "type": "array"
+        },
+        "allowed_outcome_ids": {
+          "items": {
+            "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+            "type": "string"
+          },
+          "title": "Allowed Outcome Ids",
+          "type": "array"
+        },
+        "preconditions": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Preconditions",
+          "type": "array"
+        },
+        "expiry_conditions": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Expiry Conditions",
+          "type": "array"
+        },
+        "balance_rating": {
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Balance Rating",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "parent_milestone_id",
+        "title",
+        "description",
+        "referenced_entity_ids",
+        "allowed_outcome_ids",
+        "preconditions",
+        "expiry_conditions",
+        "balance_rating"
+      ],
+      "title": "OpportunityDefinition",
+      "type": "object"
+    },
+    "PlotFile": {
+      "additionalProperties": false,
+      "description": "The root plot file structure.",
+      "properties": {
+        "schema_version": {
+          "const": 1,
+          "default": 1,
+          "title": "Schema Version",
+          "type": "integer"
+        },
+        "campaign_id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Campaign Id",
+          "type": "string"
+        },
+        "campaign_version": {
+          "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$",
+          "title": "Campaign Version",
+          "type": "string"
+        },
+        "start_milestone_ids": {
+          "items": {
+            "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Start Milestone Ids",
+          "type": "array"
+        },
+        "milestones": {
+          "items": {
+            "$ref": "#/$defs/MilestoneDefinition"
+          },
+          "title": "Milestones",
+          "type": "array"
+        },
+        "authored_opportunities": {
+          "items": {
+            "$ref": "#/$defs/OpportunityDefinition"
+          },
+          "title": "Authored Opportunities",
+          "type": "array"
+        },
+        "ending_milestone_ids": {
+          "items": {
+            "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Ending Milestone Ids",
+          "type": "array"
+        },
+        "clock_definitions": {
+          "items": {
+            "$ref": "#/$defs/ClockDefinition"
+          },
+          "title": "Clock Definitions",
+          "type": "array"
+        }
+      },
+      "required": [
+        "campaign_id",
+        "campaign_version",
+        "start_milestone_ids",
+        "milestones",
+        "authored_opportunities",
+        "ending_milestone_ids",
+        "clock_definitions"
+      ],
+      "title": "PlotFile",
+      "type": "object"
+    },
+    "PointBuyDefinition": {
+      "additionalProperties": false,
+      "description": "Rules for initial stat point buy.",
+      "properties": {
+        "budget": {
+          "const": 27,
+          "default": 27,
+          "title": "Budget",
+          "type": "integer"
+        },
+        "minimum": {
+          "const": 8,
+          "default": 8,
+          "title": "Minimum",
+          "type": "integer"
+        },
+        "maximum_before_bonus": {
+          "const": 15,
+          "default": 15,
+          "title": "Maximum Before Bonus",
+          "type": "integer"
+        },
+        "maximum_after_bonus": {
+          "const": 17,
+          "default": 17,
+          "title": "Maximum After Bonus",
+          "type": "integer"
+        },
+        "cost_map": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "title": "Cost Map",
+          "type": "object"
+        }
+      },
+      "required": [
+        "cost_map"
+      ],
+      "title": "PointBuyDefinition",
+      "type": "object"
+    },
+    "PowerSystem": {
+      "additionalProperties": false,
+      "description": "Rules and costs of the macro power system.",
+      "properties": {
+        "rules": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Rules",
+          "type": "array"
+        },
+        "costs": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Costs",
+          "type": "array"
+        },
+        "access_restrictions": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Access Restrictions",
+          "type": "array"
+        },
+        "side_effects": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Side Effects",
+          "type": "array"
+        }
+      },
+      "required": [
+        "rules",
+        "costs",
+        "access_restrictions",
+        "side_effects"
+      ],
+      "title": "PowerSystem",
+      "type": "object"
+    },
+    "Rational": {
+      "additionalProperties": false,
+      "description": "A rational number representing a fraction.",
+      "properties": {
+        "numerator": {
+          "title": "Numerator",
+          "type": "integer"
+        },
+        "denominator": {
+          "title": "Denominator",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "numerator",
+        "denominator"
+      ],
+      "title": "Rational",
+      "type": "object"
+    },
+    "ResidentNpc": {
+      "additionalProperties": false,
+      "description": "A resident NPC found in an area.",
+      "properties": {
+        "id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "role": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Role",
+          "type": "string"
+        },
+        "faction_id": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Faction Id"
+        },
+        "availability": {
+          "$ref": "#/$defs/Availability"
+        },
+        "location_anchor": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Location Anchor",
+          "type": "string"
+        },
+        "initial_disposition": {
+          "maximum": 100,
+          "minimum": -100,
+          "title": "Initial Disposition",
+          "type": "integer"
+        },
+        "knowledge_tags": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Knowledge Tags",
+          "type": "array"
+        },
+        "personal_goal": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Personal Goal",
+          "type": "string"
+        },
+        "interaction_hooks": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Interaction Hooks",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "role",
+        "availability",
+        "location_anchor",
+        "initial_disposition",
+        "knowledge_tags",
+        "personal_goal",
+        "interaction_hooks"
+      ],
+      "title": "ResidentNpc",
+      "type": "object"
+    },
+    "SensoryPalette": {
+      "additionalProperties": false,
+      "description": "Lists of sensory elements to incorporate into narration.",
+      "properties": {
+        "sounds": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Sounds",
+          "type": "array"
+        },
+        "smells": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Smells",
+          "type": "array"
+        },
+        "materials": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Materials",
+          "type": "array"
+        },
+        "lighting": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Lighting",
+          "type": "array"
+        },
+        "textures": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Textures",
+          "type": "array"
+        }
+      },
+      "required": [
+        "sounds",
+        "smells",
+        "materials",
+        "lighting",
+        "textures"
+      ],
+      "title": "SensoryPalette",
+      "type": "object"
+    },
+    "SkillTree": {
+      "additionalProperties": false,
+      "description": "A progression tree of skills.",
+      "properties": {
+        "id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "owner_companion_id": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Owner Companion Id"
+        },
+        "nodes": {
+          "items": {
+            "$ref": "#/$defs/SkillTreeNode"
+          },
+          "title": "Nodes",
+          "type": "array"
+        },
+        "edges": {
+          "items": {
+            "$ref": "#/$defs/SkillTreeEdge"
+          },
+          "title": "Edges",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "nodes",
+        "edges"
+      ],
+      "title": "SkillTree",
+      "type": "object"
+    },
+    "SkillTreeEdge": {
+      "additionalProperties": false,
+      "description": "A directed edge between skill nodes.",
+      "properties": {
+        "source_node_id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Source Node Id",
+          "type": "string"
+        },
+        "target_node_id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Target Node Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_node_id",
+        "target_node_id"
+      ],
+      "title": "SkillTreeEdge",
+      "type": "object"
+    },
+    "SkillTreeNode": {
+      "additionalProperties": false,
+      "description": "A node in a progression tree.",
+      "properties": {
+        "id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "skill_id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Skill Id",
+          "type": "string"
+        },
+        "cost": {
+          "title": "Cost",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "skill_id",
+        "cost"
+      ],
+      "title": "SkillTreeNode",
+      "type": "object"
+    },
+    "SkillsFile": {
+      "additionalProperties": false,
+      "description": "The root skills file structure.",
+      "properties": {
+        "schema_version": {
+          "const": 1,
+          "default": 1,
+          "title": "Schema Version",
+          "type": "integer"
+        },
+        "campaign_id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Campaign Id",
+          "type": "string"
+        },
+        "campaign_version": {
+          "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$",
+          "title": "Campaign Version",
+          "type": "string"
+        },
+        "point_buy": {
+          "$ref": "#/$defs/PointBuyDefinition"
+        },
+        "non_combat_skills": {
+          "items": {
+            "$ref": "#/$defs/NonCombatSkill"
+          },
+          "title": "Non Combat Skills",
+          "type": "array"
+        },
+        "combat_skills": {
+          "items": {
+            "$ref": "#/$defs/CombatSkill"
+          },
+          "title": "Combat Skills",
+          "type": "array"
+        },
+        "skill_trees": {
+          "items": {
+            "$ref": "#/$defs/SkillTree"
+          },
+          "title": "Skill Trees",
+          "type": "array"
+        },
+        "fusion_recipes": {
+          "items": {
+            "$ref": "#/$defs/FusionRecipe"
+          },
+          "title": "Fusion Recipes",
+          "type": "array"
+        }
+      },
+      "required": [
+        "campaign_id",
+        "campaign_version",
+        "point_buy",
+        "non_combat_skills",
+        "combat_skills",
+        "skill_trees",
+        "fusion_recipes"
+      ],
+      "title": "SkillsFile",
+      "type": "object"
+    },
+    "SourceType": {
+      "enum": [
+        "prompt",
+        "novel",
+        "plain_text",
+        "comic_transcript",
+        "custom"
+      ],
+      "title": "SourceType",
+      "type": "string"
+    },
+    "StatBlock": {
+      "additionalProperties": false,
+      "description": "Exact six statistics for a character.",
+      "properties": {
+        "strength": {
+          "maximum": 30,
+          "minimum": 1,
+          "title": "Strength",
+          "type": "integer"
+        },
+        "dexterity": {
+          "maximum": 30,
+          "minimum": 1,
+          "title": "Dexterity",
+          "type": "integer"
+        },
+        "intelligence": {
+          "maximum": 30,
+          "minimum": 1,
+          "title": "Intelligence",
+          "type": "integer"
+        },
+        "charisma": {
+          "maximum": 30,
+          "minimum": 1,
+          "title": "Charisma",
+          "type": "integer"
+        },
+        "constitution": {
+          "maximum": 30,
+          "minimum": 1,
+          "title": "Constitution",
+          "type": "integer"
+        },
+        "wisdom": {
+          "maximum": 30,
+          "minimum": 1,
+          "title": "Wisdom",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "strength",
+        "dexterity",
+        "intelligence",
+        "charisma",
+        "constitution",
+        "wisdom"
+      ],
+      "title": "StatBlock",
+      "type": "object"
+    },
+    "StatName": {
+      "description": "The six core statistics.",
+      "enum": [
+        "strength",
+        "dexterity",
+        "intelligence",
+        "charisma",
+        "constitution",
+        "wisdom"
+      ],
+      "title": "StatName",
+      "type": "string"
+    },
+    "StyleBible": {
+      "additionalProperties": false,
+      "description": "Core stylistic elements for the campaign text generation.",
+      "properties": {
+        "style_id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Style Id",
+          "type": "string"
+        },
+        "tone": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Tone",
+          "type": "string"
+        },
+        "narrative_voice": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Narrative Voice",
+          "type": "string"
+        },
+        "sensory_palette": {
+          "$ref": "#/$defs/SensoryPalette"
+        },
+        "faction_language_notes": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Faction Language Notes",
+          "type": "string"
+        },
+        "naming_conventions": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Naming Conventions",
+          "type": "string"
+        },
+        "banned_phrases": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Banned Phrases",
+          "type": "array"
+        },
+        "description_requirements": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Description Requirements",
+          "type": "string"
+        },
+        "examples": {
+          "items": {
+            "maxLength": 800,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 5,
+          "minItems": 1,
+          "title": "Examples",
+          "type": "array"
+        },
+        "anti_examples": {
+          "items": {
+            "maxLength": 800,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 5,
+          "minItems": 1,
+          "title": "Anti Examples",
+          "type": "array"
+        },
+        "art_direction": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Art Direction",
+          "type": "string"
+        }
+      },
+      "required": [
+        "style_id",
+        "tone",
+        "narrative_voice",
+        "sensory_palette",
+        "faction_language_notes",
+        "naming_conventions",
+        "banned_phrases",
+        "description_requirements",
+        "examples",
+        "anti_examples",
+        "art_direction"
+      ],
+      "title": "StyleBible",
+      "type": "object"
+    },
+    "StyleBibleFile": {
+      "additionalProperties": false,
+      "description": "The root style bible file structure.",
+      "properties": {
+        "schema_version": {
+          "const": 1,
+          "default": 1,
+          "title": "Schema Version",
+          "type": "integer"
+        },
+        "campaign_id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Campaign Id",
+          "type": "string"
+        },
+        "campaign_version": {
+          "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$",
+          "title": "Campaign Version",
+          "type": "string"
+        },
+        "style_bible": {
+          "$ref": "#/$defs/StyleBible"
+        }
+      },
+      "required": [
+        "campaign_id",
+        "campaign_version",
+        "style_bible"
+      ],
+      "title": "StyleBibleFile",
+      "type": "object"
+    },
+    "TargetRule": {
+      "description": "Who a skill can target.",
+      "enum": [
+        "self",
+        "single_ally",
+        "single_enemy",
+        "all_allies",
+        "all_enemies",
+        "any"
+      ],
+      "title": "TargetRule",
+      "type": "string"
+    },
+    "Theme": {
+      "enum": [
+        "fantasy",
+        "sci_fi",
+        "apocalyptic",
+        "custom"
+      ],
+      "title": "Theme",
+      "type": "string"
+    },
+    "WorldDefinition": {
+      "additionalProperties": false,
+      "description": "The macro structure and factions of the world.",
+      "properties": {
+        "name": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "core_conflict": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Core Conflict",
+          "type": "string"
+        },
+        "power_system": {
+          "$ref": "#/$defs/PowerSystem"
+        },
+        "values": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Values",
+          "type": "array"
+        },
+        "factions": {
+          "items": {
+            "$ref": "#/$defs/FactionDefinition"
+          },
+          "title": "Factions",
+          "type": "array"
+        },
+        "major_locations": {
+          "items": {
+            "$ref": "#/$defs/MajorLocation"
+          },
+          "title": "Major Locations",
+          "type": "array"
+        },
+        "material_conditions": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Material Conditions",
+          "type": "array"
+        }
+      },
+      "required": [
+        "name",
+        "core_conflict",
+        "power_system",
+        "values",
+        "factions",
+        "major_locations",
+        "material_conditions"
+      ],
+      "title": "WorldDefinition",
+      "type": "object"
+    },
+    "WorldFile": {
+      "additionalProperties": false,
+      "description": "The root world file structure.",
+      "properties": {
+        "schema_version": {
+          "const": 1,
+          "default": 1,
+          "title": "Schema Version",
+          "type": "integer"
+        },
+        "campaign_id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Campaign Id",
+          "type": "string"
+        },
+        "campaign_version": {
+          "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$",
+          "title": "Campaign Version",
+          "type": "string"
+        },
+        "world": {
+          "$ref": "#/$defs/WorldDefinition"
+        }
+      },
+      "required": [
+        "campaign_id",
+        "campaign_version",
+        "world"
+      ],
+      "title": "WorldFile",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "The complete aggregated campaign configuration.",
+  "properties": {
+    "meta": {
+      "$ref": "#/$defs/CampaignMeta"
+    },
+    "style": {
+      "$ref": "#/$defs/StyleBibleFile"
+    },
+    "world": {
+      "$ref": "#/$defs/WorldFile"
+    },
+    "areas": {
+      "$ref": "#/$defs/AreasFile"
+    },
+    "characters": {
+      "$ref": "#/$defs/CharactersFile"
+    },
+    "skills": {
+      "$ref": "#/$defs/SkillsFile"
+    },
+    "items": {
+      "$ref": "#/$defs/ItemsFile"
+    },
+    "enemies": {
+      "$ref": "#/$defs/EnemiesFile"
+    },
+    "plot": {
+      "$ref": "#/$defs/PlotFile"
+    },
+    "balance": {
+      "$ref": "#/$defs/BalanceFile"
+    }
+  },
+  "required": [
+    "meta",
+    "style",
+    "world",
+    "areas",
+    "characters",
+    "skills",
+    "items",
+    "enemies",
+    "plot",
+    "balance"
+  ],
+  "title": "CampaignPack",
+  "type": "object"
+}

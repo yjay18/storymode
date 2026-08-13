@@ -1,0 +1,195 @@
+{
+  "$defs": {
+    "SensoryPalette": {
+      "additionalProperties": false,
+      "description": "Lists of sensory elements to incorporate into narration.",
+      "properties": {
+        "sounds": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Sounds",
+          "type": "array"
+        },
+        "smells": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Smells",
+          "type": "array"
+        },
+        "materials": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Materials",
+          "type": "array"
+        },
+        "lighting": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Lighting",
+          "type": "array"
+        },
+        "textures": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Textures",
+          "type": "array"
+        }
+      },
+      "required": [
+        "sounds",
+        "smells",
+        "materials",
+        "lighting",
+        "textures"
+      ],
+      "title": "SensoryPalette",
+      "type": "object"
+    },
+    "StyleBible": {
+      "additionalProperties": false,
+      "description": "Core stylistic elements for the campaign text generation.",
+      "properties": {
+        "style_id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Style Id",
+          "type": "string"
+        },
+        "tone": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Tone",
+          "type": "string"
+        },
+        "narrative_voice": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Narrative Voice",
+          "type": "string"
+        },
+        "sensory_palette": {
+          "$ref": "#/$defs/SensoryPalette"
+        },
+        "faction_language_notes": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Faction Language Notes",
+          "type": "string"
+        },
+        "naming_conventions": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Naming Conventions",
+          "type": "string"
+        },
+        "banned_phrases": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Banned Phrases",
+          "type": "array"
+        },
+        "description_requirements": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Description Requirements",
+          "type": "string"
+        },
+        "examples": {
+          "items": {
+            "maxLength": 800,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 5,
+          "minItems": 1,
+          "title": "Examples",
+          "type": "array"
+        },
+        "anti_examples": {
+          "items": {
+            "maxLength": 800,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 5,
+          "minItems": 1,
+          "title": "Anti Examples",
+          "type": "array"
+        },
+        "art_direction": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Art Direction",
+          "type": "string"
+        }
+      },
+      "required": [
+        "style_id",
+        "tone",
+        "narrative_voice",
+        "sensory_palette",
+        "faction_language_notes",
+        "naming_conventions",
+        "banned_phrases",
+        "description_requirements",
+        "examples",
+        "anti_examples",
+        "art_direction"
+      ],
+      "title": "StyleBible",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "The root style bible file structure.",
+  "properties": {
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "campaign_id": {
+      "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+      "title": "Campaign Id",
+      "type": "string"
+    },
+    "campaign_version": {
+      "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$",
+      "title": "Campaign Version",
+      "type": "string"
+    },
+    "style_bible": {
+      "$ref": "#/$defs/StyleBible"
+    }
+  },
+  "required": [
+    "campaign_id",
+    "campaign_version",
+    "style_bible"
+  ],
+  "title": "StyleBibleFile",
+  "type": "object"
+}

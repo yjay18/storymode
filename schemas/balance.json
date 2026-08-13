@@ -1,0 +1,202 @@
+{
+  "$defs": {
+    "DcBands": {
+      "additionalProperties": false,
+      "description": "The expected DC bands.",
+      "properties": {
+        "easy": {
+          "const": 8,
+          "default": 8,
+          "title": "Easy",
+          "type": "integer"
+        },
+        "standard": {
+          "const": 12,
+          "default": 12,
+          "title": "Standard",
+          "type": "integer"
+        },
+        "difficult": {
+          "const": 15,
+          "default": 15,
+          "title": "Difficult",
+          "type": "integer"
+        },
+        "expert": {
+          "const": 18,
+          "default": 18,
+          "title": "Expert",
+          "type": "integer"
+        },
+        "exceptional": {
+          "const": 22,
+          "default": 22,
+          "title": "Exceptional",
+          "type": "integer"
+        },
+        "near_impossible": {
+          "minimum": 25,
+          "title": "Near Impossible",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "near_impossible"
+      ],
+      "title": "DcBands",
+      "type": "object"
+    },
+    "DifficultyProfile": {
+      "additionalProperties": false,
+      "description": "Exact difficulty multipliers.",
+      "properties": {
+        "dc_adjustment": {
+          "title": "Dc Adjustment",
+          "type": "integer"
+        },
+        "enemy_hp_ratio": {
+          "$ref": "#/$defs/Rational"
+        },
+        "enemy_damage_ratio": {
+          "$ref": "#/$defs/Rational"
+        },
+        "enemy_armour_ratio": {
+          "$ref": "#/$defs/Rational"
+        },
+        "luck_capacity": {
+          "title": "Luck Capacity",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "dc_adjustment",
+        "enemy_hp_ratio",
+        "enemy_damage_ratio",
+        "enemy_armour_ratio",
+        "luck_capacity"
+      ],
+      "title": "DifficultyProfile",
+      "type": "object"
+    },
+    "DifficultyProfiles": {
+      "additionalProperties": false,
+      "description": "The three required difficulty profiles.",
+      "properties": {
+        "story": {
+          "$ref": "#/$defs/DifficultyProfile"
+        },
+        "normal": {
+          "$ref": "#/$defs/DifficultyProfile"
+        },
+        "hard": {
+          "$ref": "#/$defs/DifficultyProfile"
+        }
+      },
+      "required": [
+        "story",
+        "normal",
+        "hard"
+      ],
+      "title": "DifficultyProfiles",
+      "type": "object"
+    },
+    "Rational": {
+      "additionalProperties": false,
+      "description": "A rational number representing a fraction.",
+      "properties": {
+        "numerator": {
+          "title": "Numerator",
+          "type": "integer"
+        },
+        "denominator": {
+          "title": "Denominator",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "numerator",
+        "denominator"
+      ],
+      "title": "Rational",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "The root balance file structure.",
+  "properties": {
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "campaign_id": {
+      "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+      "title": "Campaign Id",
+      "type": "string"
+    },
+    "campaign_version": {
+      "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$",
+      "title": "Campaign Version",
+      "type": "string"
+    },
+    "difficulty_profiles": {
+      "$ref": "#/$defs/DifficultyProfiles"
+    },
+    "level_xp_thresholds": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "title": "Level Xp Thresholds",
+      "type": "object"
+    },
+    "dc_bands": {
+      "$ref": "#/$defs/DcBands"
+    },
+    "modifier_limits": {
+      "additionalProperties": true,
+      "title": "Modifier Limits",
+      "type": "object"
+    },
+    "effect_limits": {
+      "additionalProperties": true,
+      "title": "Effect Limits",
+      "type": "object"
+    },
+    "enemy_power_formula": {
+      "additionalProperties": true,
+      "title": "Enemy Power Formula",
+      "type": "object"
+    },
+    "encounter_targets": {
+      "additionalProperties": true,
+      "title": "Encounter Targets",
+      "type": "object"
+    },
+    "fusion_limits": {
+      "additionalProperties": true,
+      "title": "Fusion Limits",
+      "type": "object"
+    },
+    "boss_allowances": {
+      "additionalProperties": true,
+      "title": "Boss Allowances",
+      "type": "object"
+    }
+  },
+  "required": [
+    "campaign_id",
+    "campaign_version",
+    "difficulty_profiles",
+    "level_xp_thresholds",
+    "dc_bands",
+    "modifier_limits",
+    "effect_limits",
+    "enemy_power_formula",
+    "encounter_targets",
+    "fusion_limits",
+    "boss_allowances"
+  ],
+  "title": "BalanceFile",
+  "type": "object"
+}

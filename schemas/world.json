@@ -1,0 +1,284 @@
+{
+  "$defs": {
+    "FactionDefinition": {
+      "additionalProperties": false,
+      "description": "A macro faction in the world.",
+      "properties": {
+        "id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "goals": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Goals",
+          "type": "array"
+        },
+        "resources": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Resources",
+          "type": "array"
+        },
+        "hypocrisy": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Hypocrisy",
+          "type": "string"
+        },
+        "language_style": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Language Style",
+          "type": "string"
+        },
+        "visual_markings": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Visual Markings",
+          "type": "string"
+        },
+        "relationship_edges": {
+          "items": {
+            "$ref": "#/$defs/FactionRelationship"
+          },
+          "title": "Relationship Edges",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "goals",
+        "resources",
+        "hypocrisy",
+        "language_style",
+        "visual_markings",
+        "relationship_edges"
+      ],
+      "title": "FactionDefinition",
+      "type": "object"
+    },
+    "FactionRelationship": {
+      "additionalProperties": false,
+      "description": "An edge between factions.",
+      "properties": {
+        "target_faction_id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Target Faction Id",
+          "type": "string"
+        },
+        "stance": {
+          "maximum": 100,
+          "minimum": -100,
+          "title": "Stance",
+          "type": "integer"
+        },
+        "summary": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Summary",
+          "type": "string"
+        }
+      },
+      "required": [
+        "target_faction_id",
+        "stance",
+        "summary"
+      ],
+      "title": "FactionRelationship",
+      "type": "object"
+    },
+    "MajorLocation": {
+      "additionalProperties": false,
+      "description": "A macro location in the world.",
+      "properties": {
+        "id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "summary": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Summary",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "summary"
+      ],
+      "title": "MajorLocation",
+      "type": "object"
+    },
+    "PowerSystem": {
+      "additionalProperties": false,
+      "description": "Rules and costs of the macro power system.",
+      "properties": {
+        "rules": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Rules",
+          "type": "array"
+        },
+        "costs": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Costs",
+          "type": "array"
+        },
+        "access_restrictions": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Access Restrictions",
+          "type": "array"
+        },
+        "side_effects": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Side Effects",
+          "type": "array"
+        }
+      },
+      "required": [
+        "rules",
+        "costs",
+        "access_restrictions",
+        "side_effects"
+      ],
+      "title": "PowerSystem",
+      "type": "object"
+    },
+    "WorldDefinition": {
+      "additionalProperties": false,
+      "description": "The macro structure and factions of the world.",
+      "properties": {
+        "name": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "core_conflict": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Core Conflict",
+          "type": "string"
+        },
+        "power_system": {
+          "$ref": "#/$defs/PowerSystem"
+        },
+        "values": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Values",
+          "type": "array"
+        },
+        "factions": {
+          "items": {
+            "$ref": "#/$defs/FactionDefinition"
+          },
+          "title": "Factions",
+          "type": "array"
+        },
+        "major_locations": {
+          "items": {
+            "$ref": "#/$defs/MajorLocation"
+          },
+          "title": "Major Locations",
+          "type": "array"
+        },
+        "material_conditions": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Material Conditions",
+          "type": "array"
+        }
+      },
+      "required": [
+        "name",
+        "core_conflict",
+        "power_system",
+        "values",
+        "factions",
+        "major_locations",
+        "material_conditions"
+      ],
+      "title": "WorldDefinition",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "The root world file structure.",
+  "properties": {
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "campaign_id": {
+      "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+      "title": "Campaign Id",
+      "type": "string"
+    },
+    "campaign_version": {
+      "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$",
+      "title": "Campaign Version",
+      "type": "string"
+    },
+    "world": {
+      "$ref": "#/$defs/WorldDefinition"
+    }
+  },
+  "required": [
+    "campaign_id",
+    "campaign_version",
+    "world"
+  ],
+  "title": "WorldFile",
+  "type": "object"
+}

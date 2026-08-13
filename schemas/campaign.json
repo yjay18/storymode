@@ -1,0 +1,137 @@
+{
+  "$defs": {
+    "CampaignLength": {
+      "enum": [
+        "short",
+        "medium",
+        "long",
+        "custom"
+      ],
+      "title": "CampaignLength",
+      "type": "string"
+    },
+    "CampaignStatus": {
+      "enum": [
+        "draft",
+        "published"
+      ],
+      "title": "CampaignStatus",
+      "type": "string"
+    },
+    "DefaultDifficulty": {
+      "enum": [
+        "story",
+        "normal",
+        "hard"
+      ],
+      "title": "DefaultDifficulty",
+      "type": "string"
+    },
+    "SourceType": {
+      "enum": [
+        "prompt",
+        "novel",
+        "plain_text",
+        "comic_transcript",
+        "custom"
+      ],
+      "title": "SourceType",
+      "type": "string"
+    },
+    "Theme": {
+      "enum": [
+        "fantasy",
+        "sci_fi",
+        "apocalyptic",
+        "custom"
+      ],
+      "title": "Theme",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Metadata representing a campaign's state and configuration.",
+  "properties": {
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "campaign_id": {
+      "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+      "title": "Campaign Id",
+      "type": "string"
+    },
+    "campaign_version": {
+      "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$",
+      "title": "Campaign Version",
+      "type": "string"
+    },
+    "title": {
+      "maxLength": 120,
+      "minLength": 1,
+      "title": "Title",
+      "type": "string"
+    },
+    "theme": {
+      "$ref": "#/$defs/Theme"
+    },
+    "source_type": {
+      "$ref": "#/$defs/SourceType"
+    },
+    "source_summary": {
+      "maxLength": 4000,
+      "minLength": 1,
+      "title": "Source Summary",
+      "type": "string"
+    },
+    "default_difficulty": {
+      "$ref": "#/$defs/DefaultDifficulty"
+    },
+    "campaign_length": {
+      "$ref": "#/$defs/CampaignLength"
+    },
+    "art_style_ref": {
+      "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+      "title": "Art Style Ref",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "content_fingerprint": {
+      "anyOf": [
+        {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Content Fingerprint"
+    },
+    "status": {
+      "$ref": "#/$defs/CampaignStatus"
+    }
+  },
+  "required": [
+    "campaign_id",
+    "campaign_version",
+    "title",
+    "theme",
+    "source_type",
+    "source_summary",
+    "default_difficulty",
+    "campaign_length",
+    "art_style_ref",
+    "created_at",
+    "status"
+  ],
+  "title": "CampaignMeta",
+  "type": "object"
+}

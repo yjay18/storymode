@@ -1,0 +1,631 @@
+{
+  "$defs": {
+    "CombatSkill": {
+      "additionalProperties": false,
+      "description": "A combat skill definition.",
+      "properties": {
+        "id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        },
+        "tags": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Tags",
+          "type": "array"
+        },
+        "acquisition_source_ids": {
+          "items": {
+            "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+            "type": "string"
+          },
+          "title": "Acquisition Source Ids",
+          "type": "array"
+        },
+        "levels": {
+          "items": {
+            "$ref": "#/$defs/CombatSkillLevel"
+          },
+          "title": "Levels",
+          "type": "array"
+        },
+        "allowed_actor_types": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Allowed Actor Types",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "description",
+        "tags",
+        "acquisition_source_ids",
+        "levels",
+        "allowed_actor_types"
+      ],
+      "title": "CombatSkill",
+      "type": "object"
+    },
+    "CombatSkillLevel": {
+      "additionalProperties": false,
+      "description": "One of the 5 levels of a combat skill.",
+      "properties": {
+        "level": {
+          "maximum": 5,
+          "minimum": 1,
+          "title": "Level",
+          "type": "integer"
+        },
+        "mana_cost": {
+          "maximum": 10,
+          "minimum": 0,
+          "title": "Mana Cost",
+          "type": "integer"
+        },
+        "target_rule": {
+          "$ref": "#/$defs/TargetRule"
+        },
+        "base_effects": {
+          "items": {
+            "$ref": "#/$defs/EffectDefinition"
+          },
+          "title": "Base Effects",
+          "type": "array"
+        },
+        "effect_die": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/EffectDieTable"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "prerequisite": {
+          "anyOf": [
+            {
+              "maxLength": 120,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Prerequisite"
+        }
+      },
+      "required": [
+        "level",
+        "mana_cost",
+        "target_rule",
+        "base_effects"
+      ],
+      "title": "CombatSkillLevel",
+      "type": "object"
+    },
+    "EffectDefinition": {
+      "additionalProperties": false,
+      "description": "An atomic combat effect.",
+      "properties": {
+        "effect_id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Effect Id",
+          "type": "string"
+        },
+        "kind": {
+          "$ref": "#/$defs/EffectKind"
+        },
+        "magnitude": {
+          "title": "Magnitude",
+          "type": "integer"
+        },
+        "duration": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Duration"
+        },
+        "status_id": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status Id"
+        },
+        "stacking_key": {
+          "anyOf": [
+            {
+              "maxLength": 120,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Stacking Key"
+        }
+      },
+      "required": [
+        "effect_id",
+        "kind",
+        "magnitude"
+      ],
+      "title": "EffectDefinition",
+      "type": "object"
+    },
+    "EffectDieTable": {
+      "additionalProperties": false,
+      "description": "Effect bands for a d20 roll.",
+      "properties": {
+        "natural_1": {
+          "items": {
+            "$ref": "#/$defs/EffectDefinition"
+          },
+          "title": "Natural 1",
+          "type": "array"
+        },
+        "low": {
+          "items": {
+            "$ref": "#/$defs/EffectDefinition"
+          },
+          "title": "Low",
+          "type": "array"
+        },
+        "standard": {
+          "items": {
+            "$ref": "#/$defs/EffectDefinition"
+          },
+          "title": "Standard",
+          "type": "array"
+        },
+        "strong": {
+          "items": {
+            "$ref": "#/$defs/EffectDefinition"
+          },
+          "title": "Strong",
+          "type": "array"
+        },
+        "natural_20": {
+          "items": {
+            "$ref": "#/$defs/EffectDefinition"
+          },
+          "title": "Natural 20",
+          "type": "array"
+        }
+      },
+      "required": [
+        "natural_1",
+        "low",
+        "standard",
+        "strong",
+        "natural_20"
+      ],
+      "title": "EffectDieTable",
+      "type": "object"
+    },
+    "EffectKind": {
+      "description": "Closed set of allowed combat effects.",
+      "enum": [
+        "damage",
+        "heal",
+        "buff",
+        "debuff",
+        "status",
+        "resource_drain",
+        "resource_restore"
+      ],
+      "title": "EffectKind",
+      "type": "string"
+    },
+    "FusionRecipe": {
+      "additionalProperties": false,
+      "description": "A recipe to combine two level-5 skills.",
+      "properties": {
+        "id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "source_skill_ids": {
+          "items": {
+            "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+            "type": "string"
+          },
+          "maxItems": 2,
+          "minItems": 2,
+          "title": "Source Skill Ids",
+          "type": "array"
+        },
+        "result_skill_id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Result Skill Id",
+          "type": "string"
+        },
+        "catalyst_item_id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Catalyst Item Id",
+          "type": "string"
+        },
+        "catalyst_quantity": {
+          "title": "Catalyst Quantity",
+          "type": "integer"
+        },
+        "unlock_conditions": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Unlock Conditions",
+          "type": "array"
+        },
+        "location_or_specialist_ids": {
+          "items": {
+            "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+            "type": "string"
+          },
+          "title": "Location Or Specialist Ids",
+          "type": "array"
+        },
+        "companion_backup_skill_id": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Companion Backup Skill Id"
+        },
+        "power_budget": {
+          "title": "Power Budget",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "source_skill_ids",
+        "result_skill_id",
+        "catalyst_item_id",
+        "catalyst_quantity",
+        "unlock_conditions",
+        "location_or_specialist_ids",
+        "power_budget"
+      ],
+      "title": "FusionRecipe",
+      "type": "object"
+    },
+    "NonCombatSkill": {
+      "additionalProperties": false,
+      "description": "An exploration or social skill.",
+      "properties": {
+        "id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        },
+        "stat": {
+          "$ref": "#/$defs/StatName"
+        },
+        "rank_min": {
+          "const": 0,
+          "default": 0,
+          "title": "Rank Min",
+          "type": "integer"
+        },
+        "rank_max": {
+          "const": 5,
+          "default": 5,
+          "title": "Rank Max",
+          "type": "integer"
+        },
+        "availability_tags": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Availability Tags",
+          "type": "array"
+        },
+        "capability_tags": {
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Capability Tags",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "description",
+        "stat",
+        "availability_tags",
+        "capability_tags"
+      ],
+      "title": "NonCombatSkill",
+      "type": "object"
+    },
+    "PointBuyDefinition": {
+      "additionalProperties": false,
+      "description": "Rules for initial stat point buy.",
+      "properties": {
+        "budget": {
+          "const": 27,
+          "default": 27,
+          "title": "Budget",
+          "type": "integer"
+        },
+        "minimum": {
+          "const": 8,
+          "default": 8,
+          "title": "Minimum",
+          "type": "integer"
+        },
+        "maximum_before_bonus": {
+          "const": 15,
+          "default": 15,
+          "title": "Maximum Before Bonus",
+          "type": "integer"
+        },
+        "maximum_after_bonus": {
+          "const": 17,
+          "default": 17,
+          "title": "Maximum After Bonus",
+          "type": "integer"
+        },
+        "cost_map": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "title": "Cost Map",
+          "type": "object"
+        }
+      },
+      "required": [
+        "cost_map"
+      ],
+      "title": "PointBuyDefinition",
+      "type": "object"
+    },
+    "SkillTree": {
+      "additionalProperties": false,
+      "description": "A progression tree of skills.",
+      "properties": {
+        "id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "owner_companion_id": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Owner Companion Id"
+        },
+        "nodes": {
+          "items": {
+            "$ref": "#/$defs/SkillTreeNode"
+          },
+          "title": "Nodes",
+          "type": "array"
+        },
+        "edges": {
+          "items": {
+            "$ref": "#/$defs/SkillTreeEdge"
+          },
+          "title": "Edges",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "nodes",
+        "edges"
+      ],
+      "title": "SkillTree",
+      "type": "object"
+    },
+    "SkillTreeEdge": {
+      "additionalProperties": false,
+      "description": "A directed edge between skill nodes.",
+      "properties": {
+        "source_node_id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Source Node Id",
+          "type": "string"
+        },
+        "target_node_id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Target Node Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_node_id",
+        "target_node_id"
+      ],
+      "title": "SkillTreeEdge",
+      "type": "object"
+    },
+    "SkillTreeNode": {
+      "additionalProperties": false,
+      "description": "A node in a progression tree.",
+      "properties": {
+        "id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "skill_id": {
+          "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+          "title": "Skill Id",
+          "type": "string"
+        },
+        "cost": {
+          "title": "Cost",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "skill_id",
+        "cost"
+      ],
+      "title": "SkillTreeNode",
+      "type": "object"
+    },
+    "StatName": {
+      "description": "The six core statistics.",
+      "enum": [
+        "strength",
+        "dexterity",
+        "intelligence",
+        "charisma",
+        "constitution",
+        "wisdom"
+      ],
+      "title": "StatName",
+      "type": "string"
+    },
+    "TargetRule": {
+      "description": "Who a skill can target.",
+      "enum": [
+        "self",
+        "single_ally",
+        "single_enemy",
+        "all_allies",
+        "all_enemies",
+        "any"
+      ],
+      "title": "TargetRule",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "description": "The root skills file structure.",
+  "properties": {
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "campaign_id": {
+      "pattern": "^[a-z][a-z0-9_-]{2,63}$",
+      "title": "Campaign Id",
+      "type": "string"
+    },
+    "campaign_version": {
+      "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$",
+      "title": "Campaign Version",
+      "type": "string"
+    },
+    "point_buy": {
+      "$ref": "#/$defs/PointBuyDefinition"
+    },
+    "non_combat_skills": {
+      "items": {
+        "$ref": "#/$defs/NonCombatSkill"
+      },
+      "title": "Non Combat Skills",
+      "type": "array"
+    },
+    "combat_skills": {
+      "items": {
+        "$ref": "#/$defs/CombatSkill"
+      },
+      "title": "Combat Skills",
+      "type": "array"
+    },
+    "skill_trees": {
+      "items": {
+        "$ref": "#/$defs/SkillTree"
+      },
+      "title": "Skill Trees",
+      "type": "array"
+    },
+    "fusion_recipes": {
+      "items": {
+        "$ref": "#/$defs/FusionRecipe"
+      },
+      "title": "Fusion Recipes",
+      "type": "array"
+    }
+  },
+  "required": [
+    "campaign_id",
+    "campaign_version",
+    "point_buy",
+    "non_combat_skills",
+    "combat_skills",
+    "skill_trees",
+    "fusion_recipes"
+  ],
+  "title": "SkillsFile",
+  "type": "object"
+}
