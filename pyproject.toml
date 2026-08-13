@@ -49,6 +49,8 @@ indent-style = "space"
 [tool.mypy]
 python_version = "3.12"
 strict = true
+explicit_package_bases = true
+mypy_path = "src"
 files = ["src", "tests", "scripts"]
 exclude = ["^src/ui/"]
 plugins = ["pydantic.mypy"]

@@ -74,7 +74,7 @@ storage formats, model providers, formulas, or field names.
   - Test: `uv run pytest tests/unit/test_package_imports.py -q`.
   - Accept: test passes, `uv run ruff check .` and `uv run mypy src tests` pass.
 
-- [ ] **BOOT-03 — Add documentation/scaffold validation script**
+- [x] **BOOT-03 — Add documentation/scaffold validation script**
   - Depends: BOOT-02
   - Read: root `AGENT.md`, `scripts/CONTEXT.md`, documentation hierarchy in bootstrap.
   - Create: `scripts/check_scaffold.py`, `tests/unit/test_check_scaffold.py`.
