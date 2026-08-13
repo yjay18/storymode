@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "campaign_id": "minimal-campaign",
+  "campaign_version": "1.0.0",
+  "areas": [
+    {
+      "id": "area-1",
+      "name": "Area",
+      "major_location_id": "loc-99",
+      "description": "Area",
+      "art_prompt": "Art",
+      "danger_level": 1,
+      "connected_area_ids": [],
+      "local_faction_ids": [
+        "fac-1"
+      ],
+      "residents": [
+        {
+          "id": "resident-1",
+          "name": "Resident",
+          "role": "Role",
+          "faction_id": null,
+          "availability": "available",
+          "location_anchor": "Anchor",
+          "initial_disposition": 0,
+          "knowledge_tags": [],
+          "personal_goal": "Goal",
+          "interaction_hooks": []
+        }
+      ],
+      "objects": [
+        {
+          "id": "object-1",
+          "name": "Object",
+          "description": "Object",
+          "location_anchor": "Anchor",
+          "state": "State",
+          "interactable_tags": [],
+          "capability_requirements": [],
+          "allowed_effect_ids": []
+        }
+      ],
+      "encounters": [
+        {
+          "id": "encounter-1",
+          "enemy_archetype_ids": [
+            "enemy-1"
+          ],
+          "condition": "Condition",
+          "weight": 1,
+          "escape_policy_id": "milestone-1",
+          "consequence_ids": []
+        }
+      ],
+      "secrets": [
+        {
+          "id": "secret-1",
+          "summary": "Secret",
+          "lead_fact_ids": [],
+          "reveal_conditions": [],
+          "core_clue": false
+        }
+      ]
+    }
+  ]
+}

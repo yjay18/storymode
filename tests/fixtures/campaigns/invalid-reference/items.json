@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "campaign_id": "minimal-campaign",
+  "campaign_version": "1.0.0",
+  "items": [
+    {
+      "id": "item-1",
+      "name": "Item",
+      "type": "consumable",
+      "rarity": "common",
+      "mechanics": [
+        {
+          "effect_id": "eff-1",
+          "kind": "damage",
+          "magnitude": 1,
+          "duration": null,
+          "status_id": null,
+          "stacking_key": null
+        }
+      ],
+      "requirements": [],
+      "capability_tags": [],
+      "stacking_key": null,
+      "flavour_text": "Flavour",
+      "provenance": "Prov",
+      "max_stack": 1
+    }
+  ]
+}
