@@ -3,6 +3,7 @@
 import pytest
 from pydantic import ValidationError
 
+from llm.contracts.action import ActionProposal
 from llm.orchestration.json_parser import parse_llm_response
 
 
@@ -11,18 +12,27 @@ def test_parse_valid_json_block() -> None:
     
 ```json
 {
-  "intention": "Look around",
-  "action_type": "inspect",
-  "target_id": "room",
-  "payload": {}
+  "contract_version": 1,
+  "prompt_version": "1.0",
+  "request_id": "req-1",
+  "status": "valid",
+  "operation": "inspect",
+  "verb": "look",
+  "entity_mentions": [{"text": "the room", "role": "target", "candidate_ordinal": 1}],
+  "capability_mentions": [],
+  "intended_effect": "Look around the room",
+  "challenge_label": "none",
+  "uncertainty_reason": null,
+  "stakes": [],
+  "reinterpretation": null,
+  "redirect": null
 }
 ```
 """
     proposal = parse_llm_response(text)
-    assert proposal.intention == "Look around"
-    assert proposal.action_type == "inspect"
-    assert proposal.target_id == "room"
-    assert proposal.payload == {}
+    assert proposal.contract_version == 1
+    assert proposal.status == "valid"
+    assert proposal.operation == "inspect"
 
 
 def test_parse_missing_block() -> None:
@@ -35,10 +45,10 @@ def test_parse_malformed_json() -> None:
     text = """
 ```json
 {
-  "intention": "Look",
-  "action_type": "inspect",
-  "target_id": "room",
-  "payload": }
+  "contract_version": 1,
+  "prompt_version": "1.0",
+  "request_id": "req-1",
+  "status": "valid" }
 }
 ```
 """
@@ -50,10 +60,20 @@ def test_parse_extra_fields() -> None:
     text = """
 ```json
 {
-  "intention": "Look",
-  "action_type": "inspect",
-  "target_id": "room",
-  "payload": {},
+  "contract_version": 1,
+  "prompt_version": "1.0",
+  "request_id": "req-1",
+  "status": "valid",
+  "operation": "inspect",
+  "verb": "look",
+  "entity_mentions": [],
+  "capability_mentions": [],
+  "intended_effect": "Look",
+  "challenge_label": "none",
+  "uncertainty_reason": null,
+  "stakes": [],
+  "reinterpretation": null,
+  "redirect": null,
   "die_roll": 20
 }
 ```
@@ -66,8 +86,9 @@ def test_parse_missing_fields() -> None:
     text = """
 ```json
 {
-  "intention": "Look",
-  "action_type": "inspect"
+  "contract_version": 1,
+  "prompt_version": "1.0",
+  "request_id": "req-1"
 }
 ```
 """
