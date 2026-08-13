@@ -176,7 +176,7 @@ storage formats, model providers, formulas, or field names.
     point-buy table.
   - Accept: no formula strings/eval fields; all collections and bounds match docs.
 
-- [ ] **SCHEMA-07 — Implement item and enemy campaign models**
+- [x] **SCHEMA-07 — Implement item and enemy campaign models**
   - Depends: SCHEMA-01, SCHEMA-06
   - Read: campaign schema item/enemy sections; combat and progression docs.
   - Create: `src/domain/models/{item,enemy}.py`,
