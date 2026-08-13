@@ -65,7 +65,7 @@ storage formats, model providers, formulas, or field names.
   - Test: `uv run python -c "import api, app, campaign, domain, engine, llm"`.
   - Accept: import exits 0, lockfile is committed, no app/model/network/file I/O occurs.
 
-- [ ] **BOOT-02 — Add the backend test harness and import smoke test**
+- [x] **BOOT-02 — Add the backend test harness and import smoke test**
   - Depends: BOOT-01
   - Read: `tests/CONTEXT.md`, `tests/AGENT.md`.
   - Create: `tests/conftest.py`, `tests/unit/test_package_imports.py`.
