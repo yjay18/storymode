@@ -110,5 +110,5 @@ class CharactersFile(FrozenModel):
 
         if len(all_ids) != len(set(all_ids)):
             raise ValueError("duplicate character IDs found")
-            
+
         return self

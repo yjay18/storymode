@@ -47,12 +47,12 @@ def make_valid_companion(cid: str = "comp-1") -> dict[str, Any]:
 
 def test_stat_block_exact_six() -> None:
     data = make_valid_stat_block()
-    
+
     # Missing stat
     del data["strength"]
     with pytest.raises(ValidationError):
         StatBlock(**data)
-        
+
     # Extra stat
     data["strength"] = 10
     data["extra"] = 10
@@ -62,12 +62,12 @@ def test_stat_block_exact_six() -> None:
 
 def test_stat_block_out_of_range() -> None:
     data = make_valid_stat_block()
-    
+
     # Stat too low
     data["strength"] = 0
     with pytest.raises(ValidationError):
         StatBlock(**data)
-        
+
     # Stat too high
     data["strength"] = 31
     with pytest.raises(ValidationError):
@@ -76,33 +76,35 @@ def test_stat_block_out_of_range() -> None:
 
 def test_background_bonus_range() -> None:
     with pytest.raises(ValidationError):
-        BackgroundDefinition(**{  # type: ignore
-            "id": "bg-1",
-            "name": "Bg",
-            "description": "Desc",
-            "stat_bonus": "strength",
-            "stat_bonus_value": 3,  # Invalid
-            "starting_skill_ids": [],
-            "starting_item_ids": [],
-            "starting_fact_ids": [],
-        })
+        BackgroundDefinition(
+            **{  # type: ignore
+                "id": "bg-1",
+                "name": "Bg",
+                "description": "Desc",
+                "stat_bonus": "strength",
+                "stat_bonus_value": 3,  # Invalid
+                "starting_skill_ids": [],
+                "starting_item_ids": [],
+                "starting_fact_ids": [],
+            }
+        )
 
 
 def test_companion_loadout_rules() -> None:
     data = make_valid_companion()
-    
+
     # Unknown skill
     data["starting_loadout"] = ["skill-3"]
     with pytest.raises(ValidationError) as exc:
         CompanionDefinition(**data)
     assert "not known" in str(exc.value)
-    
+
     # Duplicate skill
     data["starting_loadout"] = ["skill-1", "skill-1"]
     with pytest.raises(ValidationError) as exc:
         CompanionDefinition(**data)
     assert "duplicate skills" in str(exc.value)
-    
+
     # Fifth skill (too many)
     data["starting_skill_ids"] = ["sk-1", "sk-2", "sk-3", "sk-4", "sk-5"]
     data["starting_loadout"] = ["sk-1", "sk-2", "sk-3", "sk-4", "sk-5"]
@@ -113,12 +115,12 @@ def test_companion_loadout_rules() -> None:
 
 def test_companion_usable_actions_bounds() -> None:
     data = make_valid_companion()
-    
+
     # Too low
     data["minimum_usable_actions"] = 0
     with pytest.raises(ValidationError):
         CompanionDefinition(**data)
-        
+
     # Too high
     data["minimum_usable_actions"] = 5
     with pytest.raises(ValidationError):
@@ -134,7 +136,7 @@ def test_characters_file_duplicate_ids() -> None:
         "companions": [
             make_valid_companion("comp-1"),
             make_valid_companion("comp-1"),
-        ]
+        ],
     }
     with pytest.raises(ValidationError) as exc:
         CharactersFile(**data)  # type: ignore

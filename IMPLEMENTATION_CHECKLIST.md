@@ -164,7 +164,7 @@ storage formats, model providers, formulas, or field names.
     companion usable-action bounds, duplicate character IDs.
   - Accept: models implement authored definitions only, not runtime relationship state.
 
-- [ ] **SCHEMA-06 — Implement skill, effect, tree, and fusion campaign models**
+- [x] **SCHEMA-06 — Implement skill, effect, tree, and fusion campaign models**
   - Depends: SCHEMA-01, SCHEMA-05
   - Read: campaign schema skills section; progression and combat docs.
   - Create: `src/domain/models/skill.py`, `tests/unit/domain/test_skill_models.py`.
