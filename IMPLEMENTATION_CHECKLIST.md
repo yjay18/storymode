@@ -795,7 +795,7 @@ storage formats, model providers, formulas, or field names.
     duplicate grant, levels/token/prerequisite/cap, fifth/duplicate/unknown loadout, combat.
   - Accept: all changes atomic and journal exact source/skill/before/after.
 
-- [ ] **PROG-03 — Implement player fusion transaction**
+- [x] **PROG-03 — Implement player fusion transaction**
   - Depends: PROG-02
   - Read: exact seven fusion prerequisites and atomic result.
   - Create: `src/engine/progression/fusion.py`,
