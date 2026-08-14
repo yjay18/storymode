@@ -637,7 +637,7 @@ storage formats, model providers, formulas, or field names.
     armour-only/exact/spill/no-armour/overkill; booleans/negative denominator rejected.
   - Accept: no gameplay float operations and no attack/armour-class calculation.
 
-- [ ] **COMBAT-02 — Start encounters and calculate deterministic turn order**
+- [x] **COMBAT-02 — Start encounters and calculate deterministic turn order**
   - Depends: COMBAT-01, DICE-02
   - Read: combat encounter start/order; party size rules.
   - Create: `src/engine/combat/{__init__,encounter,turn_order}.py`,
