@@ -1,6 +1,5 @@
 """Tests for PARTY-02 companion build construction and combat actions."""
 
-
 from domain.models.character import CompanionDefinition, StatBlock
 from domain.models.combat_state import CombatParticipant, CombatPhase, CombatState, ParticipantSide
 from domain.models.common import DisplayString, EntityId

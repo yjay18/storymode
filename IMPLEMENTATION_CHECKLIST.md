@@ -773,7 +773,7 @@ storage formats, model providers, formulas, or field names.
     diagnostic, companion mana/status/target, no automatic AI action.
   - Accept: no respec or model-selected companion action path exists.
 
-- [ ] **PROG-01 — Implement XP thresholds and level-token grants**
+- [x] **PROG-01 — Implement XP thresholds and level-token grants**
   - Depends: STATE-01, VALID-04
   - Read: progression character levels and balance XP.
   - Create: `src/engine/progression/leveling.py`,
