@@ -841,7 +841,7 @@ storage formats, model providers, formulas, or field names.
     non-selection defer, meaningful invalidation, transformation/audit, protected fact.
   - Accept: opportunity history persists and no hidden pruning occurs.
 
-- [ ] **PLOT-03 — Validate runtime opportunity proposals independent of LLM transport**
+- [x] **PLOT-03 — Validate runtime opportunity proposals independent of LLM transport**
   - Depends: PLOT-02
   - Read: OpportunityProposalV1 and opportunity runtime validation.
   - Create: `src/engine/plot/proposal_validator.py`,
