@@ -1,4 +1,5 @@
-from typing import Any, cast
+from typing import cast
+
 from fastapi import Request
 
 from app.config import Settings

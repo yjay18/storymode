@@ -44,7 +44,7 @@ def main() -> None:
             json.dump(schema, f, indent=2)
             f.write("\n")
 
-    print(f"Generated {len(MODELS)} schemas in {schemas_dir}/")  # noqa: T201
+    print(f"Generated {len(MODELS)} schemas in {schemas_dir}/")
 
 
 if __name__ == "__main__":

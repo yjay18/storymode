@@ -33,16 +33,14 @@ class RecoveryManager:
 
             for i in (2, 1):
                 old_path = save_dir / f"{base_path.stem}.{i}.json"
-                new_path = save_dir / f"{base_path.stem}.{i+1}.json"
+                new_path = save_dir / f"{base_path.stem}.{i + 1}.json"
                 if old_path.exists():
                     os.replace(old_path, new_path)
-                    
+
             new_path = save_dir / f"{base_path.stem}.1.json"
-            # Instead of os.replace, we want to KEEP the original so write_state can overwrite it safely,
-            # wait, if we os.replace, we delete the only valid state until write_state completes!
-            # The checklist says: "never delete the only valid state (minimum 1 backup before rotation if replacing)".
-            # If we copy the file instead of moving it, the original remains as a valid state until atomic replace.
+            # Keep original so write_state can overwrite safely without data loss.
             import shutil
+
             shutil.copy2(base_path, new_path)
 
     def list_recoverable_snapshots(self, campaign_id: EntityId, save_id: EntityId) -> list[int]:
@@ -50,26 +48,26 @@ class RecoveryManager:
         save_dir = self._reader._resolve_save_dir(campaign_id, save_id)
         if not save_dir.exists():
             return []
-            
+
         valid = []
         for i in (1, 2, 3):
             state_path = save_dir / f"state.{i}.json"
             if state_path.exists():
                 # We could potentially validate the state here
                 valid.append(i)
-                
+
         return valid
 
     def rebuild_derived_metadata(self, campaign_id: EntityId, save_id: EntityId) -> bool:
-        """Extract a minimal fallback SaveMeta from state if save_meta.json is missing or corrupt."""
+        """Extract minimal fallback SaveMeta from state if save_meta.json is missing or corrupt."""
         save_dir = self._reader._resolve_save_dir(campaign_id, save_id)
         meta_path = save_dir / "save_meta.json"
-        
+
         try:
             # Load state. This might fail if state is corrupt.
             result = self._reader.load_save(campaign_id, save_id)
             state = result.state
-            
+
             meta = SaveMeta(
                 campaign_id=state.campaign_id,
                 campaign_version=state.campaign_version,
@@ -85,9 +83,9 @@ class RecoveryManager:
                 play_seconds=state.play_seconds,
                 created_at=datetime.datetime.now(datetime.UTC),
                 updated_at=datetime.datetime.now(datetime.UTC),
-                recovery_status=DisplayString("rebuilt")
+                recovery_status=DisplayString("rebuilt"),
             )
-            
+
             self._writer._atomic_write_json(meta_path, meta)
             return True
         except SaveError:

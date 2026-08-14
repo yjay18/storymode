@@ -1,11 +1,9 @@
-"""Combat effect bands."""
-
-from enum import Enum
+from enum import StrEnum
 
 
-class CombatEffectBand(str, Enum):
+class CombatEffectBand(StrEnum):
     """Outcome bands for a combat effect die."""
-    
+
     NATURAL_1 = "natural_1"
     LOW = "low"
     STANDARD = "standard"
@@ -25,5 +23,5 @@ def calculate_combat_band(roll: int) -> CombatEffectBand:
         return CombatEffectBand.STANDARD
     if 15 <= roll <= 19:
         return CombatEffectBand.STRONG
-        
+
     raise ValueError(f"Roll {roll} out of bounds for d20 combat band")

@@ -15,7 +15,7 @@ class DiceService:
     """Service to execute rolls and construct audit records."""
 
     def __init__(
-        self, 
+        self,
         rng: RandomSource,
         clock: Callable[[], datetime.datetime],
         id_generator: Callable[[], EntityId],
@@ -37,14 +37,14 @@ class DiceService:
         """Roll an exploration check, calculate its band, and create a record."""
         # 1. Roll exactly once
         raw_roll = self._rng.roll(20)
-        
+
         # 2. Compute total
         total_modifiers = sum(named_modifiers.values())
         total = raw_roll + total_modifiers
-        
+
         # 3. Compute outcome band
         band = calculate_exploration_band(raw_roll, total, dc)
-        
+
         # 4. Construct record
         record = RollRecord(
             roll_id=self._id_generator(),
@@ -76,7 +76,7 @@ class DiceService:
         """Roll a combat effect die and create a record."""
         raw_roll = self._rng.roll(20)
         band = calculate_combat_band(raw_roll)
-        
+
         record = RollRecord(
             roll_id=self._id_generator(),
             transaction_id=transaction_id,
@@ -106,7 +106,7 @@ class DiceService:
     ) -> tuple[int, RollRecord]:
         """Roll a d20 tie-break with no DC or modifiers and create a record."""
         raw_roll = self._rng.roll(20)
-        
+
         record = RollRecord(
             roll_id=self._id_generator(),
             transaction_id=transaction_id,

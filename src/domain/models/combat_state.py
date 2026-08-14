@@ -33,18 +33,18 @@ class CombatParticipant(FrozenModel):
     hp: ResourceValue
     armour: ResourceValue
     mana: ResourceValue
-    
+
     statuses: list[StatusInstance] = Field(default_factory=list)
     known_combat_skills: list[KnownCombatSkill] = Field(default_factory=list)
     combat_loadout: list[EntityId] = Field(default_factory=list)
-    
+
     faction_id: EntityId | None = None
     side: ParticipantSide
 
 
 class TieBreakRecord(FrozenModel):
     """Record of a random tie-break used to order participants."""
-    
+
     participant_id: EntityId
     roll_total: int
 
@@ -57,13 +57,13 @@ class CombatState(FrozenModel):
     round: int = Field(default=1, ge=1)
     order: list[EntityId] = Field(default_factory=list)
     current_index: int = Field(default=0, ge=0)
-    
+
     participants: dict[EntityId, CombatParticipant] = Field(default_factory=dict)
     tie_break_records: list[TieBreakRecord] = Field(default_factory=list)
-    
+
     escape_policy: EntityId | None = None
     yield_policy: EntityId | None = None
-    
+
     encounter_modifiers: list[DisplayString] = Field(default_factory=list)
     origin_ids: list[EntityId] = Field(default_factory=list)
 
@@ -72,28 +72,30 @@ class CombatState(FrozenModel):
         """Verify phase constraints and order consistency."""
         # Terminal phase rejection for normally persisted state
         # A normal persisted state should only be ACTIVE. Other phases are transient.
-        # Note: The requirement "terminal stored-phase rejection" implies that we 
-        # should raise an error if phase is terminal, as terminal states reduce to 
+        # Note: The requirement "terminal stored-phase rejection" implies that we
+        # should raise an error if phase is terminal, as terminal states reduce to
         # encounter history instead of being persisted as a CombatState.
         terminal_phases = {
-            CombatPhase.VICTORY, 
-            CombatPhase.DEFEAT, 
-            CombatPhase.ESCAPED, 
+            CombatPhase.VICTORY,
+            CombatPhase.DEFEAT,
+            CombatPhase.ESCAPED,
             CombatPhase.YIELDED,
         }
         if self.phase in terminal_phases:
             raise ValueError(f"CombatState cannot be persisted in terminal phase: {self.phase}")
-            
+
         # Duplicate order checking
         if len(self.order) != len(set(self.order)):
             raise ValueError("combat order contains duplicates")
-            
+
         # Current index bounds checking
         if self.order and self.current_index >= len(self.order):
-            raise ValueError(
-                f"current_index ({self.current_index}) is out of bounds for order of size {len(self.order)}"
+            msg = (
+                f"current_index ({self.current_index}) is out of bounds "
+                f"for order of size {len(self.order)}"
             )
-            
+            raise ValueError(msg)
+
         # All order IDs must exist in participants
         for actor_id in self.order:
             if actor_id not in self.participants:

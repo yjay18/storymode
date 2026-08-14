@@ -12,10 +12,10 @@ def test_plot_state_enums() -> None:
     # Validate enum choices
     ms = MilestoneState("active")
     assert ms == MilestoneState.ACTIVE
-    
+
     op = OpportunityInstance(opportunity_id="op-1", is_resolved=True)
     assert op.opportunity_id == "op-1"
-    
+
     plot = PlotState(
         milestones={"ms-1": MilestoneState.ACTIVE},
         opportunities={"op-1": op},
@@ -28,17 +28,15 @@ def test_clock_state_bounds() -> None:
     # Valid
     c = ClockState(clock_id="c-1", current=2, maximum=4, last_advancement_revision=10)
     assert c.current == 2
-    
+
     # Validation errors
     with pytest.raises(ValueError):
         ClockState(clock_id="c-2", current=-1, maximum=4, last_advancement_revision=10)
 
 
 def test_pending_check_arithmetic() -> None:
-    outcomes = CheckOutcomes(
-        natural_1=[], low=[], standard=[], strong=[], natural_20=[]
-    )
-    
+    outcomes = CheckOutcomes(natural_1=[], low=[], standard=[], strong=[], natural_20=[])
+
     # Valid arithmetic
     c = PendingCheck(
         check_id="chk-1",
@@ -55,7 +53,7 @@ def test_pending_check_arithmetic() -> None:
         final_dc=10,
     )
     assert c.final_dc == 10
-    
+
     # Invalid arithmetic
     with pytest.raises(ValueError, match="Arithmetic mismatch"):
         PendingCheck(
@@ -87,7 +85,7 @@ def test_combat_state_invariants() -> None:
         mana=ResourceValue(current=0, maximum=5),
         side=ParticipantSide.ENEMY,
     )
-    
+
     # Valid
     c = CombatState(
         encounter_id="enc-1",
@@ -97,7 +95,7 @@ def test_combat_state_invariants() -> None:
         participants={"hero": p1, "goblin": p2},
     )
     assert c.phase == CombatPhase.ACTIVE
-    
+
     # Terminal phase rejection
     with pytest.raises(ValueError, match="cannot be persisted in terminal phase: victory"):
         CombatState(
@@ -106,7 +104,7 @@ def test_combat_state_invariants() -> None:
             order=["hero"],
             participants={"hero": p1},
         )
-        
+
     # Duplicate order
     with pytest.raises(ValueError, match="order contains duplicates"):
         CombatState(
@@ -115,17 +113,17 @@ def test_combat_state_invariants() -> None:
             order=["hero", "hero"],
             participants={"hero": p1},
         )
-        
+
     # Current index bounds
     with pytest.raises(ValueError, match="out of bounds"):
         CombatState(
             encounter_id="enc-1",
             phase=CombatPhase.ACTIVE,
             order=["hero", "goblin"],
-            current_index=2, # Size is 2, index 2 is OOB
+            current_index=2,  # Size is 2, index 2 is OOB
             participants={"hero": p1, "goblin": p2},
         )
-        
+
     # Unknown actor in order
     with pytest.raises(ValueError, match="actor goblin in order is not in participants dict"):
         CombatState(

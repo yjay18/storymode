@@ -12,7 +12,7 @@ from domain.models.runtime_common import ResourceValue
 from domain.models.runtime_state import RuntimeState
 from domain.models.world_state import LocationState
 from engine.actions.checks import build_pending_check, cancel_pending_check, decide_check_necessity
-from llm.contracts.action import ActionProposal, EntityMention
+from llm.contracts.action import ActionProposal
 
 
 @pytest.fixture
@@ -21,7 +21,9 @@ def mock_state() -> RuntimeState:
         id="player-1",
         name="Hero",
         background_id="bg-1",
-        stats=StatBlock(strength=10, dexterity=10, intelligence=10, charisma=10, constitution=10, wisdom=10),
+        stats=StatBlock(
+            strength=10, dexterity=10, intelligence=10, charisma=10, constitution=10, wisdom=10
+        ),
         hp=ResourceValue(current=10, maximum=10),
         armour=ResourceValue(current=0, maximum=5),
         mana=ResourceValue(current=5, maximum=5),
@@ -50,25 +52,43 @@ def empty_outcomes() -> CheckOutcomes:
 
 def test_decide_check_necessity() -> None:
     no_check = ActionProposal(
-        contract_version=1, prompt_version="1", request_id="r1", status="valid",
-        operation="inspect", verb="look", intended_effect="look", challenge_label="none"
+        contract_version=1,
+        prompt_version="1",
+        request_id="r1",
+        status="valid",
+        operation="inspect",
+        verb="look",
+        intended_effect="look",
+        challenge_label="none",
     )
     needs_check = ActionProposal(
-        contract_version=1, prompt_version="1", request_id="r1", status="valid",
-        operation="investigate", verb="look", intended_effect="look deeply", challenge_label="standard"
+        contract_version=1,
+        prompt_version="1",
+        request_id="r1",
+        status="valid",
+        operation="investigate",
+        verb="look",
+        intended_effect="look deeply",
+        challenge_label="standard",
     )
-    
+
     assert decide_check_necessity(no_check) is False
     assert decide_check_necessity(needs_check) is True
 
 
 def test_build_pending_check(mock_state: RuntimeState, empty_outcomes: CheckOutcomes) -> None:
     proposal = ActionProposal(
-        contract_version=1, prompt_version="1", request_id="r1", status="valid",
-        operation="investigate", verb="lift", intended_effect="Lift the boulder",
-        challenge_label="difficult", stakes=["Might drop it", "Noise"]
+        contract_version=1,
+        prompt_version="1",
+        request_id="r1",
+        status="valid",
+        operation="investigate",
+        verb="lift",
+        intended_effect="Lift the boulder",
+        challenge_label="difficult",
+        stakes=["Might drop it", "Noise"],
     )
-    
+
     check = build_pending_check(
         command_id="cmd-1",
         state=mock_state,
@@ -77,9 +97,9 @@ def test_build_pending_check(mock_state: RuntimeState, empty_outcomes: CheckOutc
         difficulty_adjustment=2,
         actor_id="player-1",
         target_ids=["obj-boulder"],
-        outcomes=empty_outcomes
+        outcomes=empty_outcomes,
     )
-    
+
     assert check.source_command_id == "cmd-1"
     assert check.source_revision == mock_state.revision
     assert check.actor_id == "player-1"
@@ -93,11 +113,17 @@ def test_build_pending_check(mock_state: RuntimeState, empty_outcomes: CheckOutc
 
 def test_cancel_pending_check(mock_state: RuntimeState, empty_outcomes: CheckOutcomes) -> None:
     proposal = ActionProposal(
-        contract_version=1, prompt_version="1", request_id="r1", status="valid",
-        operation="investigate", verb="lift", intended_effect="Lift the boulder",
-        challenge_label="difficult", stakes=["Might drop it", "Noise"]
+        contract_version=1,
+        prompt_version="1",
+        request_id="r1",
+        status="valid",
+        operation="investigate",
+        verb="lift",
+        intended_effect="Lift the boulder",
+        challenge_label="difficult",
+        stakes=["Might drop it", "Noise"],
     )
-    
+
     check = build_pending_check(
         command_id="cmd-1",
         state=mock_state,
@@ -106,16 +132,16 @@ def test_cancel_pending_check(mock_state: RuntimeState, empty_outcomes: CheckOut
         difficulty_adjustment=2,
         actor_id="player-1",
         target_ids=["obj-boulder"],
-        outcomes=empty_outcomes
+        outcomes=empty_outcomes,
     )
-    
+
     state_with_check = mock_state.model_copy(update={"pending_check": check})
     assert state_with_check.pending_check is not None
-    
+
     # Cancel it
     state_without_check = cancel_pending_check(state_with_check)
     assert state_without_check.pending_check is None
-    
+
     # Cannot cancel if None
     with pytest.raises(ValueError, match="No active pending check"):
         cancel_pending_check(state_without_check)

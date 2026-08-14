@@ -52,12 +52,12 @@ def test_apply_command_success(mock_state: RuntimeState) -> None:
         canonical_request_hash="hash-new",
         mutation_fn=mock_mutation,
     )
-    
+
     assert new_state.revision == original_rev + 1
     assert receipt.committed_revision == original_rev + 1
     assert receipt.command_id == "cmd-new"
     assert receipt.canonical_request_hash == "hash-new"
-    
+
     # Receipt should be appended
     assert len(new_state.last_command_receipts) == len(mock_state.last_command_receipts) + 1
     assert new_state.last_command_receipts[-1] == receipt
@@ -83,7 +83,7 @@ def test_apply_command_idempotent(mock_state: RuntimeState) -> None:
         canonical_request_hash="hash-1",
         mutation_fn=mock_mutation,
     )
-    
+
     # Now try to apply the exact same command on the new state
     state2, receipt2 = apply_command(
         state1,
@@ -92,7 +92,7 @@ def test_apply_command_idempotent(mock_state: RuntimeState) -> None:
         canonical_request_hash="hash-1",
         mutation_fn=mock_mutation,
     )
-    
+
     # Should return original state and receipt
     assert state2 is state1
     assert receipt2 == receipt1
@@ -100,14 +100,14 @@ def test_apply_command_idempotent(mock_state: RuntimeState) -> None:
 
 def test_apply_command_conflict(mock_state: RuntimeState) -> None:
     # First apply a command
-    state1, receipt1 = apply_command(
+    state1, _receipt1 = apply_command(
         mock_state,
         expected_revision=mock_state.revision,
         command_id=EntityId("cmd-1"),
         canonical_request_hash="hash-1",
         mutation_fn=mock_mutation,
     )
-    
+
     # Now try to apply the same command ID but different hash
     with pytest.raises(IdempotentCommandError):
         apply_command(
@@ -141,7 +141,7 @@ def test_apply_command_rotates_receipts(mock_state: RuntimeState) -> None:
             canonical_request_hash="hash",
             mutation_fn=mock_mutation,
         )
-        
+
     # Should keep exactly 10 receipts
     assert len(state.last_command_receipts) == 10
     # The first receipt should be cmd-5

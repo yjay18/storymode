@@ -12,8 +12,6 @@ import subprocess
 import sys
 from pathlib import Path
 
-import pytest
-
 # Absolute path to the script under test.
 # __file__ is tests/integration/scripts/test_smoke_script.py
 # .parent x3 = repo root
@@ -28,7 +26,8 @@ def test_smoke_script_success() -> None:
         text=True,
     )
     assert result.returncode == 0, (
-        f"Expected exit 0, got {result.returncode}.\nstdout:\n{result.stdout}\nstderr:\n{result.stderr}"
+        f"Expected exit 0, got {result.returncode}.\n"
+        f"stdout:\n{result.stdout}\nstderr:\n{result.stderr}"
     )
     # Verify key step markers are present in output
     assert "[PASS] Write initial save" in result.stdout
@@ -37,6 +36,12 @@ def test_smoke_script_success() -> None:
     assert "[PASS] Submit proposal with check" in result.stdout
     assert "[PASS] Resolve check" in result.stdout
     assert "[PASS] Final reload" in result.stdout
+    assert "[PASS] FastAPI create save" in result.stdout
+    assert "[PASS] FastAPI verify initial save" in result.stdout
+    assert "[PASS] FastAPI submit direct action" in result.stdout
+    assert "[PASS] FastAPI submit action with check" in result.stdout
+    assert "[PASS] FastAPI resolve check" in result.stdout
+    assert "[PASS] FastAPI final state reload" in result.stdout
     assert "all steps passed" in result.stdout
     # No failures
     assert "[FAIL]" not in result.stdout

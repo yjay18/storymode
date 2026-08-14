@@ -8,7 +8,6 @@ commits the resulting state atomically.  Returns a safe result object.
 from __future__ import annotations
 
 import dataclasses
-from typing import Optional
 
 from domain.models.area import AreaDefinition
 from domain.models.check_state import CheckOutcomes
@@ -37,7 +36,7 @@ class SubmitResult:
     has_pending_check: bool
     """True when the action created a pending check that must be resolved."""
 
-    rejection_reason: Optional[str]
+    rejection_reason: str | None
     """Non-None when the proposal was rejected (state unchanged)."""
 
 

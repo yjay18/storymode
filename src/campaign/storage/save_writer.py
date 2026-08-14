@@ -17,7 +17,7 @@ class SaveWriter:
 
     def __init__(self, root_dir: Path) -> None:
         self.root_dir = root_dir.resolve()
-        
+
     def _resolve_save_dir(self, campaign_id: EntityId, save_id: EntityId) -> Path:
         save_dir = self.root_dir / "campaigns" / campaign_id / "saves" / save_id
         resolved = save_dir.resolve()
@@ -43,7 +43,7 @@ class SaveWriter:
         """Append Pydantic models to a JSONL file."""
         if not models:
             return
-            
+
         try:
             with path.open("a", encoding="utf-8") as f:
                 for model in models:
@@ -53,24 +53,30 @@ class SaveWriter:
         except Exception as e:
             raise SaveError(f"Failed to append to {path}: {e}") from e
 
-    def write_state(self, state: RuntimeState, meta: SaveMeta, memory: NarrativeMemory | None) -> None:
+    def write_state(
+        self, state: RuntimeState, meta: SaveMeta, memory: NarrativeMemory | None
+    ) -> None:
         """Write authoritative state, meta, and optional memory atomically."""
         save_dir = self._resolve_save_dir(state.campaign_id, state.save_id)
         save_dir.mkdir(parents=True, exist_ok=True)
-        
+
         self._atomic_write_json(save_dir / "state.json", state)
         self._atomic_write_json(save_dir / "save_meta.json", meta)
-        
+
         if memory is not None:
             self._atomic_write_json(save_dir / "narrative_memory.json", memory)
 
-    def append_journal(self, campaign_id: EntityId, save_id: EntityId, events: list[JournalEvent]) -> None:
+    def append_journal(
+        self, campaign_id: EntityId, save_id: EntityId, events: list[JournalEvent]
+    ) -> None:
         """Append events to the journal log."""
         save_dir = self._resolve_save_dir(campaign_id, save_id)
         save_dir.mkdir(parents=True, exist_ok=True)
         self._append_jsonl(save_dir / "journal.jsonl", events)
 
-    def append_rolls(self, campaign_id: EntityId, save_id: EntityId, rolls: list[RollRecord]) -> None:
+    def append_rolls(
+        self, campaign_id: EntityId, save_id: EntityId, rolls: list[RollRecord]
+    ) -> None:
         """Append rolls to the roll log."""
         save_dir = self._resolve_save_dir(campaign_id, save_id)
         save_dir.mkdir(parents=True, exist_ok=True)

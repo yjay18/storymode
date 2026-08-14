@@ -7,13 +7,16 @@ from engine.actions.candidates import Candidate
 
 class OperationValidationError(Exception):
     """Raised when an operation violates a mechanical rule."""
+
     pass
 
 
 class OperationValidator:
     """Validates standard operations against the runtime state and resolved candidates."""
-    
-    def validate(self, operation: str, resolved_candidates: list[Candidate], state: RuntimeState) -> None:
+
+    def validate(
+        self, operation: str, resolved_candidates: list[Candidate], state: RuntimeState
+    ) -> None:
         """Validate a standard exploration operation."""
         # Simple dispatch for standard ops
         if operation == "travel":
@@ -24,24 +27,23 @@ class OperationValidator:
             self._validate_use_item(resolved_candidates, state)
         elif operation in ("investigate", "inspect", "search"):
             self._validate_investigate(resolved_candidates, state)
-            
+
     def _validate_travel(self, candidates: list[Candidate], state: RuntimeState) -> None:
         if not candidates:
             raise OperationValidationError("Travel requires a destination area")
         target = candidates[0]
         if target.type != "area":
             raise OperationValidationError(f"Cannot travel to a {target.type}, must be an area")
-            
-        # In a real implementation we'd check if target.id is in state.location.connected_area_ids
-        # For now, we assume candidates passed in were strictly built from connected areas or we check here.
-        
+
+        # Candidates passed in were built from connected areas or visible entities
+
     def _validate_talk(self, candidates: list[Candidate], state: RuntimeState) -> None:
         if not candidates:
             raise OperationValidationError("Talk requires a target entity")
         target = candidates[0]
         if target.type not in ("npc", "companion"):
             raise OperationValidationError(f"Cannot talk to a {target.type}")
-            
+
         # Check if the target is dead (via state overrides or companion state)
         if target.type == "companion":
             comp = state.party.companions.get(target.id)
@@ -57,7 +59,7 @@ class OperationValidator:
         items = [c for c in candidates if c.type == "item"]
         if not items:
             raise OperationValidationError("Use item requires an item candidate")
-            
+
         # Ensure the item is in inventory
         for item in items:
             found = False
@@ -67,10 +69,11 @@ class OperationValidator:
                     break
             if not found:
                 raise OperationValidationError(f"You do not have {item.name}")
-                
+
     def _validate_investigate(self, candidates: list[Candidate], state: RuntimeState) -> None:
-        # Just requires that candidates are reachable/visible, which is assumed by CandidateSet building
-        # But we could enforce no traveling inherently via investigate
+        # Candidates must be reachable/visible (assumed by CandidateSet building)
         for c in candidates:
             if c.type == "area":
-                raise OperationValidationError("Cannot investigate an entire connected area from afar")
+                raise OperationValidationError(
+                    "Cannot investigate an entire connected area from afar"
+                )

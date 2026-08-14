@@ -27,11 +27,7 @@ def calculate_fingerprint(file_contents: Mapping[str, Any]) -> str:
         content = file_contents[filename]
 
         # Parse if it's a string
-        if isinstance(content, str):
-            parsed = json.loads(content)
-        else:
-            # Create a copy so we don't mutate the original dict
-            parsed = dict(content)
+        parsed = json.loads(content) if isinstance(content, str) else dict(content)
 
         # Strip content_fingerprint if it exists
         if filename == "campaign.json" and "content_fingerprint" in parsed:

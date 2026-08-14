@@ -1,4 +1,5 @@
 """Generate minimal valid campaign using the actual models."""
+
 import sys
 from datetime import UTC, datetime
 from pathlib import Path
@@ -69,7 +70,7 @@ def generate() -> None:
         source_summary="Summary",
         status=CampaignStatus.DRAFT,
         created_at=datetime.now(UTC),
-        art_style_ref="style-1"
+        art_style_ref="style-1",
     )
 
     style = StyleBibleFile(
@@ -84,7 +85,7 @@ def generate() -> None:
                 smells=["smell"],
                 materials=["mat"],
                 lighting=["light"],
-                textures=["tex"]
+                textures=["tex"],
             ),
             banned_phrases=["Phrase"],
             description_requirements="Desc",
@@ -92,8 +93,8 @@ def generate() -> None:
             naming_conventions="Note",
             art_direction="Art",
             examples=["Example"],
-            anti_examples=["Example"]
-        )
+            anti_examples=["Example"],
+        ),
     )
 
     world = WorldFile(
@@ -106,7 +107,7 @@ def generate() -> None:
                 rules=["Rule"],
                 costs=["Cost"],
                 access_restrictions=["Access"],
-                side_effects=["Side Effect"]
+                side_effects=["Side Effect"],
             ),
             material_conditions=["Condition"],
             values=["Value"],
@@ -119,17 +120,11 @@ def generate() -> None:
                     hypocrisy="Hypocrisy",
                     language_style="Style",
                     visual_markings="Markings",
-                    relationship_edges=[]
+                    relationship_edges=[],
                 )
             ],
-            major_locations=[
-                MajorLocation(
-                    id="loc-1",
-                    name="Loc",
-                    summary="Summary"
-                )
-            ]
-        )
+            major_locations=[MajorLocation(id="loc-1", name="Loc", summary="Summary")],
+        ),
     )
 
     areas = AreasFile(
@@ -153,7 +148,7 @@ def generate() -> None:
                         initial_disposition=0,
                         knowledge_tags=[],
                         personal_goal="Goal",
-                        interaction_hooks=[]
+                        interaction_hooks=[],
                     )
                 ],
                 objects=[
@@ -165,7 +160,7 @@ def generate() -> None:
                         state="State",
                         interactable_tags=[],
                         capability_requirements=[],
-                        allowed_effect_ids=[]
+                        allowed_effect_ids=[],
                     )
                 ],
                 encounters=[
@@ -175,7 +170,7 @@ def generate() -> None:
                         condition="Condition",
                         weight=1,
                         escape_policy_id="milestone-1",
-                        consequence_ids=[]
+                        consequence_ids=[],
                     )
                 ],
                 secrets=[
@@ -184,13 +179,13 @@ def generate() -> None:
                         summary="Secret",
                         lead_fact_ids=[],
                         reveal_conditions=[],
-                        core_clue=False
+                        core_clue=False,
                     )
                 ],
                 local_faction_ids=["fac-1"],
-                connected_area_ids=[]
+                connected_area_ids=[],
             )
-        ]
+        ],
     )
 
     characters = CharactersFile(
@@ -205,7 +200,7 @@ def generate() -> None:
                 stat_bonus_value=2,
                 starting_item_ids=["item-1"],
                 starting_skill_ids=["skill-1"],
-                starting_fact_ids=["fact-1"]
+                starting_fact_ids=["fact-1"],
             )
         ],
         companions=[
@@ -222,13 +217,15 @@ def generate() -> None:
                 availability_rules=["Rule"],
                 story_hook_ids=["milestone-1"],
                 skill_tree_id="tree-1",
-                base_stats=StatBlock(strength=8, dexterity=8, intelligence=8, charisma=8, constitution=8, wisdom=8),
+                base_stats=StatBlock(
+                    strength=8, dexterity=8, intelligence=8, charisma=8, constitution=8, wisdom=8
+                ),
                 minimum_usable_actions=1,
                 starting_skill_ids=["skill-1"],
-                starting_loadout=["skill-1"]
+                starting_loadout=["skill-1"],
             )
         ],
-        major_npcs=[]
+        major_npcs=[],
     )
 
     skills = SkillsFile(
@@ -244,12 +241,10 @@ def generate() -> None:
                 tags=["tag1"],
                 levels=[
                     CombatSkillLevel(
-                        level=i,
-                        mana_cost=0,
-                        target_rule=TargetRule.SINGLE_ENEMY,
-                        base_effects=[]
-                    ) for i in range(1, 6)
-                ]
+                        level=i, mana_cost=0, target_rule=TargetRule.SINGLE_ENEMY, base_effects=[]
+                    )
+                    for i in range(1, 6)
+                ],
             )
         ],
         non_combat_skills=[
@@ -259,18 +254,20 @@ def generate() -> None:
                 description="E",
                 stat=StatName.STRENGTH,
                 availability_tags=["tag1"],
-                capability_tags=["tag2"]
+                capability_tags=["tag2"],
             )
         ],
-        point_buy=PointBuyDefinition(cost_map={8: 0, 9: 1, 10: 2, 11: 3, 12: 4, 13: 5, 14: 7, 15: 9}),
+        point_buy=PointBuyDefinition(
+            cost_map={8: 0, 9: 1, 10: 2, 11: 3, 12: 4, 13: 5, 14: 7, 15: 9}
+        ),
         skill_trees=[
             SkillTree(
                 id="tree-1",
                 nodes=[SkillTreeNode(id="node-1", skill_id="skill-1", cost=1)],
-                edges=[]
+                edges=[],
             )
         ],
-        fusion_recipes=[]
+        fusion_recipes=[],
     )
 
     items = ItemsFile(
@@ -284,18 +281,14 @@ def generate() -> None:
                 rarity=ItemRarity.COMMON,
                 flavour_text="Flavour",
                 mechanics=[
-                    EffectDefinition(
-                        effect_id="eff-1",
-                        kind=EffectKind.DAMAGE,
-                        magnitude=1
-                    )
+                    EffectDefinition(effect_id="eff-1", kind=EffectKind.DAMAGE, magnitude=1)
                 ],
                 provenance="Prov",
                 requirements=[],
                 capability_tags=[],
-                max_stack=1
+                max_stack=1,
             )
-        ]
+        ],
     )
 
     enemies = EnemiesFile(
@@ -320,15 +313,10 @@ def generate() -> None:
                 behavior_profile="Behavior",
                 portrait_prompt="Portrait",
                 loot_table=[
-                    LootEntry(
-                        item_id="item-1",
-                        minimum_quantity=1,
-                        maximum_quantity=1,
-                        weight=1
-                    )
-                ]
+                    LootEntry(item_id="item-1", minimum_quantity=1, maximum_quantity=1, weight=1)
+                ],
             )
-        ]
+        ],
     )
 
     plot = PlotFile(
@@ -347,7 +335,7 @@ def generate() -> None:
                 required_outcome_ids=[],
                 difficulty_band="easy",
                 cycle_allowed=False,
-                valid_next_milestone_ids=["milestone-2"]
+                valid_next_milestone_ids=["milestone-2"],
             ),
             MilestoneDefinition(
                 id="milestone-2",
@@ -360,8 +348,8 @@ def generate() -> None:
                 required_outcome_ids=[],
                 difficulty_band="expert",
                 cycle_allowed=False,
-                valid_next_milestone_ids=[]
-            )
+                valid_next_milestone_ids=[],
+            ),
         ],
         start_milestone_ids=["milestone-1"],
         ending_milestone_ids=["milestone-2"],
@@ -375,9 +363,9 @@ def generate() -> None:
                 preconditions=[],
                 expiry_conditions=[],
                 allowed_outcome_ids=[],
-                referenced_entity_ids=[]
+                referenced_entity_ids=[],
             )
-        ]
+        ],
     )
 
     balance = BalanceFile(
@@ -389,36 +377,38 @@ def generate() -> None:
                 enemy_hp_ratio=Rational(numerator=7, denominator=10),
                 enemy_damage_ratio=Rational(numerator=1, denominator=2),
                 enemy_armour_ratio=Rational(numerator=1, denominator=1),
-                luck_capacity=3
+                luck_capacity=3,
             ),
             normal=DifficultyProfile(
                 dc_adjustment=0,
                 enemy_hp_ratio=Rational(numerator=1, denominator=1),
                 enemy_damage_ratio=Rational(numerator=1, denominator=1),
                 enemy_armour_ratio=Rational(numerator=1, denominator=1),
-                luck_capacity=2
+                luck_capacity=2,
             ),
             hard=DifficultyProfile(
                 dc_adjustment=2,
                 enemy_hp_ratio=Rational(numerator=5, denominator=4),
                 enemy_damage_ratio=Rational(numerator=3, denominator=2),
                 enemy_armour_ratio=Rational(numerator=1, denominator=1),
-                luck_capacity=1
-            )
+                luck_capacity=1,
+            ),
         ),
         level_xp_thresholds={1: 0, 2: 10},
-        dc_bands=DcBands(easy=8, standard=12, difficult=15, expert=18, exceptional=22, near_impossible=25),
+        dc_bands=DcBands(
+            easy=8, standard=12, difficult=15, expert=18, exceptional=22, near_impossible=25
+        ),
         modifier_limits={"max_companion_stat_cost": 35},
         effect_limits={},
         enemy_power_formula={"max_loot_weight_ratio": 1.0},
         encounter_targets={},
         fusion_limits={"max_power_budget": 100},
-        boss_allowances={}
+        boss_allowances={},
     )
-    
+
     base_dir = Path("tests/fixtures/campaigns/valid-minimal")
     base_dir.mkdir(parents=True, exist_ok=True)
-    
+
     files = {
         "campaign.json": meta,
         "style.json": style,
@@ -429,12 +419,13 @@ def generate() -> None:
         "items.json": items,
         "enemies.json": enemies,
         "plot.json": plot,
-        "balance.json": balance
+        "balance.json": balance,
     }
-    
+
     for filename, model in files.items():
         with open(base_dir / filename, "w", encoding="utf-8") as f:
             f.write(model.model_dump_json(indent=2))
+
 
 if __name__ == "__main__":
     generate()

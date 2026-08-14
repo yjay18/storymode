@@ -1,9 +1,7 @@
 """Tests for the check_scaffold script."""
 
 import shutil
-import sys
 from pathlib import Path
-
 
 from scripts.check_scaffold import check_markdown_links, check_required_docs
 

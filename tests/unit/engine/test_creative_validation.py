@@ -22,7 +22,9 @@ def mock_state() -> RuntimeState:
         id="player-1",
         name="Hero",
         background_id="bg-1",
-        stats=StatBlock(strength=10, dexterity=10, intelligence=10, charisma=10, constitution=10, wisdom=10),
+        stats=StatBlock(
+            strength=10, dexterity=10, intelligence=10, charisma=10, constitution=10, wisdom=10
+        ),
         hp=ResourceValue(current=10, maximum=10),
         armour=ResourceValue(current=0, maximum=5),
         mana=ResourceValue(current=5, maximum=5),
@@ -30,7 +32,7 @@ def mock_state() -> RuntimeState:
         speed=30,
         luck_capacity=3,
         inventory=[InventoryEntry(item_id="crowbar", quantity=1)],
-        non_combat_skill_ranks={"athletics": 2}
+        non_combat_skill_ranks={"athletics": 2},
     )
     return RuntimeState(
         campaign_id="camp-1",
@@ -57,15 +59,15 @@ def test_creative_validate_success(mock_state: RuntimeState) -> None:
             state="locked",
             interactable_tags=[],
             capability_requirements=["crowbar"],
-            allowed_effect_ids=[]
+            allowed_effect_ids=[],
         )
     }
-    
+
     validator.validate(
         capability_mentions=["crowbar"],
         resolved_candidates=[Candidate("crate-1", "object", "Wooden Crate")],
         area_objects=objects,
-        state=mock_state
+        state=mock_state,
     )
 
 
@@ -80,16 +82,16 @@ def test_creative_validate_missing_capability(mock_state: RuntimeState) -> None:
             state="locked",
             interactable_tags=[],
             capability_requirements=["laser"],
-            allowed_effect_ids=[]
+            allowed_effect_ids=[],
         )
     }
-    
+
     with pytest.raises(OperationValidationError, match="requires one of: laser"):
         validator.validate(
             capability_mentions=["crowbar"],
             resolved_candidates=[Candidate("crate-1", "object", "Wooden Crate")],
             area_objects=objects,
-            state=mock_state
+            state=mock_state,
         )
 
 
@@ -104,14 +106,14 @@ def test_creative_validate_no_requirements(mock_state: RuntimeState) -> None:
             state="locked",
             interactable_tags=[],
             capability_requirements=[],
-            allowed_effect_ids=[]
+            allowed_effect_ids=[],
         )
     }
-    
+
     # Should not raise
     validator.validate(
         capability_mentions=[],
         resolved_candidates=[Candidate("crate-1", "object", "Wooden Crate")],
         area_objects=objects,
-        state=mock_state
+        state=mock_state,
     )

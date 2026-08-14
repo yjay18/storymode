@@ -9,9 +9,7 @@ from domain.rules.point_buy import apply_background_bonus, validate_point_buy
 
 @pytest.fixture
 def point_buy_def() -> PointBuyDefinition:
-    return PointBuyDefinition(
-        cost_map={8: 0, 9: 1, 10: 2, 11: 3, 12: 4, 13: 5, 14: 7, 15: 9}
-    )
+    return PointBuyDefinition(cost_map={8: 0, 9: 1, 10: 2, 11: 3, 12: 4, 13: 5, 14: 7, 15: 9})
 
 
 @pytest.fixture
@@ -38,7 +36,7 @@ def test_validate_point_buy_valid(point_buy_def: PointBuyDefinition) -> None:
         StatName.WISDOM: 10,
         StatName.CHARISMA: 8,
     }
-    
+
     result = validate_point_buy(stats, point_buy_def)
     assert result.is_valid
     assert result.total_cost == 27
@@ -52,7 +50,7 @@ def test_validate_point_buy_invalid_total(point_buy_def: PointBuyDefinition) -> 
         StatName.DEXTERITY: 14,
         StatName.CONSTITUTION: 13,
         StatName.INTELLIGENCE: 12,
-        StatName.WISDOM: 9, # 9 costs 1, so total is 26
+        StatName.WISDOM: 9,  # 9 costs 1, so total is 26
         StatName.CHARISMA: 8,
     }
     result = validate_point_buy(stats, point_buy_def)
@@ -61,7 +59,7 @@ def test_validate_point_buy_invalid_total(point_buy_def: PointBuyDefinition) -> 
     assert "exactly 27" in result.errors[0]
 
     # 28 points
-    stats[StatName.WISDOM] = 11 # 11 costs 3, so total is 28
+    stats[StatName.WISDOM] = 11  # 11 costs 3, so total is 28
     result = validate_point_buy(stats, point_buy_def)
     assert not result.is_valid
     assert "exactly 27" in result.errors[0]
@@ -70,7 +68,7 @@ def test_validate_point_buy_invalid_total(point_buy_def: PointBuyDefinition) -> 
 def test_validate_point_buy_boundary_scores(point_buy_def: PointBuyDefinition) -> None:
     # Out of bounds high
     stats = {
-        StatName.STRENGTH: 16, # Invalid, > 15
+        StatName.STRENGTH: 16,  # Invalid, > 15
         StatName.DEXTERITY: 14,
         StatName.CONSTITUTION: 12,
         StatName.INTELLIGENCE: 10,
@@ -103,7 +101,7 @@ def test_validate_point_buy_malformed_stats(point_buy_def: PointBuyDefinition) -
 
     # Extra stat
     stats[StatName.CHARISMA] = 8
-    stats["luck"] = 10 # type: ignore
+    stats["luck"] = 10  # type: ignore
     result = validate_point_buy(stats, point_buy_def)
     assert not result.is_valid
     assert any("Extra stats" in err for err in result.errors)
@@ -120,10 +118,10 @@ def test_apply_background_bonus_valid(
         StatName.WISDOM: 10,
         StatName.CHARISMA: 8,
     }
-    
+
     # Input unchanged
     original_strength = stats[StatName.STRENGTH]
-    
+
     result = apply_background_bonus(stats, background, point_buy_def)
     assert result.is_valid
     assert result.stats is not None
@@ -143,7 +141,7 @@ def test_apply_background_bonus_rejects_18(
         StatName.WISDOM: 10,
         StatName.CHARISMA: 8,
     }
-    
+
     result = apply_background_bonus(stats, background, point_buy_def)
     assert not result.is_valid
     assert any("exceeds maximum 17" in err for err in result.errors)

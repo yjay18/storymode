@@ -23,22 +23,22 @@ class PendingCheck(FrozenModel):
     check_id: EntityId
     source_command_id: EntityId
     source_revision: int = Field(ge=0)
-    
+
     original_input: DisplayString
     resolved_operation: DisplayString
     actor_id: EntityId
     target_ids: list[EntityId] = Field(default_factory=list)
-    
+
     stat: StatName | None = None
     skill_id: EntityId | None = None
-    
+
     named_modifiers: dict[DisplayString, int] = Field(default_factory=dict)
     semantic_difficulty: DisplayString
-    
+
     base_dc: int = Field(default=10, ge=1)
     difficulty_adjustment: int = Field(default=0)
     final_dc: int = Field(default=10, ge=1)
-    
+
     stakes: DisplayString
     allowed_outcomes: CheckOutcomes
 

@@ -8,9 +8,7 @@ from domain.models.world_state import LocationState, NpcOverride
 
 
 def make_companion(
-    comp_id: str,
-    is_available: bool = True,
-    life_state: LifeState = LifeState.ALIVE
+    comp_id: str, is_available: bool = True, life_state: LifeState = LifeState.ALIVE
 ) -> CompanionRuntimeState:
     return CompanionRuntimeState(
         id=comp_id,
@@ -37,9 +35,9 @@ def test_party_max_three_active() -> None:
     comp2 = make_companion("comp-2")
     comp3 = make_companion("comp-3")
     comp4 = make_companion("comp-4")
-    
+
     companions = {c.id: c for c in [comp1, comp2, comp3, comp4]}
-    
+
     with pytest.raises(ValueError, match="more than 3 active companions"):
         PartyState(
             protagonist_id="hero",
@@ -51,7 +49,7 @@ def test_party_max_three_active() -> None:
 def test_party_protagonist_duplication() -> None:
     # Protagonist in active list
     comp1 = make_companion("hero")
-    
+
     with pytest.raises(ValueError, match="protagonist cannot be in active_companion_ids"):
         PartyState(
             protagonist_id="hero",
@@ -111,7 +109,7 @@ def test_location_and_overrides_allow_unknown_values() -> None:
     # but Pydantic's FrozenModel (with extra="forbid") handles this.
     loc = LocationState(area_id="town", discovered_area_ids={"town", "forest"})
     assert loc.area_id == "town"
-    
+
     with pytest.raises(ValueError):
         # extra field
-        NpcOverride(location_area_id="town", unknown_field=True) # type: ignore
+        NpcOverride(location_area_id="town", unknown_field=True)  # type: ignore

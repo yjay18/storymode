@@ -27,7 +27,9 @@ def base_player() -> PlayerState:
         id="hero",
         name="Hero",
         background_id="bg-1",
-        stats=StatBlock(strength=10, dexterity=10, intelligence=10, charisma=10, constitution=10, wisdom=10),
+        stats=StatBlock(
+            strength=10, dexterity=10, intelligence=10, charisma=10, constitution=10, wisdom=10
+        ),
         hp=ResourceValue(current=10, maximum=10),
         armour=ResourceValue(current=0, maximum=5),
         mana=ResourceValue(current=10, maximum=10),
@@ -45,7 +47,7 @@ def test_runtime_state_invariants(base_player: PlayerState) -> None:
             canonical_request_hash="hash",
             committed_revision=i,
             result_kind="success",
-            safe_result_summary="ok"
+            safe_result_summary="ok",
         )
         for i in range(101)
     ]
@@ -71,7 +73,7 @@ def test_runtime_state_invariants(base_player: PlayerState) -> None:
             canonical_request_hash="hash",
             committed_revision=5,
             result_kind="success",
-            safe_result_summary="ok"
+            safe_result_summary="ok",
         )
     ]
     with pytest.raises(ValueError, match="cannot trail a committed command receipt"):
@@ -80,7 +82,7 @@ def test_runtime_state_invariants(base_player: PlayerState) -> None:
             campaign_version="1.0.0",
             campaign_fingerprint="fp",
             save_id="save-1",
-            revision=4, # < 5
+            revision=4,  # < 5
             last_command_receipts=bad_receipts,
             difficulty=DefaultDifficulty.NORMAL,
             player=base_player,
@@ -91,8 +93,8 @@ def test_runtime_state_invariants(base_player: PlayerState) -> None:
 
 
 def test_audit_logs_utc(utc_now: datetime.datetime) -> None:
-    naive_dt = datetime.datetime.now()
-    
+    naive_dt = datetime.datetime.now(datetime.UTC).replace(tzinfo=None)
+
     with pytest.raises(ValueError, match="recorded_at must be UTC"):
         JournalEvent(
             event_id="e-1",
@@ -103,7 +105,7 @@ def test_audit_logs_utc(utc_now: datetime.datetime) -> None:
             command_id="cmd-1",
             event_type="info",
         )
-        
+
     with pytest.raises(ValueError, match="recorded_at must be UTC"):
         RollRecord(
             roll_id="r-1",
@@ -130,11 +132,11 @@ def test_roll_record_bounds(utc_now: datetime.datetime) -> None:
             command_id="cmd-1",
             reason="attack",
             die_sides=20,
-            raw_rolls=[21], # invalid for d20
+            raw_rolls=[21],  # invalid for d20
             selected_roll_index=0,
             total=21,
         )
-        
+
     # Invalid selected index
     with pytest.raises(ValueError, match="selected_roll_index is out of bounds"):
         RollRecord(
@@ -146,7 +148,7 @@ def test_roll_record_bounds(utc_now: datetime.datetime) -> None:
             reason="attack",
             die_sides=20,
             raw_rolls=[10],
-            selected_roll_index=1, # size is 1, max index is 0
+            selected_roll_index=1,  # size is 1, max index is 0
             total=10,
         )
 
@@ -161,12 +163,11 @@ def test_narrative_memory_size_limit() -> None:
         current_objective="Obj",
     )
     assert mem.campaign_id == "camp-1"
-    
-    # Create a large dictionary to exceed the 32 KiB limit without exceeding DisplayString 120 char limit
-    large_dict = {
-        f"entity-{i:04d}": "A" * 100 for i in range(400)
-    }
-    
+
+    # Create a large dictionary to exceed the 32 KiB limit
+    # without exceeding DisplayString 120 char limit
+    large_dict = {f"entity-{i:04d}": "A" * 100 for i in range(400)}
+
     with pytest.raises(ValueError, match="exceeds 32 KiB"):
         NarrativeMemory(
             campaign_id="camp-1",

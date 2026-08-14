@@ -34,10 +34,10 @@ def test_migration_runner_steps() -> None:
     registry = MigrationRegistry()
     registry.register(2, lambda s: {**s, "added_by_v2": True})
     registry.register(3, lambda s: {**s, "added_by_v3": True})
-    
+
     runner = MigrationRunner(registry)
     state = {"schema_version": 1, "data": "foo"}
-    
+
     result = runner.run_migrations(state, target_version=3)
     assert result["schema_version"] == 3
     assert result["added_by_v2"] is True
@@ -47,9 +47,9 @@ def test_migration_runner_steps() -> None:
 def test_migration_runner_missing_step() -> None:
     registry = MigrationRegistry()
     registry.register(3, lambda s: {**s, "added_by_v3": True})
-    
+
     runner = MigrationRunner(registry)
     state = {"schema_version": 1, "data": "foo"}
-    
+
     with pytest.raises(ValueError, match="Missing migration step for version 2"):
         runner.run_migrations(state, target_version=3)

@@ -1,4 +1,5 @@
 """Generate a minimal valid campaign pack."""
+
 import json
 from pathlib import Path
 
@@ -6,7 +7,7 @@ from pathlib import Path
 def main() -> None:
     base_dir = Path("tests/fixtures/campaigns/valid-minimal")
     base_dir.mkdir(parents=True, exist_ok=True)
-    
+
     # 1. campaign.json
     campaign = {
         "schema_version": 1,
@@ -14,9 +15,9 @@ def main() -> None:
         "campaign_version": "1.0.0",
         "title": "Minimal",
         "author": "Test",
-        "description": "Minimal valid campaign"
+        "description": "Minimal valid campaign",
     }
-    
+
     # 2. style.json
     style = {
         "schema_version": 1,
@@ -28,10 +29,10 @@ def main() -> None:
             "prose_style": "Simple",
             "dialogue_conventions": "Direct",
             "narrator_perspective": "first_person_limited",
-            "environmental_descriptions": "Brief"
-        }
+            "environmental_descriptions": "Brief",
+        },
     }
-    
+
     # 3. world.json
     world = {
         "schema_version": 1,
@@ -52,7 +53,7 @@ def main() -> None:
                     "hypocrisy": "Hypocrisy",
                     "language_style": "Style",
                     "visual_markings": "Markings",
-                    "relationship_edges": []
+                    "relationship_edges": [],
                 }
             ],
             "major_locations": [
@@ -60,12 +61,12 @@ def main() -> None:
                     "id": "loc-1",
                     "name": "Loc",
                     "description": "Loc",
-                    "discovery_milestone_id": "milestone-1"
+                    "discovery_milestone_id": "milestone-1",
                 }
-            ]
-        }
+            ],
+        },
     }
-    
+
     # 4. areas.json
     areas = {
         "schema_version": 1,
@@ -79,11 +80,11 @@ def main() -> None:
                 "description": "Area",
                 "environment_tags": ["tag1"],
                 "local_faction_ids": ["fac-1"],
-                "connected_area_ids": []
+                "connected_area_ids": [],
             }
-        ]
+        ],
     }
-    
+
     # 5. characters.json
     characters = {
         "schema_version": 1,
@@ -98,10 +99,10 @@ def main() -> None:
                     "stat_bonus_target": "strength",
                     "stat_bonus_value": 2,
                     "starting_item_ids": ["item-1"],
-                    "starting_skill_ids": ["skill-1"]
+                    "starting_skill_ids": ["skill-1"],
                 }
             ],
-            "starting_milestone_ids": ["milestone-1"]
+            "starting_milestone_ids": ["milestone-1"],
         },
         "companions": [
             {
@@ -115,7 +116,7 @@ def main() -> None:
                     "intelligence": 8,
                     "charisma": 8,
                     "constitution": 8,
-                    "wisdom": 8
+                    "wisdom": 8,
                 },
                 "minimum_usable_actions": 1,
                 "starting_loadout": ["skill-1"],
@@ -123,11 +124,11 @@ def main() -> None:
                 "personality_traits": ["trait1"],
                 "dialogue_style": "Style",
                 "loyalty_drivers": ["Loyalty"],
-                "portrait_prompt": "Portrait"
+                "portrait_prompt": "Portrait",
             }
-        ]
+        ],
     }
-    
+
     # 6. skills.json
     skills = {
         "schema_version": 1,
@@ -146,37 +147,37 @@ def main() -> None:
                         "target_rule": "single_enemy",
                         "base_effects": [],
                         "tags": ["tag1"],
-                        "upgrade_prerequisites": []
+                        "upgrade_prerequisites": [],
                     },
                     {
                         "mana_cost": 0,
                         "target_rule": "single_enemy",
                         "base_effects": [],
                         "tags": ["tag1"],
-                        "upgrade_prerequisites": []
+                        "upgrade_prerequisites": [],
                     },
                     {
                         "mana_cost": 0,
                         "target_rule": "single_enemy",
                         "base_effects": [],
                         "tags": ["tag1"],
-                        "upgrade_prerequisites": []
+                        "upgrade_prerequisites": [],
                     },
                     {
                         "mana_cost": 0,
                         "target_rule": "single_enemy",
                         "base_effects": [],
                         "tags": ["tag1"],
-                        "upgrade_prerequisites": []
+                        "upgrade_prerequisites": [],
                     },
                     {
                         "mana_cost": 0,
                         "target_rule": "single_enemy",
                         "base_effects": [],
                         "tags": ["tag1"],
-                        "upgrade_prerequisites": []
-                    }
-                ]
+                        "upgrade_prerequisites": [],
+                    },
+                ],
             }
         ],
         "non_combat_skills": [
@@ -187,24 +188,20 @@ def main() -> None:
                 "associated_stat": "strength",
                 "tags": ["tag1"],
                 "discovery_tags": [],
-                "capability_tags": []
+                "capability_tags": [],
             }
         ],
-        "point_buy": {
-            "initial_points": 27
-        },
+        "point_buy": {"initial_points": 27},
         "skill_trees": [
             {
                 "id": "tree-1",
-                "nodes": [
-                    {"id": "node-1", "skill_id": "skill-1", "cost": 1}
-                ],
-                "edges": []
+                "nodes": [{"id": "node-1", "skill_id": "skill-1", "cost": 1}],
+                "edges": [],
             }
         ],
-        "fusion_recipes": []
+        "fusion_recipes": [],
     }
-    
+
     # 7. items.json
     items = {
         "schema_version": 1,
@@ -221,11 +218,11 @@ def main() -> None:
                 "provenance": "Prov",
                 "requirements": [],
                 "capability_tags": [],
-                "max_stack": 1
+                "max_stack": 1,
             }
-        ]
+        ],
     }
-    
+
     # 8. enemies.json
     enemies = {
         "schema_version": 1,
@@ -248,17 +245,12 @@ def main() -> None:
                 "escape_policy_id": "milestone-1",
                 "combat_skill_ids": ["skill-1"],
                 "loot_table": [
-                    {
-                        "item_id": "item-1", 
-                        "minimum_quantity": 1,
-                        "maximum_quantity": 1, 
-                        "weight": 1
-                    }
-                ]
+                    {"item_id": "item-1", "minimum_quantity": 1, "maximum_quantity": 1, "weight": 1}
+                ],
             }
-        ]
+        ],
     }
-    
+
     # 9. plot.json
     plot = {
         "schema_version": 1,
@@ -277,7 +269,7 @@ def main() -> None:
                 "forbidden_changes": [],
                 "required_outcome_ids": [],
                 "cycle_allowed": False,
-                "valid_next_milestone_ids": ["milestone-2"]
+                "valid_next_milestone_ids": ["milestone-2"],
             },
             {
                 "id": "milestone-2",
@@ -290,8 +282,8 @@ def main() -> None:
                 "forbidden_changes": [],
                 "required_outcome_ids": [],
                 "cycle_allowed": False,
-                "valid_next_milestone_ids": []
-            }
+                "valid_next_milestone_ids": [],
+            },
         ],
         "start_milestone_ids": ["milestone-1"],
         "ending_milestone_ids": ["milestone-2"],
@@ -305,11 +297,11 @@ def main() -> None:
                 "preconditions": [],
                 "expiry_conditions": [],
                 "allowed_outcome_ids": [],
-                "referenced_entity_ids": []
+                "referenced_entity_ids": [],
             }
-        ]
+        ],
     }
-    
+
     # 10. balance.json
     balance = {
         "schema_version": 1,
@@ -321,49 +313,40 @@ def main() -> None:
                 "enemy_hp_ratio": "7/10",
                 "enemy_damage_ratio": "1/2",
                 "enemy_armour_ratio": "1/1",
-                "luck_capacity": 3
+                "luck_capacity": 3,
             },
             "normal": {
                 "dc_adjustment": 0,
                 "enemy_hp_ratio": "1/1",
                 "enemy_damage_ratio": "1/1",
                 "enemy_armour_ratio": "1/1",
-                "luck_capacity": 2
+                "luck_capacity": 2,
             },
             "hard": {
                 "dc_adjustment": 2,
                 "enemy_hp_ratio": "5/4",
                 "enemy_damage_ratio": "3/2",
                 "enemy_armour_ratio": "1/1",
-                "luck_capacity": 1
-            }
+                "luck_capacity": 1,
+            },
         },
-        "level_xp_thresholds": {
-            "1": 0,
-            "2": 10
-        },
+        "level_xp_thresholds": {"1": 0, "2": 10},
         "dc_bands": {
             "easy": 8,
             "standard": 12,
             "difficult": 15,
             "expert": 18,
             "exceptional": 22,
-            "near_impossible": 25
+            "near_impossible": 25,
         },
-        "modifier_limits": {
-            "max_companion_stat_cost": 35
-        },
+        "modifier_limits": {"max_companion_stat_cost": 35},
         "effect_limits": {},
-        "enemy_power_formula": {
-            "max_loot_weight_ratio": 1.0
-        },
+        "enemy_power_formula": {"max_loot_weight_ratio": 1.0},
         "encounter_targets": {},
-        "fusion_limits": {
-            "max_power_budget": 100
-        },
-        "boss_allowances": {}
+        "fusion_limits": {"max_power_budget": 100},
+        "boss_allowances": {},
     }
-    
+
     files = {
         "campaign.json": campaign,
         "style.json": style,
@@ -374,12 +357,13 @@ def main() -> None:
         "items.json": items,
         "enemies.json": enemies,
         "plot.json": plot,
-        "balance.json": balance
+        "balance.json": balance,
     }
-    
+
     for filename, data in files.items():
         with open(base_dir / filename, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=2)
+
 
 if __name__ == "__main__":
     main()

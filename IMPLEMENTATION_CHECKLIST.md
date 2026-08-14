@@ -260,7 +260,7 @@ storage formats, model providers, formulas, or field names.
   - Test: one valid case and one focused failing case for every rule/rounding boundary.
   - Accept: integer/rational math only; model-provided rating never bypasses recomputation.
 
-- [ ] **FIXTURE-01 — Create the smallest valid campaign and targeted invalid fixtures**
+- [x] **FIXTURE-01 — Create the smallest valid campaign and targeted invalid fixtures**
   - Depends: VALID-03, VALID-04
   - Read: all campaign schema docs and Milestone 1 fixture requirement.
   - Create: `tests/fixtures/campaign_minimal_valid/design/*.json` (nine files), a fixture
@@ -273,7 +273,7 @@ storage formats, model providers, formulas, or field names.
     code and JSON pointer; test fixture counts explicitly.
   - Accept: valid and invalid failures are for intended reasons, no generated/model data.
 
-- [ ] **CAMP-01 — Implement safe campaign directory loading**
+- [x] **CAMP-01 — Implement safe campaign directory loading**
   - Depends: FIXTURE-01
   - Read: campaign storage context, threat model, campaign/save ADR.
   - Create: `src/campaign/storage/{__init__,paths,json_io,repository}.py`,
@@ -286,7 +286,7 @@ storage formats, model providers, formulas, or field names.
   - Accept: no path from JSON/model controls disk; errors never expose unnecessary absolute
     paths; normal load makes no network calls.
 
-- [ ] **CAMP-02 — Implement canonical JSON and campaign fingerprint verification**
+- [x] **CAMP-02 — Implement canonical JSON and campaign fingerprint verification**
   - Depends: CAMP-01
   - Read: campaign schema meta fingerprint; ADR-003.
   - Create/change: `src/campaign/storage/canonical.py`, repository, and
@@ -298,7 +298,7 @@ storage formats, model providers, formulas, or field names.
     published mismatch, repeated calculation.
   - Accept: digest is platform-independent and contains no timestamps/paths.
 
-- [ ] **SCRIPT-01 — Implement campaign validation CLI**
+- [x] **SCRIPT-01 — Implement campaign validation CLI**
   - Depends: CAMP-02
   - Read: scripts context/manual and campaign diagnostic contract.
   - Create: `scripts/validate_campaign.py`, `tests/integration/scripts/test_validate_campaign.py`.
@@ -312,7 +312,7 @@ storage formats, model providers, formulas, or field names.
 
 ## Milestone 1C — Point buy and runtime-state contracts
 
-- [ ] **CHAR-01 — Implement and test exact 27-point-buy validation**
+- [x] **CHAR-01 — Implement and test exact 27-point-buy validation**
   - Depends: SCHEMA-05, SCHEMA-06
   - Read: progression point-buy section and campaign PointBuyDefinition.
   - Create: `src/domain/rules/{__init__,point_buy}.py`,
@@ -324,7 +324,7 @@ storage formats, model providers, formulas, or field names.
     +1/+2 valid, post-bonus 18 rejection; assert input unchanged.
   - Accept: no auto-spend, clamping, random stats, or campaign/world dependency.
 
-- [ ] **STATE-01 — Implement player inventory, skill, and resource runtime models**
+- [x] **STATE-01 — Implement player inventory, skill, and resource runtime models**
   - Depends: SCHEMA-06, SCHEMA-07, CHAR-01
   - Read: runtime-state Player section; progression and difficulty docs.
   - Create: `src/domain/models/{runtime_common,player_state}.py`,
@@ -335,7 +335,7 @@ storage formats, model providers, formulas, or field names.
   - Test: smallest valid and every invariant/boundary/extra-field failure.
   - Accept: campaign reference existence remains a cross-state validator, not guessed here.
 
-- [ ] **STATE-02 — Implement companion, party, location, NPC/object override models**
+- [x] **STATE-02 — Implement companion, party, location, NPC/object override models**
   - Depends: STATE-01
   - Read: runtime-state party/location sections; party design.
   - Create: `src/domain/models/{party_state,world_state}.py`,
@@ -346,7 +346,7 @@ storage formats, model providers, formulas, or field names.
     contradictory dead+active/unavailable state, unknown extra override value.
   - Accept: no authored definition data is copied except required runtime snapshot values.
 
-- [ ] **STATE-03 — Implement plot, pending-check, and combat snapshot models**
+- [x] **STATE-03 — Implement plot, pending-check, and combat snapshot models**
   - Depends: STATE-01
   - Read: runtime-state plot/pending/combat sections; action/combat/plot docs.
   - Create: `src/domain/models/{plot_state,check_state,combat_state}.py`,
@@ -357,7 +357,7 @@ storage formats, model providers, formulas, or field names.
     current index, resource bounds, terminal stored-phase rejection.
   - Accept: pending check has no roll; normal persisted combat phase is active only.
 
-- [ ] **STATE-04 — Implement root state, command receipt, journal, roll, memory, and meta**
+- [x] **STATE-04 — Implement root state, command receipt, journal, roll, memory, and meta**
   - Depends: STATE-02, STATE-03
   - Read: all runtime-state docs and save design.
   - Create: `src/domain/models/{runtime_state,audit,narrative_memory,save_meta}.py`,
@@ -368,7 +368,7 @@ storage formats, model providers, formulas, or field names.
     raw roll range/selected index/total, memory event count/size, extra fields.
   - Accept: timestamps are audit-only UTC; state contains no narrator prose/absolute paths.
 
-- [ ] **STATE-05 — Generate runtime JSON Schemas and valid/invalid state fixtures**
+- [x] **STATE-05 — Generate runtime JSON Schemas and valid/invalid state fixtures**
   - Depends: STATE-04, SCHEMA-09
   - Read: runtime-state and migration policy.
   - Change: `scripts/generate_schemas.py`.
@@ -383,7 +383,7 @@ storage formats, model providers, formulas, or field names.
 
 ## Milestone 1D — Dice, saves, and deterministic action slice
 
-- [ ] **DICE-01 — Define random port, secure d20 source, and scripted test source**
+- [x] **DICE-01 — Define random port, secure d20 source, and scripted test source**
   - Depends: STATE-04
   - Read: ADR-005; difficulty RNG section; engine context/manual.
   - Create: `src/engine/dice/{__init__,ports,secure,testing}.py`,
@@ -396,7 +396,7 @@ storage formats, model providers, formulas, or field names.
     exhaustion, bad queued value, bad sides; architecture import rules still pass.
   - Accept: production exposes no seed/state/retry API and does not import `random.Random`.
 
-- [ ] **DICE-02 — Implement roll arithmetic and audit-record construction**
+- [x] **DICE-02 — Implement roll arithmetic and audit-record construction**
   - Depends: DICE-01
   - Read: runtime `RollRecord`; difficulty outcome precedence; combat effect bands.
   - Create: `src/engine/dice/{checks,effects,service}.py`,
@@ -408,7 +408,7 @@ storage formats, model providers, formulas, or field names.
     every effect band, exactly one source call, audit arithmetic and metadata.
   - Accept: displayed/audited values derive from the same result object; no hidden draws.
 
-- [ ] **SAVE-01 — Implement strict save serialization and read-only loading**
+- [x] **SAVE-01 — Implement strict save serialization and read-only loading**
   - Depends: STATE-05, CAMP-02
   - Read: save design, transaction/recovery flow, threat model.
   - Create: `src/engine/state/{__init__,ports,errors}.py`,
@@ -422,7 +422,7 @@ storage formats, model providers, formulas, or field names.
     wrong fingerprint/version, committed row above revision, missing derived file status.
   - Accept: load is read-only, preserves corrupt input, and never silently defaults fields.
 
-- [ ] **SAVE-02 — Implement transition, expected revision, and command idempotency**
+- [x] **SAVE-02 — Implement transition, expected revision, and command idempotency**
   - Depends: SAVE-01
   - Read: system overview command/event model; save command receipt rules.
   - Create: `src/engine/state/{commands,transition,idempotency}.py`,
@@ -434,7 +434,7 @@ storage formats, model providers, formulas, or field names.
     with different payload, receipt bound/eviction, no input mutation.
   - Accept: duplicate path calls no handler/RNG and creates no new event.
 
-- [ ] **SAVE-03 — Implement atomic state commit and prepared JSONL records**
+- [x] **SAVE-03 — Implement atomic state commit and prepared JSONL records**
   - Depends: SAVE-02
   - Read: ADR-010 and exact save transaction flow.
   - Create: `src/campaign/storage/save_repository.py`,
@@ -448,7 +448,7 @@ storage formats, model providers, formulas, or field names.
     narration callback is not part of repository.
   - Accept: old or complete new state is readable after every injected failure; never partial.
 
-- [ ] **SAVE-04 — Add autosave recovery snapshots and recovery inspection**
+- [x] **SAVE-04 — Add autosave recovery snapshots and recovery inspection**
   - Depends: SAVE-03
   - Read: save slots/recovery section and threat model.
   - Create: `src/campaign/storage/recovery.py`,
@@ -460,7 +460,7 @@ storage formats, model providers, formulas, or field names.
     rebuild, orphan report, injected recovery failure preserves original.
   - Accept: no automatic destructive restore and at least one valid source remains.
 
-- [ ] **SAVE-05 — Implement v1 migration runner with no-op/current guards**
+- [x] **SAVE-05 — Implement v1 migration runner with no-op/current guards**
   - Depends: SAVE-04
   - Read: migration policy and scripts rules.
   - Create: `src/engine/state/migrations/{__init__,registry,runner}.py`,
@@ -473,7 +473,7 @@ storage formats, model providers, formulas, or field names.
     source unchanged, help/exit codes, injected failure.
   - Accept: architecture is ready for v2 without manufacturing an unnecessary v0 format.
 
-- [ ] **LLMCON-01 — Implement strict action-proposal contract and JSON parser**
+- [x] **LLMCON-01 — Implement strict action-proposal contract and JSON parser**
   - Depends: SCHEMA-01
   - Read: `docs/schemas/llm-contracts.md` ActionProposal and prompt action spec.
   - Create: `src/llm/contracts/{__init__,common,action}.py`,
@@ -485,7 +485,7 @@ storage formats, model providers, formulas, or field names.
     prohibited mutation/DC/die/ID fields as extra-field failures.
   - Accept: parser performs no repair or semantic entity resolution and returns typed error.
 
-- [ ] **ACTION-01 — Build bounded candidate sets and deterministic entity resolver**
+- [x] **ACTION-01 — Build bounded candidate sets and deterministic entity resolver**
   - Depends: CAMP-01, STATE-04, LLMCON-01
   - Read: freeform validation order and action contract entity mentions.
   - Create: `src/engine/actions/{__init__,candidates,resolver}.py`,
@@ -497,7 +497,7 @@ storage formats, model providers, formulas, or field names.
     ambiguity, wrong ordinal/type/text, stable ordering, malicious arbitrary ID text.
   - Accept: model never gets or returns mutable objects; selected facts fit configured caps.
 
-- [ ] **ACTION-02 — Validate standard exploration operations against state**
+- [x] **ACTION-02 — Validate standard exploration operations against state**
   - Depends: ACTION-01
   - Read: freeform actions; component rule ownership; plot protections.
   - Create: `src/engine/actions/{operations,validator}.py`,
@@ -509,7 +509,7 @@ storage formats, model providers, formulas, or field names.
     unknown operation, active combat, protected fact, interpreter-valid downgraded to invalid.
   - Accept: all rejections leave state unchanged and consume no RNG.
 
-- [ ] **ACTION-03 — Validate creative capability/object combinations**
+- [x] **ACTION-03 — Validate creative capability/object combinations**
   - Depends: ACTION-02
   - Read: creative-action section; item/object schema capability fields.
   - Create: `src/engine/actions/creative.py`,
@@ -522,7 +522,7 @@ storage formats, model providers, formulas, or field names.
     no invented object/content.
   - Accept: this satisfies entity-bound creative-action bootstrap requirement with tests.
 
-- [ ] **ACTION-04 — Decide check necessity and create/cancel pending checks**
+- [x] **ACTION-04 — Decide check necessity and create/cancel pending checks**
   - Depends: ACTION-03, SAVE-02
   - Read: difficulty check necessity; freeform pending checks; PendingCheck schema.
   - Create: `src/engine/actions/check_builder.py`,
@@ -535,7 +535,7 @@ storage formats, model providers, formulas, or field names.
     guard, exact formula display, cancel, missing fail-forward outcome/core-clue route.
   - Accept: no die exists before explicit resolve command and DC is engine-owned.
 
-- [ ] **ACTION-05 — Resolve pending checks, effects, and luck atomically**
+- [x] **ACTION-05 — Resolve pending checks, effects, and luck atomically**
   - Depends: ACTION-04, DICE-02
   - Read: difficulty outcome/luck rules; runtime pending/roll/event schemas.
   - Create: `src/engine/actions/check_resolver.py`,
@@ -548,7 +548,7 @@ storage formats, model providers, formulas, or field names.
     application failure leaves original state/pending unchanged.
   - Accept: state/event/roll effects agree exactly and core clue routes remain.
 
-- [ ] **ACTION-06 — Add deterministic submit/resolve exploration use cases**
+- [x] **ACTION-06 — Add deterministic submit/resolve exploration use cases**
   - Depends: ACTION-05, SAVE-03
   - Read: exploration data flow; system command model.
   - Create: `src/engine/actions/use_cases.py`,
@@ -560,7 +560,7 @@ storage formats, model providers, formulas, or field names.
     partial/failure, stale revision, duplicate resolve; reload state/logs after each.
   - Accept: full deterministic vertical action flow works without FastAPI or Ollama.
 
-- [ ] **SCRIPT-02 — Add deterministic vertical-slice smoke command**
+- [x] **SCRIPT-02 — Add deterministic vertical-slice smoke command**
   - Depends: ACTION-06, CHAR-01
   - Read: scripts rules and Milestone 1 deliverables.
   - Create: `scripts/run_smoke_test.py`, `tests/integration/scripts/test_smoke_script.py`.
@@ -612,7 +612,7 @@ storage formats, model providers, formulas, or field names.
     resolve/cancel, stale 409, rule rejection 422, duplicate request no extra fake roll.
   - Accept: clients cannot inject ActionProposal/roll/DC/effects through HTTP.
 
-- [ ] **API-04 — Update smoke flow to exercise FastAPI in process**
+- [x] **API-04 — Update smoke flow to exercise FastAPI in process**
   - Depends: API-03, SCRIPT-02
   - Read: README planned commands and API rules.
   - Change: `scripts/run_smoke_test.py`, smoke tests, README only if command differs.

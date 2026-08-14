@@ -15,20 +15,20 @@ from engine.dice.testing import ScriptedRandomSource
 
 def test_exploration_bands() -> None:
     # 1. Natural 20 precedence
-    assert calculate_exploration_band(20, 20-5, 25) == ExplorationBand.CRITICAL_SUCCESS
-    
+    assert calculate_exploration_band(20, 20 - 5, 25) == ExplorationBand.CRITICAL_SUCCESS
+
     # 2. Natural 1 precedence
-    assert calculate_exploration_band(1, 1+15, 12) == ExplorationBand.CRITICAL_FAILURE
-    
+    assert calculate_exploration_band(1, 1 + 15, 12) == ExplorationBand.CRITICAL_FAILURE
+
     # 3. Exact DC -> Success
     assert calculate_exploration_band(10, 15, 15) == ExplorationBand.SUCCESS
-    
+
     # 4. DC - 1 -> Partial Success
     assert calculate_exploration_band(10, 14, 15) == ExplorationBand.PARTIAL_SUCCESS
-    
+
     # 5. DC - 3 -> Partial Success
     assert calculate_exploration_band(10, 12, 15) == ExplorationBand.PARTIAL_SUCCESS
-    
+
     # 6. DC - 4 -> Failure
     assert calculate_exploration_band(10, 11, 15) == ExplorationBand.FAILURE
 
@@ -42,7 +42,7 @@ def test_combat_bands() -> None:
     assert calculate_combat_band(14) == CombatEffectBand.STANDARD
     assert calculate_combat_band(15) == CombatEffectBand.STRONG
     assert calculate_combat_band(19) == CombatEffectBand.STRONG
-    
+
     with pytest.raises(ValueError):
         calculate_combat_band(21)
 
@@ -53,13 +53,11 @@ def test_dice_service_exploration(
 ) -> None:
     rng = ScriptedRandomSource([15])
     service = DiceService(
-        rng=rng,
-        clock=lambda: fixed_clock,
-        id_generator=lambda: EntityId(sequential_id_generator())
+        rng=rng, clock=lambda: fixed_clock, id_generator=lambda: EntityId(sequential_id_generator())
     )
-    
+
     modifiers = {DisplayString("stat"): 2, DisplayString("penalty"): -1}
-    
+
     total, record = service.roll_exploration_check(
         transaction_id=EntityId("tx-1"),
         revision=1,
@@ -69,7 +67,7 @@ def test_dice_service_exploration(
         difficulty=DefaultDifficulty.NORMAL,
         named_modifiers=modifiers,
     )
-    
+
     # 15 + 2 - 1 = 16
     assert total == 16
     assert record.total == 16
@@ -79,7 +77,7 @@ def test_dice_service_exploration(
     assert record.difficulty == DefaultDifficulty.NORMAL
     assert record.named_modifiers == modifiers
     assert record.roll_id == "test-id-0001"
-    
+
     rng.assert_exhausted()
 
 
@@ -89,11 +87,9 @@ def test_dice_service_combat_and_tie_break(
 ) -> None:
     rng = ScriptedRandomSource([10, 20])
     service = DiceService(
-        rng=rng,
-        clock=lambda: fixed_clock,
-        id_generator=lambda: EntityId(sequential_id_generator())
+        rng=rng, clock=lambda: fixed_clock, id_generator=lambda: EntityId(sequential_id_generator())
     )
-    
+
     # Combat roll (uses 10)
     total, record = service.roll_combat_effect(
         transaction_id=EntityId("tx-1"),
@@ -104,7 +100,7 @@ def test_dice_service_combat_and_tie_break(
     assert total == 10
     assert record.outcome == "standard"
     assert record.dc is None
-    
+
     # Tie-break roll (uses 20)
     total_tb, record_tb = service.roll_tie_break(
         transaction_id=EntityId("tx-1"),
@@ -115,5 +111,5 @@ def test_dice_service_combat_and_tie_break(
     assert total_tb == 20
     assert record_tb.outcome is None
     assert record_tb.dc is None
-    
+
     rng.assert_exhausted()

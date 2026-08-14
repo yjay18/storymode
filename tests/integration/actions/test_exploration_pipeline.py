@@ -19,17 +19,11 @@ from __future__ import annotations
 import datetime
 from pathlib import Path
 
-import pytest
-
 from campaign.storage.save_reader import SaveReader
 from campaign.storage.save_writer import SaveWriter
 from domain.models.area import AreaDefinition, AreaObject
 from domain.models.campaign_meta import (
-    CampaignLength,
     DefaultDifficulty,
-    CampaignStatus,
-    SourceType,
-    Theme,
 )
 from domain.models.character import StatBlock
 from domain.models.common import EntityId
@@ -48,12 +42,11 @@ from engine.actions.use_cases import ExplorationUseCases
 from engine.dice.testing import ScriptedRandomSource
 from llm.contracts.action import ActionProposal, EntityMention
 
-
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
 
-_NOW = datetime.datetime(2024, 1, 1, tzinfo=datetime.timezone.utc)
+_NOW = datetime.datetime(2024, 1, 1, tzinfo=datetime.UTC)
 
 CAMPAIGN_ID: EntityId = "camp-1"
 SAVE_ID: EntityId = "save-1"

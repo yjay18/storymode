@@ -10,10 +10,10 @@ from engine.dice.testing import ScriptedRandomSource
 
 def test_secure_random_source() -> None:
     source = SecureRandomSource()
-    
+
     with pytest.raises(ValueError, match="sides must be >= 2"):
         source.roll(1)
-        
+
     with patch("secrets.SystemRandom.randint", return_value=15) as mock_randint:
         result = source.roll(20)
         assert result == 15
@@ -22,19 +22,20 @@ def test_secure_random_source() -> None:
 
 def test_scripted_random_source() -> None:
     source = ScriptedRandomSource([10, 20, 5])
-    
+
     # Check order
     assert source.roll(20) == 10
     assert source.roll(20) == 20
     assert source.roll(20) == 5
-    
+
     assert source.call_count == 3
     source.assert_exhausted()
-    
+
     # Check exhaustion
     with pytest.raises(RuntimeError, match="exhausted"):
         source.roll(20)
-        
+
+
 def test_scripted_random_source_bad_sides() -> None:
     source = ScriptedRandomSource([10])
     with pytest.raises(ValueError, match="sides must be >= 2"):

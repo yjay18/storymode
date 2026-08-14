@@ -13,7 +13,7 @@ def test_calculate_fingerprint_deterministic() -> None:
         "areas.json": {"areas": []},
         "campaign.json": {"schema_version": 1, "title": "Test"},
     }
-    
+
     assert calculate_fingerprint(content_a) == calculate_fingerprint(content_b)
 
 
@@ -25,7 +25,7 @@ def test_calculate_fingerprint_ignores_fingerprint_field() -> None:
     content_b = {
         "campaign.json": {"title": "Test", "content_fingerprint": "some-old-hash"},
     }
-    
+
     assert calculate_fingerprint(content_a) == calculate_fingerprint(content_b)
 
 
@@ -36,5 +36,5 @@ def test_calculate_fingerprint_strings_vs_dicts() -> None:
     content_str = {
         "campaign.json": '{"status": "published", "title": "Test"}',
     }
-    
+
     assert calculate_fingerprint(content_dict) == calculate_fingerprint(content_str)

@@ -14,12 +14,14 @@ from llm.contracts.action import EntityMention
 
 @pytest.fixture
 def candidates() -> CandidateSet:
-    return CandidateSet([
-        Candidate("obj-1", "object", "Wooden Crate"),
-        Candidate("npc-1", "npc", "Bob the Guard"),
-        Candidate("npc-2", "npc", "Bob the Merchant"),
-        Candidate("item-1", "item", "Crowbar"),
-    ])
+    return CandidateSet(
+        [
+            Candidate("obj-1", "object", "Wooden Crate"),
+            Candidate("npc-1", "npc", "Bob the Guard"),
+            Candidate("npc-2", "npc", "Bob the Merchant"),
+            Candidate("item-1", "item", "Crowbar"),
+        ]
+    )
 
 
 def test_resolve_exact_ordinal(candidates: CandidateSet) -> None:
@@ -73,8 +75,8 @@ def test_resolve_ambiguous_text(candidates: CandidateSet) -> None:
 
 def test_malicious_arbitrary_id_ignored(candidates: CandidateSet) -> None:
     # LLM cannot pass an arbitrary ID, it can only pass text or ordinal.
-    # The Mention struct enforces this, and the resolver only uses the CandidateSet.
-    # We test that a string resembling an ID passed as text does not match unless it's the actual name.
+    # The Mention struct enforces this, and the resolver only uses CandidateSet.
+    # A string resembling an ID passed as text does not match unless it's the actual name.
     resolver = EntityResolver()
     mention = EntityMention(text="obj-999", role="target")
     with pytest.raises(UnresolvedMentionError):

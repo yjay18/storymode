@@ -1,11 +1,9 @@
-"""Exploration checks and difficulty bands."""
-
-from enum import Enum
+from enum import StrEnum
 
 
-class ExplorationBand(str, Enum):
+class ExplorationBand(StrEnum):
     """Possible outcomes of an exploration check."""
-    
+
     CRITICAL_SUCCESS = "critical_success"
     SUCCESS = "success"
     PARTIAL_SUCCESS = "partial_success"
@@ -15,7 +13,7 @@ class ExplorationBand(str, Enum):
 
 def calculate_exploration_band(roll: int, total: int, dc: int) -> ExplorationBand:
     """Calculate the outcome band for an exploration check.
-    
+
     1. Natural 20 -> critical success.
     2. Natural 1 -> critical failure.
     3. Total at least DC -> success.

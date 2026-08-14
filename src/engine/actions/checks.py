@@ -1,7 +1,6 @@
 """Decision and management of pending checks."""
 
 import uuid
-from typing import Any
 
 from domain.models.check_state import CheckOutcomes, PendingCheck
 from domain.models.common import EntityId
@@ -26,10 +25,10 @@ def build_pending_check(
 ) -> PendingCheck:
     """Map a proposal's challenge and stakes into a PendingCheck."""
     stakes_str = " | ".join(proposal.stakes) if proposal.stakes else "None"
-    
+
     # Use verb or intended effect as original input representation for now
     original_input = proposal.intended_effect
-    
+
     return PendingCheck(
         check_id=f"chk-{uuid.uuid4().hex[:8]}",
         source_command_id=command_id,
@@ -49,10 +48,10 @@ def build_pending_check(
 
 def cancel_pending_check(state: RuntimeState) -> RuntimeState:
     """Cancel the active pending check.
-    
+
     This clears the check in a normal revision and consumes no die.
     """
     if not state.pending_check:
         raise ValueError("No active pending check to cancel")
-        
+
     return state.model_copy(update={"pending_check": None})

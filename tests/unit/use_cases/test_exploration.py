@@ -5,13 +5,14 @@ This file tests the older use_cases.exploration module for regression coverage.
 """
 
 import datetime
+from pathlib import Path
 
 import pytest
 
+from campaign.storage.save_writer import SaveWriter
 from domain.models.area import AreaDefinition, AreaObject
-from domain.models.campaign_meta import CampaignLength, CampaignMeta, CampaignStatus, DefaultDifficulty, SourceType, Theme
+from domain.models.campaign_meta import DefaultDifficulty
 from domain.models.character import StatBlock
-from domain.models.common import EntityId
 from domain.models.party_state import PartyState
 from domain.models.player_state import PlayerState
 from domain.models.plot_state import PlotState
@@ -23,11 +24,11 @@ from engine.actions.creative import CreativeValidator
 from engine.actions.operations import OperationValidator
 from engine.actions.resolution import CheckResolver
 from engine.actions.resolver import EntityResolver
-from engine.dice.testing import ScriptedRandomSource
-from campaign.storage.save_reader import SaveReader
-from campaign.storage.save_writer import SaveWriter
-from llm.contracts.action import ActionProposal, EntityMention
 from engine.actions.use_cases import ExplorationUseCases
+from engine.dice.testing import ScriptedRandomSource
+from llm.contracts.action import ActionProposal, EntityMention
+
+_NOW = datetime.datetime(2024, 1, 1, tzinfo=datetime.UTC)
 
 
 @pytest.fixture
@@ -36,7 +37,9 @@ def base_state() -> RuntimeState:
         id="player-1",
         name="Hero",
         background_id="bg-1",
-        stats=StatBlock(strength=10, dexterity=10, intelligence=10, charisma=10, constitution=10, wisdom=10),
+        stats=StatBlock(
+            strength=10, dexterity=10, intelligence=10, charisma=10, constitution=10, wisdom=10
+        ),
         hp=ResourceValue(current=5, maximum=10),
         armour=ResourceValue(current=0, maximum=5),
         mana=ResourceValue(current=5, maximum=5),
@@ -59,9 +62,6 @@ def base_state() -> RuntimeState:
     )
 
 
-_NOW = datetime.datetime(2024, 1, 1, tzinfo=datetime.timezone.utc)
-
-
 @pytest.fixture
 def campaign_meta() -> SaveMeta:
     return SaveMeta(
@@ -80,12 +80,6 @@ def campaign_meta() -> SaveMeta:
         updated_at=_NOW,
         recovery_status="ok",
     )
-
-
-from pathlib import Path
-
-from domain.models.save_meta import SaveMeta
-from engine.actions.use_cases import ExplorationUseCases
 
 
 @pytest.fixture

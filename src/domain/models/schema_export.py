@@ -22,7 +22,7 @@ def export_schemas(output_dir: Path) -> None:
         "narrative_memory.json": NarrativeMemory,
         "save_meta.json": SaveMeta,
     }
-    
+
     for filename, model_cls in models.items():
         schema = model_cls.model_json_schema()
         with open(output_dir / filename, "w") as f:
