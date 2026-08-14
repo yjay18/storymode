@@ -751,7 +751,7 @@ storage formats, model providers, formulas, or field names.
 
 ## Milestone 3 — Party, progression, plot, and clocks
 
-- [ ] **PARTY-01 — Implement recruit, activate, deactivate, leave, and availability rules**
+- [x] **PARTY-01 — Implement recruit, activate, deactivate, leave, and availability rules**
   - Depends: STATE-02, SAVE-02
   - Read: party membership/availability and plot protections.
   - Create: `src/engine/progression/{__init__,party}.py`,
