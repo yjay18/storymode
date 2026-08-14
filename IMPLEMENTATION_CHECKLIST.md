@@ -762,7 +762,7 @@ storage formats, model providers, formulas, or field names.
     authored leave condition, protected-route invalid departure, no input mutation.
   - Accept: narration/relationship prose cannot change membership.
 
-- [ ] **PARTY-02 — Validate companion authored builds and player-controlled combat actions**
+- [x] **PARTY-02 — Validate companion authored builds and player-controlled combat actions**
   - Depends: PARTY-01, COMBAT-09
   - Read: party authored builds and combat actor rules.
   - Create: `src/engine/progression/companion_builds.py`,
