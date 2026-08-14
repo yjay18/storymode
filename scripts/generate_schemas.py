@@ -2,7 +2,11 @@
 """Generate JSON schemas for all campaign files."""
 
 import json
+import sys
 from pathlib import Path
+
+# Ensure src is in sys.path when script is executed directly
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 
 from pydantic import BaseModel
 

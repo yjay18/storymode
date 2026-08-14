@@ -26,6 +26,9 @@ import tempfile
 from pathlib import Path
 from typing import Any
 
+# Ensure src is in sys.path when script is executed directly
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
+
 from fastapi.testclient import TestClient
 
 from app.config import Settings

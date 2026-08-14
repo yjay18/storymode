@@ -1,15 +1,18 @@
-"""Combat skill validation and guaranteed base effect execution."""
+"""Combat skill validation, guaranteed base effects, and optional effect die execution."""
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
+from domain.models.audit import RollRecord
 from domain.models.combat_state import CombatState
-from domain.models.common import EntityId
-from domain.models.skill import CombatSkill, TargetRule
+from domain.models.common import DisplayString, EntityId
+from domain.models.skill import CombatSkill, EffectDefinition, TargetRule
 from domain.rules.combat_resources import apply_mana_delta
 from engine.combat.commands import resolve_valid_targets
 from engine.combat.effects import EffectApplicationResult, apply_effect
+from engine.dice.effects import CombatEffectBand, calculate_combat_band
+from engine.dice.service import DiceService
 
 
 @dataclass(frozen=True)
@@ -20,9 +23,18 @@ class SkillExecutionResult:
     actor_id: EntityId
     skill_id: EntityId
     mana_spent: int
-    effect_results: list[EffectApplicationResult]
-    combat_state: CombatState
-    logs: list[str]
+    base_effect_results: list[EffectApplicationResult]
+    bonus_effect_results: list[EffectApplicationResult] = field(default_factory=list)
+    effect_die_roll: int | None = None
+    effect_die_band: CombatEffectBand | None = None
+    roll_records: list[RollRecord] = field(default_factory=list)
+    combat_state: CombatState = field(default_factory=lambda: None)  # type: ignore[assignment]
+    logs: list[str] = field(default_factory=list)
+
+    @property
+    def effect_results(self) -> list[EffectApplicationResult]:
+        """All applied effects (base + bonus)."""
+        return self.base_effect_results + self.bonus_effect_results
 
 
 def execute_skill_command(
@@ -32,9 +44,14 @@ def execute_skill_command(
     target_ids: list[EntityId],
     skills_by_id: dict[EntityId, CombatSkill],
     immunities_by_id: dict[EntityId, set[EntityId]] | None = None,
+    dice_service: DiceService | None = None,
+    transaction_id: EntityId | None = None,
+    revision: int = 1,
+    command_id: EntityId | None = None,
 ) -> SkillExecutionResult:
-    """Validate and execute a skill command, applying guaranteed base effects.
+    """Validate and execute a skill command.
 
+    Applies guaranteed base effects and an optional effect die.
     Atomic: on any validation failure, raises ValueError and performs no mutations.
     """
     # 1. Turn order check
@@ -106,7 +123,9 @@ def execute_skill_command(
 
     # 7. Atomic Execution
     new_participants = dict(combat.participants)
-    all_effect_results: list[EffectApplicationResult] = []
+    base_effect_results: list[EffectApplicationResult] = []
+    bonus_effect_results: list[EffectApplicationResult] = []
+    roll_records: list[RollRecord] = []
     logs: list[str] = []
 
     # Deduct mana
@@ -130,8 +149,67 @@ def execute_skill_command(
             )
             target_participant = updated_target
             new_participants[tid] = target_participant
-            all_effect_results.append(eff_result)
-            logs.append(eff_result.log_message)
+            base_effect_results.append(eff_result)
+            logs.append(f"[Base] {eff_result.log_message}")
+
+    # 8. Optional Effect Die
+    effect_roll: int | None = None
+    effect_band: CombatEffectBand | None = None
+
+    living_targets = [tid for tid in resolved_targets if new_participants[tid].hp.current > 0]
+
+    if skill_level.effect_die is not None and dice_service is not None and living_targets:
+        tx_id = transaction_id or EntityId("tx_combat_effect")
+        cmd_id = command_id or EntityId("cmd_skill_use")
+        reason = DisplayString(f"Effect die roll for {skill_def.name}")
+
+        effect_roll, roll_rec = dice_service.roll_combat_effect(
+            transaction_id=tx_id,
+            revision=revision,
+            command_id=cmd_id,
+            reason=reason,
+        )
+        effect_band = calculate_combat_band(effect_roll)
+        logs.append(f"Rolled effect die: {effect_roll} ({effect_band.value}).")
+
+        bonus_effects: list[EffectDefinition] = []
+        match effect_band:
+            case CombatEffectBand.NATURAL_1:
+                bonus_effects = skill_level.effect_die.natural_1
+            case CombatEffectBand.LOW:
+                bonus_effects = skill_level.effect_die.low
+            case CombatEffectBand.STANDARD:
+                bonus_effects = skill_level.effect_die.standard
+            case CombatEffectBand.STRONG:
+                bonus_effects = skill_level.effect_die.strong
+            case CombatEffectBand.NATURAL_20:
+                bonus_effects = skill_level.effect_die.natural_20
+
+        confirmed_effect_ids: list[EntityId] = []
+
+        for tid in living_targets:
+            if new_participants[tid].hp.current <= 0:
+                continue
+
+            target_participant = new_participants[tid]
+            target_immunities = immunity_map.get(tid, set())
+
+            for b_eff in bonus_effects:
+                updated_target, b_res = apply_effect(
+                    effect=b_eff,
+                    target_id=tid,
+                    target=target_participant,
+                    immunities=target_immunities,
+                )
+                target_participant = updated_target
+                new_participants[tid] = target_participant
+                bonus_effect_results.append(b_res)
+                if b_res.applied:
+                    confirmed_effect_ids.append(b_eff.effect_id)
+                logs.append(f"[Bonus] {b_res.log_message}")
+
+        updated_rec = roll_rec.model_copy(update={"confirmed_effect_ids": confirmed_effect_ids})
+        roll_records.append(updated_rec)
 
     updated_combat = combat.model_copy(update={"participants": new_participants})
 
@@ -140,7 +218,11 @@ def execute_skill_command(
         actor_id=actor_id,
         skill_id=skill_id,
         mana_spent=skill_level.mana_cost,
-        effect_results=all_effect_results,
+        base_effect_results=base_effect_results,
+        bonus_effect_results=bonus_effect_results,
+        effect_die_roll=effect_roll,
+        effect_die_band=effect_band,
+        roll_records=roll_records,
         combat_state=updated_combat,
         logs=logs,
     )

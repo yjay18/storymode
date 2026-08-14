@@ -7,6 +7,9 @@ import logging
 import sys
 from pathlib import Path
 
+# Ensure src is in sys.path when script is executed directly
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
+
 from engine.state.migrations.registry import default_registry
 from engine.state.migrations.runner import MigrationRunner
 

@@ -25,7 +25,7 @@ jobs:
         uses: astral-sh/setup-uv@e58605a9b6da7c637471fab8847a5e5a6b8df081 # v5
 
       - name: Sync dependencies
-        run: uv sync --locked --all-groups
+        run: uv sync --locked --no-install-project --all-groups
 
       - name: Scaffold check
         run: uv run python scripts/check_scaffold.py

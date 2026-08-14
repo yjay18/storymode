@@ -674,7 +674,7 @@ storage formats, model providers, formulas, or field names.
     a later base effect validation fails.
   - Accept: every valid base effect connects; there is no attack roll or generic miss.
 
-- [ ] **COMBAT-05 — Add one optional effect die and bonus-effect tables**
+- [x] **COMBAT-05 — Add one optional effect die and bonus-effect tables**
   - Depends: COMBAT-04
   - Read: combat effect-die rules; RollRecord.
   - Change: `src/engine/combat/skills.py` and tests; create
