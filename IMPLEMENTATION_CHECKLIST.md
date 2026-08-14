@@ -686,7 +686,7 @@ storage formats, model providers, formulas, or field names.
     drawback bounded, duplicate command via use case fake no second draw.
   - Accept: result and audit clearly separate guaranteed base from bonus.
 
-- [ ] **COMBAT-06 — Implement Defend and Guarded**
+- [x] **COMBAT-06 — Implement Defend and Guarded**
   - Depends: COMBAT-04
   - Read: combat Defend exact 25% rule.
   - Create: `src/engine/combat/defend.py`,
