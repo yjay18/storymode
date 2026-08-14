@@ -817,7 +817,7 @@ storage formats, model providers, formulas, or field names.
     catalyst rules, loadout after fusion, arbitrary player recipe rejected.
   - Accept: companion cannot become mechanically under-equipped.
 
-- [ ] **PLOT-01 — Implement milestone preconditions and protected transitions**
+- [x] **PLOT-01 — Implement milestone preconditions and protected transitions**
   - Depends: VALID-03, STATE-03
   - Read: campaign spine and runtime milestone state rules.
   - Create: `src/engine/plot/{__init__,predicates,milestones}.py`,
