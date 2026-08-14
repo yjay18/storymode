@@ -625,7 +625,7 @@ storage formats, model providers, formulas, or field names.
 
 ## Milestone 2 — Deterministic combat vertical slice
 
-- [ ] **COMBAT-01 — Implement integer rational scaling and resource damage helpers**
+- [x] **COMBAT-01 — Implement integer rational scaling and resource damage helpers**
   - Depends: STATE-03
   - Read: combat damage/rounding and difficulty profile math.
   - Create: `src/domain/rules/{arithmetic,combat_resources,difficulty}.py`,
