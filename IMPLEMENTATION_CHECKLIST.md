@@ -829,7 +829,7 @@ storage formats, model providers, formulas, or field names.
     protected truth/reachability failure, stable event order.
   - Accept: model text is never an input to state transition effects.
 
-- [ ] **PLOT-02 — Implement opportunity frontier state transitions**
+- [x] **PLOT-02 — Implement opportunity frontier state transitions**
   - Depends: PLOT-01
   - Read: full opportunity graph rules.
   - Create: `src/engine/plot/opportunities.py`,
