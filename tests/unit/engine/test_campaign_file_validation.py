@@ -13,7 +13,7 @@ def test_missing_and_extra_files() -> None:
     assert all(d.code == "file_missing" for d in diagnostics)
 
     # Extra file
-    pack, diagnostics = validate_campaign_files({"extra.json": {}})
+    pack, diagnostics = validate_campaign_files({"extra.json": "{}"})
     assert pack is None
     assert any(d.code == "file_extra" and d.file == "extra.json" for d in diagnostics)
 

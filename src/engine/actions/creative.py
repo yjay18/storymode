@@ -1,4 +1,4 @@
-"""Creative capability and object combination validation."""
+from collections.abc import Sequence
 
 from domain.models.area import AreaObject
 from domain.models.runtime_state import RuntimeState
@@ -8,11 +8,11 @@ from engine.actions.operations import OperationValidationError
 
 class CreativeValidator:
     """Validates creative actions combining capabilities and object states."""
-    
+
     def validate(
         self,
-        capability_mentions: list[str],
-        resolved_candidates: list[Candidate],
+        capability_mentions: Sequence[str],
+        resolved_candidates: Sequence[Candidate],
         area_objects: dict[str, AreaObject],
         state: RuntimeState,
     ) -> None:

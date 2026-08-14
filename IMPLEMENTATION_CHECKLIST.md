@@ -587,7 +587,7 @@ storage formats, model providers, formulas, or field names.
     health response/OpenAPI, safe 404/validation errors, exact CORS defaults.
   - Accept: factory tests use temp root; app never creates/downloads content on import.
 
-- [ ] **API-02 — Add campaign validation and character/save creation endpoints**
+- [x] **API-02 — Add campaign validation and character/save creation endpoints**
   - Depends: API-01, CAMP-02, CHAR-01, STATE-05
   - Read: API boundary, builder review (validation), screen map.
   - Create: `src/api/schemas/{campaigns,saves}.py`,

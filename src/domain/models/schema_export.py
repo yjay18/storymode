@@ -3,6 +3,8 @@
 import json
 from pathlib import Path
 
+from pydantic import BaseModel
+
 from domain.models.audit import JournalEvent, RollRecord
 from domain.models.narrative_memory import NarrativeMemory
 from domain.models.runtime_state import RuntimeState
@@ -12,8 +14,8 @@ from domain.models.save_meta import SaveMeta
 def export_schemas(output_dir: Path) -> None:
     """Export all runtime state JSON schemas to the given directory."""
     output_dir.mkdir(parents=True, exist_ok=True)
-    
-    models = {
+
+    models: dict[str, type[BaseModel]] = {
         "runtime_state.json": RuntimeState,
         "journal_event.json": JournalEvent,
         "roll_record.json": RollRecord,

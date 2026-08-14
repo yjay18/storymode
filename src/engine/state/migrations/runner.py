@@ -1,15 +1,17 @@
-"""Migration runner."""
+from typing import Any
 
 from engine.state.migrations.registry import MigrationRegistry
 
 
 class MigrationRunner:
     """Runs sequential migrations on a state dictionary."""
-    
+
     def __init__(self, registry: MigrationRegistry) -> None:
         self.registry = registry
-        
-    def run_migrations(self, state: dict, target_version: int = 1) -> dict:
+
+    def run_migrations(
+        self, state: dict[str, Any], target_version: int = 1
+    ) -> dict[str, Any]:
         """Run migrations to upgrade the state dictionary to target_version."""
         current_version = state.get("schema_version", 0)
         

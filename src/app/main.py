@@ -1,18 +1,17 @@
 """Application factory and main entrypoint."""
 
+from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
-from typing import AsyncGenerator, Callable
-import uuid
 
 from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
-from app.config import Settings, get_settings
-from api.routes import health
+from api.routes import campaigns, health, saves
 from api.schemas.common import create_error_response
+from app.config import Settings, get_settings
 
 
 @asynccontextmanager
@@ -47,7 +46,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         "http://127.0.0.1:8000",
         "http://localhost:8000",
     ]
-    
+
     app.add_middleware(
         CORSMiddleware,
         allow_origins=origins,
@@ -59,14 +58,23 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     # Exception handlers for safe envelopes
     @app.exception_handler(StarletteHTTPException)
     async def http_exception_handler(request: Request, exc: StarletteHTTPException) -> JSONResponse:
-        code = "not_found" if exc.status_code == 404 else "http_error"
+        if exc.status_code == 404:
+            code = "not_found"
+        elif exc.status_code == 422:
+            code = "validation_error"
+        elif exc.status_code == 409:
+            code = "conflict"
+        else:
+            code = "http_error"
         return JSONResponse(
             status_code=exc.status_code,
             content=create_error_response(code=code, message=str(exc.detail)),
         )
 
     @app.exception_handler(RequestValidationError)
-    async def validation_exception_handler(request: Request, exc: RequestValidationError) -> JSONResponse:
+    async def validation_exception_handler(
+        request: Request, exc: RequestValidationError
+    ) -> JSONResponse:
         return JSONResponse(
             status_code=422,
             content=create_error_response(code="validation_error", message="Invalid request data"),
@@ -74,5 +82,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     # Register routers
     app.include_router(health.router)
+    app.include_router(campaigns.router, prefix="/api/v1")
+    app.include_router(saves.router, prefix="/api/v1")
 
     return app

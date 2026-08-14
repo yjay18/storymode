@@ -9,6 +9,7 @@ structurally satisfy ``ActionProposalLike`` and ``EntityMentionLike`` respective
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from typing import Protocol
 
 
@@ -36,11 +37,11 @@ class ActionProposalLike(Protocol):
     """
 
     @property
-    def entity_mentions(self) -> list[EntityMentionLike]:
+    def entity_mentions(self) -> Sequence[EntityMentionLike]:
         ...
 
     @property
-    def capability_mentions(self) -> list[str]:
+    def capability_mentions(self) -> Sequence[str]:
         ...
 
     @property
@@ -52,7 +53,7 @@ class ActionProposalLike(Protocol):
         ...
 
     @property
-    def stakes(self) -> list[str]:
+    def stakes(self) -> Sequence[str]:
         ...
 
     @property

@@ -6,9 +6,9 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     """Global application settings with STORYMODE_ prefix."""
-    
+
     model_config = SettingsConfigDict(
-        env_prefix="STORYMODE_", 
+        env_prefix="STORYMODE_",
         env_file=".env",
         extra="ignore",
     )

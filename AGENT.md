@@ -23,16 +23,18 @@ root context/manual, `src/CONTEXT.md`, `src/AGENT.md`,
 
 ```text
 1. Read applicable CONTEXT.md and AGENT.md files.
-2. State the contract/invariants affected before editing.
-3. Make the smallest coherent change.
-4. Add or update tests first for deterministic logic.
-5. Run relevant tests, schema validation, and formatting.
-6. Update local and cross-cutting documentation.
-7. Summarize changed contracts, migrations, test evidence, and follow-ups.
+2. Apply the ponytail skill (YAGNI, minimal diff, reuse existing codebase/stdlib).
+3. State the contract/invariants affected before editing.
+4. Make the smallest coherent change.
+5. Add or update tests first for deterministic logic.
+6. Run relevant tests, schema validation, and formatting.
+7. Update local and cross-cutting documentation.
+8. Summarize changed contracts, migrations, test evidence, and follow-ups.
 ```
 
 ## Change rules
 
+- Always activate and follow the `ponytail` skill to prevent over-engineering.
 - Keep one checklist slice per change. Do not perform opportunistic refactors.
 - Do not add yourself as author to commits; use the repository's existing git configuration.
 - A public contract, rule, persistence shape, dependency, or component boundary

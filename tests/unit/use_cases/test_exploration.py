@@ -82,8 +82,16 @@ def campaign_meta() -> SaveMeta:
     )
 
 
+from pathlib import Path
+
+from domain.models.save_meta import SaveMeta
+from engine.actions.use_cases import ExplorationUseCases
+
+
 @pytest.fixture
-def setup_use_cases(tmp_path, base_state, campaign_meta):
+def setup_use_cases(
+    tmp_path: Path, base_state: RuntimeState, campaign_meta: SaveMeta
+) -> tuple[ExplorationUseCases, RuntimeState]:
     writer = SaveWriter(tmp_path)
     writer.write_state(base_state, campaign_meta, None)
 
@@ -123,7 +131,9 @@ def setup_use_cases(tmp_path, base_state, campaign_meta):
     return uc, base_state
 
 
-def test_submit_action(setup_use_cases):
+def test_submit_action(
+    setup_use_cases: tuple[ExplorationUseCases, RuntimeState],
+) -> None:
     uc, state = setup_use_cases
     proposal = ActionProposal(
         contract_version=1,
@@ -145,7 +155,9 @@ def test_submit_action(setup_use_cases):
     assert result.state.pending_check is None
 
 
-def test_submit_action_with_check(setup_use_cases):
+def test_submit_action_with_check(
+    setup_use_cases: tuple[ExplorationUseCases, RuntimeState],
+) -> None:
     uc, state = setup_use_cases
     proposal = ActionProposal(
         contract_version=1,
@@ -168,7 +180,9 @@ def test_submit_action_with_check(setup_use_cases):
     assert result.state.pending_check.semantic_difficulty == "standard"
 
 
-def test_resolve_check(setup_use_cases):
+def test_resolve_check(
+    setup_use_cases: tuple[ExplorationUseCases, RuntimeState],
+) -> None:
     uc, state = setup_use_cases
     proposal = ActionProposal(
         contract_version=1,
