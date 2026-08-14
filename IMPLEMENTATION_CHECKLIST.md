@@ -710,7 +710,7 @@ storage formats, model providers, formulas, or field names.
     advantage and next actor, yield allowed/denied, no yield draw, protected-route guard.
   - Accept: no generic always-flee/yield and no model-selected consequence.
 
-- [ ] **COMBAT-08 — Resolve victory, XP/loot, and protagonist soft defeat exactly once**
+- [x] **COMBAT-08 — Resolve victory, XP/loot, and protagonist soft defeat exactly once**
   - Depends: COMBAT-05, COMBAT-07
   - Read: combat defeat/victory, party defeat, progression discovery.
   - Create: `src/engine/combat/resolution.py`,
