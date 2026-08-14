@@ -457,11 +457,75 @@ def run_asgi_smoke(tmp_path: Path, scripted_rolls: list[int]) -> None:
         detail=f"status={resolve_resp.status_code} band={resolve_resp.json().get('band')}",
     )
 
-    # 6. GET /api/v1/saves/{campaign_id}/{save_id} -> Final verification
+    # 6. GET /api/v1/saves/{campaign_id}/{save_id} -> State reload before combat
+    mid_resp = client.get(f"/api/v1/saves/minimal-campaign/{save_id}")
+    _step(
+        "FastAPI exploration state reload",
+        ok=mid_resp.status_code == 200 and mid_resp.json()["revision"] == 4,
+        detail=f"revision={mid_resp.json().get('revision')}",
+    )
+
+    # 7. POST /api/v1/combat/start -> Start combat encounter
+    start_resp = client.post(
+        "/api/v1/combat/start",
+        json={
+            "campaign_id": "minimal-campaign",
+            "save_id": save_id,
+            "encounter_id": "encounter-1",
+            "command_id": "cmd-asgi-start-combat",
+            "expected_revision": 4,
+        },
+    )
+    _step(
+        "FastAPI start combat encounter",
+        ok=(
+            start_resp.status_code == 200
+            and start_resp.json()["revision"] == 5
+            and start_resp.json()["combat"] is not None
+            and len(start_resp.json()["allowed_actions"]) > 0
+        ),
+        detail=f"revision={start_resp.json().get('revision')}",
+    )
+
+    # 8. GET /api/v1/combat/view -> View combat state
+    view_resp = client.get(f"/api/v1/combat/view?campaign_id=minimal-campaign&save_id={save_id}")
+    _step(
+        "FastAPI get combat view",
+        ok=(
+            view_resp.status_code == 200
+            and view_resp.json()["revision"] == 5
+            and view_resp.json()["combat"] is not None
+        ),
+        detail=f"revision={view_resp.json().get('revision')}",
+    )
+
+    # 9. POST /api/v1/combat/yield -> Resolve combat
+    yield_resp = client.post(
+        "/api/v1/combat/yield",
+        json={
+            "campaign_id": "minimal-campaign",
+            "save_id": save_id,
+            "command_id": "cmd-asgi-yield",
+            "expected_revision": 5,
+        },
+    )
+    _step(
+        "FastAPI yield and resolve combat",
+        ok=(
+            yield_resp.status_code == 200
+            and yield_resp.json()["revision"] == 6
+            and yield_resp.json()["is_terminal"] is True
+            and yield_resp.json()["outcome"] == "Yielded"
+            and yield_resp.json()["combat"] is None
+        ),
+        detail=f"rev={yield_resp.json().get('revision')} out={yield_resp.json().get('outcome')}",
+    )
+
+    # 10. GET /api/v1/saves/{campaign_id}/{save_id} -> Final verification
     final_resp = client.get(f"/api/v1/saves/minimal-campaign/{save_id}")
     _step(
-        "FastAPI final state reload",
-        ok=final_resp.status_code == 200 and final_resp.json()["revision"] == 4,
+        "FastAPI final state reload after combat",
+        ok=final_resp.status_code == 200 and final_resp.json()["revision"] == 6,
         detail=f"revision={final_resp.json().get('revision')}",
     )
 
@@ -482,7 +546,7 @@ def main() -> None:
 
     # Scripted rolls: with --fail supply an empty list so the resolver will
     # raise ScriptedRandomSource exhaustion -> failure.
-    scripted_rolls: list[int] = [] if args.fail else [15, 15]
+    scripted_rolls: list[int] = [] if args.fail else [15, 15, 15, 15, 15, 15, 15, 15]
 
     with tempfile.TemporaryDirectory(prefix="storymode_smoke_") as tmp:
         tmp_path = Path(tmp)

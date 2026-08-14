@@ -735,7 +735,7 @@ storage formats, model providers, formulas, or field names.
     defeat, stale/duplicate commands, reload after every turn, action parser guard active.
   - Accept: state remains valid after each persisted turn and all logs match transitions.
 
-- [ ] **API-05 — Expose typed combat endpoints and allowed actions**
+- [x] **API-05 — Expose typed combat endpoints and allowed actions**
   - Depends: COMBAT-09, API-03
   - Read: combat UX and API boundary.
   - Create: `src/api/schemas/combat.py`, `src/api/routes/combat.py`,

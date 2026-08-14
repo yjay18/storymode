@@ -85,13 +85,57 @@ class CombatUseCases:
             raise ValueError(msg)
 
     def _get_active_escape_policy(self, combat: CombatState) -> EscapePolicyDefinition | None:
-        return self._escape_policies.get(combat.encounter_id)
+        if combat.encounter_id in self._escape_policies:
+            return self._escape_policies[combat.encounter_id]
+        from engine.dice.checks import ExplorationBand
+
+        return EscapePolicyDefinition(
+            id=EntityId("default_escape"),
+            dc=10,
+            consequences={
+                ExplorationBand.SUCCESS: AuthoredConsequence(
+                    consequence_id=EntityId("flee_strong"),
+                    kind="flee",
+                    description=DisplayString("You escaped safely."),
+                ),
+                ExplorationBand.PARTIAL_SUCCESS: AuthoredConsequence(
+                    consequence_id=EntityId("flee_weak"),
+                    kind="flee",
+                    description=DisplayString("You escaped but took a hit."),
+                    hp_loss=2,
+                ),
+                ExplorationBand.FAILURE: AuthoredConsequence(
+                    consequence_id=EntityId("flee_miss"),
+                    kind="flee",
+                    description=DisplayString("You failed to escape."),
+                    hp_loss=4,
+                ),
+            },
+            ends_combat_on_success=True,
+            ends_combat_on_partial=True,
+        )
 
     def _get_active_yield_policy(self, combat: CombatState) -> YieldPolicyDefinition | None:
-        return self._yield_policies.get(combat.encounter_id)
+        if combat.encounter_id in self._yield_policies:
+            return self._yield_policies[combat.encounter_id]
+        return YieldPolicyDefinition(
+            id=EntityId("default_yield"),
+            allowed=True,
+            consequence=AuthoredConsequence(
+                consequence_id=EntityId("yield_cons"),
+                kind="yield",
+                description=DisplayString("You yielded to your foes."),
+            ),
+        )
 
     def _get_active_defeat_consequence(self, combat: CombatState) -> AuthoredConsequence | None:
-        return self._defeat_consequences.get(combat.encounter_id)
+        if combat.encounter_id in self._defeat_consequences:
+            return self._defeat_consequences[combat.encounter_id]
+        return AuthoredConsequence(
+            consequence_id=EntityId("default_defeat"),
+            kind="defeat",
+            description=DisplayString("You were defeated in battle."),
+        )
 
     def get_allowed_actions(self, state: RuntimeState) -> list[AllowedCombatAction]:
         """Compute all valid combat actions for the current active actor."""
