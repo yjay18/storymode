@@ -723,7 +723,7 @@ storage formats, model providers, formulas, or field names.
     protected reachability, terminal combat removed from state.
   - Accept: narrator never supplies rewards/consequence and command replay is idempotent.
 
-- [ ] **COMBAT-09 — Add combat command use case and persistence integration**
+- [x] **COMBAT-09 — Add combat command use case and persistence integration**
   - Depends: COMBAT-06, COMBAT-08, SAVE-03
   - Read: combat data flow and engine command rules.
   - Create: `src/engine/combat/use_cases.py`,
