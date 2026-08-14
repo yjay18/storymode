@@ -661,7 +661,7 @@ storage formats, model providers, formulas, or field names.
     only-one-side remains, unknown status, original state unchanged on rejection.
   - Accept: no wall clock and no model narration in turn processing.
 
-- [ ] **COMBAT-04 — Validate skill commands and apply guaranteed base effects**
+- [x] **COMBAT-04 — Validate skill commands and apply guaranteed base effects**
   - Depends: COMBAT-03
   - Read: combat allowed commands/skill resolution; skill schema.
   - Create: `src/engine/combat/{commands,skills,effects}.py`,
