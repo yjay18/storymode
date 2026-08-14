@@ -698,7 +698,7 @@ storage formats, model providers, formulas, or field names.
     actor prevented from acting, turn advances.
   - Accept: Guarded result is visible in event/status DTO and normal mana regen unchanged.
 
-- [ ] **COMBAT-07 — Implement authored flee and yield transitions**
+- [x] **COMBAT-07 — Implement authored flee and yield transitions**
   - Depends: COMBAT-03, DICE-02
   - Read: combat flee/yield and difficulty outcome rules.
   - Create: `src/engine/combat/{escape,consequences}.py`,
