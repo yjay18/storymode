@@ -807,7 +807,7 @@ storage formats, model providers, formulas, or field names.
     catalyst quantity, unordered source recipe, result already known, rollback on failure.
   - Accept: no partial consumption and no runtime-generated recipe/effect.
 
-- [ ] **PROG-04 — Implement companion fusion backup safeguard**
+- [x] **PROG-04 — Implement companion fusion backup safeguard**
   - Depends: PROG-03, PARTY-02
   - Read: companion fusion safeguard and schema recipe fields.
   - Change: fusion module; create `tests/unit/engine/test_companion_fusion.py`.
