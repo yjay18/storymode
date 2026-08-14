@@ -864,7 +864,7 @@ storage formats, model providers, formulas, or field names.
     read/wall-clock no trigger, invalid persisted out-of-range rejects.
   - Accept: no system clock import in plot package.
 
-- [ ] **PROG-05 — Add party/progression/plot command use cases and API endpoints**
+- [x] **PROG-05 — Add party/progression/plot command use cases and API endpoints**
   - Depends: PROG-04, PLOT-04, API-05
   - Read: API boundary and relevant UX panels.
   - Create: `src/engine/progression/use_cases.py`, `src/engine/plot/use_cases.py`,
