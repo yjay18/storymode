@@ -784,7 +784,7 @@ storage formats, model providers, formulas, or field names.
     invalid table (defense), input unchanged.
   - Accept: levels are engine-derived from XP and tokens never silently spent.
 
-- [ ] **PROG-02 — Implement skill discovery, upgrade, and four-slot loadout changes**
+- [x] **PROG-02 — Implement skill discovery, upgrade, and four-slot loadout changes**
   - Depends: PROG-01
   - Read: progression discovery/loadout/upgrades.
   - Create: `src/engine/progression/skills.py`,
