@@ -63,3 +63,14 @@ class ActionProposalLike(Protocol):
     @property
     def intended_effect(self) -> str:
         ...
+
+
+class ActionInterpreter(Protocol):
+    """Structural protocol for action interpretation."""
+
+    def interpret(
+        self,
+        player_text: str,
+        candidates: Sequence[EntityMentionLike] | None = None,
+    ) -> ActionProposalLike:
+        ...

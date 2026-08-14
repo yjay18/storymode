@@ -600,7 +600,7 @@ storage formats, model providers, formulas, or field names.
     duplicate command idempotency, unsafe IDs, response excludes hidden/path data.
   - Accept: OpenAPI uses typed DTOs and mutation response includes revision.
 
-- [ ] **API-03 — Add deterministic exploration endpoints using supplied test proposals**
+- [x] **API-03 — Add deterministic exploration endpoints using supplied test proposals**
   - Depends: API-02, ACTION-06
   - Read: exploration UX and action pipeline.
   - Create: `src/api/schemas/actions.py`, `src/api/routes/actions.py`,
