@@ -26,3 +26,12 @@ campaigns/*/saves/*
 *.tmp
 *.lock
 *.bak
+
+# Agent / AI scaffold files — local only, never tracked
+AGENT.md
+AGENTS.md
+CONTEXT.md
+**/AGENT.md
+**/AGENTS.md
+**/CONTEXT.md
+.agent/
