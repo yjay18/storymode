@@ -25,6 +25,7 @@ campaigns/*/saves/*
 
 *.tmp
 *.lock
+!uv.lock
 *.bak
 
 # Agent / AI scaffold files — local only, never tracked

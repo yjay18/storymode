@@ -853,7 +853,7 @@ storage formats, model providers, formulas, or field names.
     out-of-band power, invalid proposal consumes no ID/state.
   - Accept: usable with a fake proposal before Ollama exists.
 
-- [ ] **PLOT-04 — Implement event-driven clocks and paired challenge clocks**
+- [x] **PLOT-04 — Implement event-driven clocks and paired challenge clocks**
   - Depends: PLOT-01
   - Read: plot clocks and no-world-time policy.
   - Create: `src/engine/plot/clocks.py`,
