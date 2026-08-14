@@ -649,7 +649,7 @@ storage formats, model providers, formulas, or field names.
     duplicate participant, hard/story scaling, duplicate command no tie redraw.
   - Accept: no general initiative roll; order and audit reproduce from recorded values.
 
-- [ ] **COMBAT-03 — Implement turn-start mana and status processing**
+- [x] **COMBAT-03 — Implement turn-start mana and status processing**
   - Depends: COMBAT-02
   - Read: combat turn-start and status order.
   - Create: `src/engine/combat/{statuses,turns}.py`,
