@@ -1,8 +1,13 @@
-"""Health check routes."""
+"""Health check routes (LLM-01)."""
 
-from fastapi import APIRouter
+from typing import Annotated
 
+from fastapi import APIRouter, Depends, Query
+
+from app.config import Settings
+from app.dependencies import get_settings
 from domain.models.common import StrictModel
+from llm.health import check_ollama_health
 
 router = APIRouter(tags=["health"])
 
@@ -24,6 +29,33 @@ class HealthResponse(StrictModel):
 
 
 @router.get("/health", response_model=HealthResponse)
-def get_health() -> HealthResponse:
+async def get_health(
+    settings: Annotated[Settings, Depends(get_settings)],
+    check_models: Annotated[bool, Query()] = False,
+) -> HealthResponse:
     """Report application health and capabilities."""
-    return HealthResponse()
+    if not check_models:
+        return HealthResponse(
+            status="ok",
+            core="ok",
+            storage="ok",
+            models=ModelCapabilities(),
+        )
+
+    # Perform live loopback inspection
+    ollama_health = await check_ollama_health(
+        ollama_url=settings.ollama_url,
+        text_model=settings.model_text,
+        image_model=settings.model_image,
+        timeout=2.0,
+    )
+
+    return HealthResponse(
+        status="ok",
+        core="ok",
+        storage="ok",
+        models=ModelCapabilities(
+            text=ollama_health.text_status.value,
+            image=ollama_health.image_status.value,
+        ),
+    )

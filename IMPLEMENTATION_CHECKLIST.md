@@ -881,7 +881,7 @@ storage formats, model providers, formulas, or field names.
 
 ## Milestone 4 — Local Ollama contracts and orchestration
 
-- [ ] **LLM-01 — Add Ollama settings and loopback capability health**
+- [x] **LLM-01 — Add Ollama settings and loopback capability health**
   - Depends: API-01
   - Read: ADR-002, threat model, prompt policy, app/LLM rules.
   - Change: `src/app/config.py`, `.env.example`, health DTO/route.
