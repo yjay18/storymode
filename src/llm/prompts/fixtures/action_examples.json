@@ -1,0 +1,143 @@
+[
+  {
+    "example_id": "ex-investigate-object",
+    "tags": ["investigate", "inspect", "search", "object"],
+    "player_input": "I want to examine the glowing runes carved onto the stone pillar.",
+    "proposal": {
+      "contract_version": 1,
+      "prompt_version": "action-interpreter/1.0.0",
+      "request_id": "example-investigate-1",
+      "status": "valid",
+      "operation": "investigate",
+      "verb": "examine",
+      "entity_mentions": [
+        {
+          "text": "glowing runes on the stone pillar",
+          "role": "target",
+          "candidate_ordinal": 2
+        }
+      ],
+      "capability_mentions": [],
+      "intended_effect": "Understand the meaning and origin of the glowing runes on the pillar.",
+      "challenge_label": "standard",
+      "uncertainty_reason": "Deciphering magical glyphs requires arcane or linguistic knowledge.",
+      "stakes": [
+        "On success: Discover what magic controls the chamber door.",
+        "On failure: Misinterpret the glyphs or trigger an arcane flare."
+      ],
+      "reinterpretation": null,
+      "redirect": null
+    }
+  },
+  {
+    "example_id": "ex-talk-npc",
+    "tags": ["talk", "persuade", "deceive", "intimidate", "npc"],
+    "player_input": "Ask the tavern keeper about any strange rumors in the valley.",
+    "proposal": {
+      "contract_version": 1,
+      "prompt_version": "action-interpreter/1.0.0",
+      "request_id": "example-talk-1",
+      "status": "valid",
+      "operation": "talk",
+      "verb": "ask",
+      "entity_mentions": [
+        {
+          "text": "tavern keeper",
+          "role": "target",
+          "candidate_ordinal": 1
+        }
+      ],
+      "capability_mentions": [],
+      "intended_effect": "Gather information about recent unusual events in the valley.",
+      "challenge_label": "none",
+      "uncertainty_reason": null,
+      "stakes": [],
+      "reinterpretation": null,
+      "redirect": null
+    }
+  },
+  {
+    "example_id": "ex-travel-area",
+    "tags": ["travel", "move", "area", "exit"],
+    "player_input": "Head down the winding forest path towards the old ruins.",
+    "proposal": {
+      "contract_version": 1,
+      "prompt_version": "action-interpreter/1.0.0",
+      "request_id": "example-travel-1",
+      "status": "valid",
+      "operation": "travel",
+      "verb": "head towards",
+      "entity_mentions": [
+        {
+          "text": "old ruins",
+          "role": "destination",
+          "candidate_ordinal": 3
+        }
+      ],
+      "capability_mentions": [],
+      "intended_effect": "Travel along the path to the connected old ruins area.",
+      "challenge_label": "none",
+      "uncertainty_reason": null,
+      "stakes": [],
+      "reinterpretation": null,
+      "redirect": null
+    }
+  },
+  {
+    "example_id": "ex-use-item",
+    "tags": ["use_item", "item", "inventory"],
+    "player_input": "Drink the lesser healing potion from my backpack.",
+    "proposal": {
+      "contract_version": 1,
+      "prompt_version": "action-interpreter/1.0.0",
+      "request_id": "example-item-1",
+      "status": "valid",
+      "operation": "use_item",
+      "verb": "drink",
+      "entity_mentions": [
+        {
+          "text": "lesser healing potion",
+          "role": "item",
+          "candidate_ordinal": 4
+        }
+      ],
+      "capability_mentions": [],
+      "intended_effect": "Consume the potion to restore lost health.",
+      "challenge_label": "none",
+      "uncertainty_reason": null,
+      "stakes": [],
+      "reinterpretation": null,
+      "redirect": null
+    }
+  },
+  {
+    "example_id": "ex-creative-alter-env",
+    "tags": ["alter_environment", "creative", "other", "avoid_detection"],
+    "player_input": "Throw a rock across the corridor to distract the patrolling guard.",
+    "proposal": {
+      "contract_version": 1,
+      "prompt_version": "action-interpreter/1.0.0",
+      "request_id": "example-creative-1",
+      "status": "valid_creative",
+      "operation": "alter_environment",
+      "verb": "throw",
+      "entity_mentions": [
+        {
+          "text": "patrolling guard",
+          "role": "target",
+          "candidate_ordinal": 1
+        }
+      ],
+      "capability_mentions": [],
+      "intended_effect": "Create a sound diversion drawing the guard's attention away from the corridor.",
+      "challenge_label": "easy",
+      "uncertainty_reason": "Guard may notice the trajectory or ignore the noise.",
+      "stakes": [
+        "On success: Guard moves to investigate the noise, clearing the path.",
+        "On failure: Guard becomes alert and looks directly towards the party."
+      ],
+      "reinterpretation": null,
+      "redirect": null
+    }
+  }
+]

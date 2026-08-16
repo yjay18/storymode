@@ -916,7 +916,7 @@ storage formats, model providers, formulas, or field names.
     optional truncation, mandatory overflow, hostile instruction stored as quoted data.
   - Accept: packet contains ordinals, never mutable objects/repository or final DC mapping.
 
-- [ ] **LLM-04 — Add safe prompt renderer and versioned action template/examples**
+- [x] **LLM-04 — Add safe prompt renderer and versioned action template/examples**
   - Depends: LLM-03, LLMCON-01
   - Read: prompt policy and action prompt spec completely.
   - Create: `src/llm/prompts/{renderer,action_interpreter_v1}.py`,
