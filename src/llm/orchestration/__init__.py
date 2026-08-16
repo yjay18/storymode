@@ -1,4 +1,4 @@
-"""LLM orchestration package for action interpretation and narration (LLM-05, LLM-07)."""
+"""LLM orchestration package for action interpretation, narration, and opportunity planning."""
 
 from llm.orchestration.action_interpreter import (
     ActionInterpreter,
@@ -9,6 +9,7 @@ from llm.orchestration.action_interpreter import (
 )
 from llm.orchestration.fallback import generate_deterministic_fallback_narration
 from llm.orchestration.narrator import NarratorOrchestrator
+from llm.orchestration.opportunity_planner import OpportunityPlannerAdapter
 
 __all__ = [
     "ActionInterpreter",
@@ -17,5 +18,6 @@ __all__ = [
     "InterpretationResult",
     "InterpretationSuccess",
     "NarratorOrchestrator",
+    "OpportunityPlannerAdapter",
     "generate_deterministic_fallback_narration",
 ]

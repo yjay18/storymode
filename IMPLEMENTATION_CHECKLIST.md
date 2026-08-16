@@ -965,7 +965,7 @@ storage formats, model providers, formulas, or field names.
     fallback for direct/check/combat/rejection, no new roll/state write.
   - Accept: committed factual result remains visible independently of model.
 
-- [ ] **LLM-08 — Implement opportunity contract, context, prompt, and planner adapter**
+- [x] **LLM-08 — Implement opportunity contract, context, prompt, and planner adapter**
   - Depends: LLM-02, PLOT-03
   - Read: OpportunityProposalV1, opportunity prompt and plot design.
   - Create: `src/llm/contracts/opportunity.py`,
