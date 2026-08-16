@@ -929,7 +929,7 @@ storage formats, model providers, formulas, or field names.
     patch authority, example schemas validate, byte budget.
   - Accept: prompt output is deterministic for same packet/input and logs are not involved.
 
-- [ ] **LLM-05 — Implement action interpretation, one repair, and typed failure**
+- [x] **LLM-05 — Implement action interpretation, one repair, and typed failure**
   - Depends: LLM-02, LLM-04
   - Read: LLM contract retry policy and exploration data flow.
   - Create: `src/llm/orchestration/{__init__,action_interpreter}.py`,
