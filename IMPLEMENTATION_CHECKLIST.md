@@ -992,7 +992,7 @@ storage formats, model providers, formulas, or field names.
     stored factual result/fallback, no network through fake transport.
   - Accept: Milestone 4 smoke uses fake model; optional manual Ollama check is separate/skipped.
 
-- [ ] **SCRIPT-03 — Add explicit local model setup/capability script**
+- [x] **SCRIPT-03 — Add explicit local model setup and capability inspection script**
   - Depends: LLM-02
   - Read: scripts rules, Ollama choice, image capability fallback.
   - Create: `scripts/setup_local_models.py`,
