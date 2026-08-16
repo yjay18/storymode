@@ -941,7 +941,7 @@ storage formats, model providers, formulas, or field names.
     timeout, cancellation, repair facts identical, raw text absent from logs.
   - Accept: implementation satisfies `ActionInterpreter` port and cannot mutate state.
 
-- [ ] **LLM-06 — Implement narrator contract, context packet, and prompt**
+- [x] **LLM-06 — Implement narrator contract, context packet, and prompt**
   - Depends: LLM-02, STATE-04
   - Read: NarrationV1 contract, narrator prompt, save narrative memory.
   - Create: `src/llm/contracts/narration.py`, `src/llm/retrieval/narrator_context.py`,
