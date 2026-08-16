@@ -904,7 +904,7 @@ storage formats, model providers, formulas, or field names.
     redirect loopback and remote, missing response field; no test network.
   - Accept: client has no save/game-rule imports and never shells out.
 
-- [ ] **LLM-03 — Build bounded action-interpreter context packets**
+- [x] **LLM-03 — Build bounded action-interpreter context packets**
   - Depends: ACTION-01
   - Read: action prompt context, prompt budget, narrator retrieval inputs.
   - Create: `src/llm/retrieval/{__init__,action_context}.py`,
