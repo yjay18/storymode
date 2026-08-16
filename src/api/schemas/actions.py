@@ -23,6 +23,7 @@ class SubmitActionResponse(StrictModel):
     has_pending_check: bool
     rejection_reason: str | None = None
     pending_check: PendingCheck | None = None
+    narration: str | None = None
 
 
 class ResolveCheckRequest(StrictModel):
@@ -43,6 +44,7 @@ class ResolveCheckResponse(StrictModel):
     revision: int
     roll: int
     band: str
+    narration: str | None = None
 
 
 class CancelCheckRequest(StrictModel):
@@ -60,3 +62,4 @@ class CancelCheckResponse(StrictModel):
     save_id: EntityId
     campaign_id: EntityId
     revision: int
+    narration: str | None = None

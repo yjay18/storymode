@@ -979,7 +979,7 @@ storage formats, model providers, formulas, or field names.
     hook rejected downstream, timeout -> authored fallback/no frontier corruption.
   - Accept: planner fulfills port and has no repository/state mutation imports.
 
-- [ ] **LLM-09 — Integrate interpreter/narrator/planner at post-validation boundaries**
+- [x] **LLM-09 — Integrate interpreter/narrator/planner at post-validation boundaries**
   - Depends: LLM-05, LLM-07, LLM-08, API-03, PROG-05
   - Read: all four data flows and component boundaries.
   - Change: app dependencies; action/plot use-case orchestration; health/action responses.
