@@ -893,7 +893,7 @@ storage formats, model providers, formulas, or field names.
     fake tag responses/timeouts/malformed; health never mutates or downloads.
   - Accept: absence is typed and no cloud endpoint/key setting exists.
 
-- [ ] **LLM-02 — Implement bounded Ollama HTTP transport**
+- [x] **LLM-02 — Implement bounded Ollama HTTP transport**
   - Depends: LLM-01
   - Read: LLM folder rules and local threat controls.
   - Create: `src/llm/ollama_client.py`, `tests/unit/llm/test_ollama_client.py`.
