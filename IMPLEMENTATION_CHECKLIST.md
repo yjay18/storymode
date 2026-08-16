@@ -953,7 +953,7 @@ storage formats, model providers, formulas, or field names.
     truncation/mandatory overflow, prompt hostile text and authority rules.
   - Accept: narration string cannot carry structured effects and packet builds only post-commit.
 
-- [ ] **LLM-07 — Implement narration validation, orchestration, and deterministic fallback**
+- [x] **LLM-07 — Implement narration validation, orchestration, and deterministic fallback**
   - Depends: LLM-06
   - Read: narrator rules/fallback and action flow post-commit behavior.
   - Create: `src/llm/orchestration/narrator.py`, `src/llm/orchestration/fallback.py`,

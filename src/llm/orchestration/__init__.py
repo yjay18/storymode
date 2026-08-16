@@ -1,4 +1,4 @@
-"""Action interpreter orchestration (LLM-05)."""
+"""LLM orchestration package for action interpretation and narration (LLM-05, LLM-07)."""
 
 from llm.orchestration.action_interpreter import (
     ActionInterpreter,
@@ -7,6 +7,8 @@ from llm.orchestration.action_interpreter import (
     InterpretationResult,
     InterpretationSuccess,
 )
+from llm.orchestration.fallback import generate_deterministic_fallback_narration
+from llm.orchestration.narrator import NarratorOrchestrator
 
 __all__ = [
     "ActionInterpreter",
@@ -14,4 +16,6 @@ __all__ = [
     "InterpretationFailure",
     "InterpretationResult",
     "InterpretationSuccess",
+    "NarratorOrchestrator",
+    "generate_deterministic_fallback_narration",
 ]
