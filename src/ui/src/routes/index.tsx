@@ -3,6 +3,8 @@ import { Link, Navigate, Route, Routes } from "react-router-dom";
 import { defaultApiClient } from "../api/client";
 import type { CampaignSummary, HealthResponse } from "../api/schema";
 import { AppShell } from "../components/AppShell";
+import { BriefForm } from "../features/builder/BriefForm";
+import { QuickPromptForm } from "../features/builder/QuickPromptForm";
 import { CampaignDetail } from "../features/campaigns/CampaignDetail";
 import { CampaignList } from "../features/campaigns/CampaignList";
 import { PreflightCard } from "../features/startup/PreflightCard";
@@ -66,25 +68,11 @@ export function LibraryScreen(): React.JSX.Element {
 }
 
 export function GuidedBuilderScreen(): React.JSX.Element {
-  return (
-    <section aria-labelledby="guided-builder-heading">
-      <h1 id="guided-builder-heading">Guided Campaign Builder</h1>
-      <p style={{ color: "var(--color-text-secondary)", marginTop: "0.5rem" }}>
-        Craft a campaign world step by step from a comprehensive brief or book text.
-      </p>
-    </section>
-  );
+  return <BriefForm />;
 }
 
 export function QuickBuilderScreen(): React.JSX.Element {
-  return (
-    <section aria-labelledby="quick-builder-heading">
-      <h1 id="quick-builder-heading">Quick Prompt Builder</h1>
-      <p style={{ color: "var(--color-text-secondary)", marginTop: "0.5rem" }}>
-        Generate a campaign world quickly from a single premise.
-      </p>
-    </section>
-  );
+  return <QuickPromptForm />;
 }
 
 export function CampaignDetailScreen(): React.JSX.Element {

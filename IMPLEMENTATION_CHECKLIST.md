@@ -1168,7 +1168,7 @@ storage formats, model providers, formulas, or field names.
     malicious title/description, retry.
   - Accept: never offers cloud fallback or calls health repeatedly without user/poll interval cap.
 
-- [ ] **UI-05 — Implement guided and quick builder input flows**
+- [x] **UI-05 — Implement guided and quick builder input flows**
   - Depends: UI-04
   - Read: builder UX guided/shared pipeline.
   - Create: `src/ui/src/features/builder/BriefForm.tsx`, `QuickPromptForm.tsx`, route/state/tests.
