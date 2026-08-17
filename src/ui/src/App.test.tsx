@@ -3,12 +3,9 @@ import { describe, expect, it } from "vitest";
 import { App } from "./App";
 
 describe("App setup", () => {
-  it("renders the Storymode setup landmark and heading", () => {
+  it("renders the Storymode app shell and default Campaign Library screen", () => {
     render(<App />);
-    const landmark = screen.getByRole("main", { name: "Storymode setup" });
-    expect(landmark).toBeInTheDocument();
-    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
-      "Storymode setup",
-    );
+    expect(screen.getByRole("link", { name: "STORYMODE" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Campaign Library" })).toBeInTheDocument();
   });
 });

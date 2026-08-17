@@ -1145,7 +1145,7 @@ storage formats, model providers, formulas, or field names.
     no remote base URL accepted in production config.
   - Accept: no game formulas, `any`, hidden cloud fallback, or direct Ollama call.
 
-- [ ] **UI-03 — Build accessible shell, routing, error boundary, and base styles**
+- [x] **UI-03 — Build accessible shell, routing, error boundary, and base styles**
   - Depends: UI-02
   - Read: screen map responsive/nav rules and accessibility entire document.
   - Create: `src/ui/src/routes/*`, `components/AppShell.tsx`, `components/ErrorBoundary.tsx`,

@@ -1,11 +1,16 @@
 import React from "react";
+import { BrowserRouter } from "react-router-dom";
+import { ErrorBoundary } from "./components/ErrorBoundary";
+import { AppRoutes } from "./routes";
+import "./styles/global.css";
 
 export function App(): React.JSX.Element {
   return (
-    <main aria-label="Storymode setup">
-      <h1>Storymode setup</h1>
-      <p>Single-player text RPG with deterministic rules and local models.</p>
-    </main>
+    <ErrorBoundary>
+      <BrowserRouter>
+        <AppRoutes />
+      </BrowserRouter>
+    </ErrorBoundary>
   );
 }
 
