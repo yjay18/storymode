@@ -1309,7 +1309,7 @@ storage formats, model providers, formulas, or field names.
   - Accept: every required threat-model verification has a named passing test; no skipped case
     without a documented platform reason and manual evidence.
 
-- [ ] **CI-02 — Add frontend and schema/smoke checks to CI**
+- [x] **CI-02 — Add frontend and schema/smoke checks to CI**
   - Depends: UI-11, IMAGE-04, SEC-01, BOOT-04
   - Read: README commands and ADR dependencies.
   - Change: `.github/workflows/test.yml`.
