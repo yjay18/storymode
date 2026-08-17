@@ -1020,7 +1020,7 @@ storage formats, model providers, formulas, or field names.
     content limit, no raw source in normalized summary, extra fields.
   - Accept: neither path can mark a campaign published or skip stages.
 
-- [ ] **BUILD-02 — Implement bounded plain-text source importer**
+- [x] **BUILD-02 — Implement bounded plain-text source importer**
   - Depends: BUILD-01
   - Read: threat model source controls; worldbuilding source policy.
   - Create: `src/campaign/importers/{__init__,plain_text}.py`,
