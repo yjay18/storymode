@@ -142,3 +142,4 @@ class DraftState(FrozenModel):
     stages: dict[DraftStage, DraftStageState] = Field(default_factory=dict)
     diagnostics: list[StageDiagnostic] = Field(default_factory=list)
     is_published: bool = False
+    published_campaign_id: EntityId | None = None

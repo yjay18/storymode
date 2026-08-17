@@ -1092,7 +1092,7 @@ storage formats, model providers, formulas, or field names.
     missing optional art warning not error, publish-ready predicate.
   - Accept: review never silently repairs or changes another artifact.
 
-- [ ] **BUILD-08 — Publish an immutable validated campaign atomically**
+- [x] **BUILD-08 — Publish an immutable validated campaign atomically**
   - Depends: BUILD-07, CAMP-02
   - Read: campaign generation publish flow, ADR-003, threat model.
   - Create: `src/campaign/storage/publisher.py`,

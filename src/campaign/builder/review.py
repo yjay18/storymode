@@ -249,7 +249,7 @@ class DraftReviewService:
                 if "meta" in data:
                     files["campaign.json"] = json.dumps(data["meta"])
                 if "style" in data:
-                    files["style_bible.json"] = json.dumps(data["style"])
+                    files["style.json"] = json.dumps(data["style"])
             elif stage_name == "rules":
                 if "world" in data:
                     files["world.json"] = json.dumps(data["world"])
@@ -277,7 +277,7 @@ class DraftReviewService:
         """Map engine Diagnostic to StageDiagnostic."""
         stage_map = {
             "campaign.json": "meta_style",
-            "style_bible.json": "meta_style",
+            "style.json": "meta_style",
             "world.json": "rules",
             "areas.json": "areas",
             "plot.json": "plot",
