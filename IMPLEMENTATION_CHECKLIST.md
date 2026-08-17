@@ -1105,7 +1105,7 @@ storage formats, model providers, formulas, or field names.
     content order stability, draft preserved, no saves created.
   - Accept: published design cannot be edited in place through builder repository.
 
-- [ ] **BUILD-09 — Expose builder draft/generate/review/publish API**
+- [x] **BUILD-09 — Expose builder draft/generate/review/publish API**
   - Depends: BUILD-08, LLM-09
   - Read: builder UX and API boundary.
   - Create: `src/api/schemas/builder.py`, `src/api/routes/builder.py`,

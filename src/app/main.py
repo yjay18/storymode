@@ -9,7 +9,17 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, RedirectResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
-from api.routes import actions, campaigns, combat, health, party, plot, progression, saves
+from api.routes import (
+    actions,
+    builder,
+    campaigns,
+    combat,
+    health,
+    party,
+    plot,
+    progression,
+    saves,
+)
 from api.schemas.common import create_error_response
 from app.config import Settings, get_settings
 
@@ -85,6 +95,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     # Register routers
     app.include_router(health.router)
     app.include_router(campaigns.router, prefix="/api/v1")
+    app.include_router(builder.router, prefix="/api/v1")
     app.include_router(saves.router, prefix="/api/v1")
     app.include_router(actions.router, prefix="/api/v1")
     app.include_router(combat.router, prefix="/api/v1")
