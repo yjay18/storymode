@@ -1032,7 +1032,7 @@ storage formats, model providers, formulas, or field names.
     storage wrapper, embedded prompt injection retained as quoted data, no execution.
   - Accept: unsupported formats return actionable error, not a new dependency.
 
-- [ ] **BUILD-03 — Implement draft filesystem repository**
+- [x] **BUILD-03 — Implement draft filesystem repository**
   - Depends: BUILD-01, CAMP-01
   - Read: campaign context and publish transaction principles.
   - Create: `src/campaign/storage/drafts.py`,
