@@ -4,8 +4,10 @@ import { defaultApiClient } from "../../api/client";
 import { createCommandTracker } from "../../api/commands";
 import type { RuntimeStateResponse } from "../../api/schema";
 import { ActionComposer } from "./ActionComposer";
+import { CheckPanel, PendingCheckData } from "./CheckPanel";
 import { ContextRail } from "./ContextRail";
 import { LogEntry, NarrativeLog } from "./NarrativeLog";
+import { RollHistory, RollHistoryItem } from "./RollHistory";
 
 export function ExplorationScreen(): React.JSX.Element {
   const { campaignId, saveId } = useParams<{ campaignId: string; saveId: string }>();
@@ -16,6 +18,8 @@ export function ExplorationScreen(): React.JSX.Element {
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [entries, setEntries] = useState<LogEntry[]>([]);
+  const [pendingCheck, setPendingCheck] = useState<PendingCheckData | null>(null);
+  const [rollHistory, setRollHistory] = useState<RollHistoryItem[]>([]);
 
   const trackerRef = useRef(createCommandTracker());
 
@@ -46,7 +50,6 @@ export function ExplorationScreen(): React.JSX.Element {
     const intentKey = `action-${state.revision}-${rawInput}`;
     const commandId = trackerRef.current.getOrGenerate(intentKey);
 
-    // Append player action immediately to narrative log
     const actionLogId = `user-${Date.now()}`;
     setEntries((prev) => [
       ...prev,
@@ -61,7 +64,18 @@ export function ExplorationScreen(): React.JSX.Element {
         expected_revision: state.revision,
       });
 
-      // Append result card to chronicle
+      if (resp.status === "check_required" && resp.pending_check) {
+        setPendingCheck({
+          check_id: resp.pending_check.check_id,
+          skill_or_attribute: resp.pending_check.skill_or_attribute,
+          dc: resp.pending_check.dc,
+          stakes_description: resp.pending_check.stakes_description,
+          allow_luck_reroll: resp.pending_check.allow_luck_reroll,
+        });
+      } else {
+        setPendingCheck(null);
+      }
+
       setEntries((prev) => [
         ...prev,
         {
@@ -75,7 +89,6 @@ export function ExplorationScreen(): React.JSX.Element {
 
       trackerRef.current.consume(intentKey);
 
-      // Refresh state to fetch updated revision, HP, mana, items
       const updated = await defaultApiClient.getSave(campaignId, saveId);
       setState(updated);
 
@@ -89,6 +102,69 @@ export function ExplorationScreen(): React.JSX.Element {
           id: `err-${Date.now()}`,
           type: "result",
           content: "Action failed",
+          status: "rejected",
+          errorReason: err instanceof Error ? err.message : "Transport error",
+        },
+      ]);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleResolveCheck = async (useLuck: boolean) => {
+    if (!campaignId || !saveId || !state || !pendingCheck) return;
+
+    const intentKey = `check-${state.revision}-${pendingCheck.check_id}-${useLuck}`;
+    const commandId = trackerRef.current.getOrGenerate(intentKey);
+
+    setSubmitting(true);
+    try {
+      const resp = await defaultApiClient.resolveCheck(
+        campaignId,
+        saveId,
+        pendingCheck.check_id,
+        {
+          command_id: commandId,
+          use_luck: useLuck,
+          expected_revision: state.revision,
+        },
+      );
+
+      setRollHistory((prev) => [
+        ...prev,
+        {
+          id: `roll-${Date.now()}`,
+          checkId: pendingCheck.check_id,
+          trait: pendingCheck.skill_or_attribute,
+          dc: pendingCheck.dc,
+          outcome: resp.status === "success" ? "Passed" : "Failed",
+          timestamp: new Date().toLocaleTimeString(),
+        },
+      ]);
+
+      setEntries((prev) => [
+        ...prev,
+        {
+          id: `res-${Date.now()}`,
+          type: "result",
+          content: resp.outcome_summary,
+          status: resp.status,
+          narration: resp.narration,
+        },
+      ]);
+
+      setPendingCheck(null);
+      trackerRef.current.consume(intentKey);
+
+      const updated = await defaultApiClient.getSave(campaignId, saveId);
+      setState(updated);
+    } catch (err) {
+      setEntries((prev) => [
+        ...prev,
+        {
+          id: `err-${Date.now()}`,
+          type: "result",
+          content: "Check resolution failed",
           status: "rejected",
           errorReason: err instanceof Error ? err.message : "Transport error",
         },
@@ -130,14 +206,29 @@ export function ExplorationScreen(): React.JSX.Element {
       >
         <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
           <NarrativeLog entries={entries} />
-          <ActionComposer
-            disabled={submitting || state.in_combat}
-            submitting={submitting}
-            onSubmit={handleTakeAction}
-          />
+
+          {pendingCheck && (
+            <CheckPanel
+              check={pendingCheck}
+              submitting={submitting}
+              onResolve={handleResolveCheck}
+              onCancel={() => setPendingCheck(null)}
+            />
+          )}
+
+          {!pendingCheck && (
+            <ActionComposer
+              disabled={submitting || state.in_combat}
+              submitting={submitting}
+              onSubmit={handleTakeAction}
+            />
+          )}
         </div>
 
-        <ContextRail runtimeState={state} />
+        <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+          <ContextRail runtimeState={state} />
+          <RollHistory history={rollHistory} />
+        </div>
       </div>
     </div>
   );

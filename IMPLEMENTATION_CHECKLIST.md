@@ -1203,7 +1203,7 @@ storage formats, model providers, formulas, or field names.
     duplicate-click prevention, malicious text escaped, log focus/live behavior, axe.
   - Accept: no state inferred from prose and opening rail/panels sends no mutation.
 
-- [ ] **UI-08 — Implement visible check confirmation, luck, and roll history**
+- [x] **UI-08 — Implement visible check confirmation, luck, and roll history**
   - Depends: UI-07
   - Read: exploration visible check, difficulty/luck, roll schema.
   - Create: exploration `CheckPanel`, `RollResult`, `RollHistory` and tests.
