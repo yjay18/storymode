@@ -8,6 +8,7 @@ import { DraftWorkspace } from "../features/builder/DraftWorkspace";
 import { QuickPromptForm } from "../features/builder/QuickPromptForm";
 import { CampaignDetail } from "../features/campaigns/CampaignDetail";
 import { CampaignList } from "../features/campaigns/CampaignList";
+import { CombatScreen } from "../features/combat/CombatScreen";
 import { ExplorationScreen } from "../features/exploration/ExplorationScreen";
 import { PreflightCard } from "../features/startup/PreflightCard";
 
@@ -123,6 +124,10 @@ export function AppRoutes(): React.JSX.Element {
         <Route path="/builder" element={<Navigate to="/builder/guided" replace />} />
         <Route path="/campaigns/:campaignId" element={<CampaignDetailScreen />} />
         <Route path="/play/:campaignId/:saveId" element={<PlayScreen />} />
+        <Route
+          path="/play/:campaignId/:saveId/combat/:combatId"
+          element={<CombatScreen />}
+        />
         <Route path="/recovery" element={<RecoveryScreen />} />
         <Route path="*" element={<NotFoundScreen />} />
       </Routes>

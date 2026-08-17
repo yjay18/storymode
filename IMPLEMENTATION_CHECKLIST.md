@@ -1225,7 +1225,7 @@ storage formats, model providers, formulas, or field names.
     save list/create conflict, open sends GET only, combat disables changes, keyboard/axe.
   - Accept: mechanics are descriptions/data from API, not calculations duplicated in UI.
 
-- [ ] **UI-10 — Implement combat screen and all bounded commands**
+- [x] **UI-10 — Implement combat screen and all bounded commands**
   - Depends: UI-08, API-05
   - Read: combat UX and accessibility result order.
   - Create: `src/ui/src/features/combat/*` and tests.
