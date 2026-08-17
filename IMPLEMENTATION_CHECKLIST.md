@@ -1214,7 +1214,7 @@ storage formats, model providers, formulas, or field names.
     retry same ID, double click, reduced motion, keyboard/focus/live/axe.
   - Accept: UI never generates die/random animation value or recomputes outcome.
 
-- [ ] **UI-09 — Implement character, inventory, party, journal, and save panels**
+- [x] **UI-09 — Implement character, inventory, party, journal, and save panels**
   - Depends: UI-07, PROG-05
   - Read: progression/party/save design and screen map.
   - Create: `src/ui/src/features/{character,inventory,party,journal,saves}/*` and tests.
