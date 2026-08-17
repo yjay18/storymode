@@ -1319,7 +1319,7 @@ storage formats, model providers, formulas, or field names.
   - Test: run every command locally from clean dependency installs where practical; inspect YAML.
   - Accept: CI requires no cloud product service beyond GitHub runner dependency download.
 
-- [ ] **POLISH-01 — Add resource limits, cancellation, and observability verification**
+- [x] **POLISH-01 — Add resource limits, cancellation, and observability verification**
   - Depends: CI-02
   - Read: prompt budgets, threat availability controls, builder/image UX.
   - Create: `tests/integration/test_resource_limits.py`; update docs/config only as necessary.
