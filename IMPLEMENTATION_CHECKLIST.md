@@ -1329,7 +1329,7 @@ storage formats, model providers, formulas, or field names.
   - Test: limit boundaries and capture/redact logs for action/narrator/builder/image/save errors.
   - Accept: no unbounded collection/model request/background job in a reachable v1 flow.
 
-- [ ] **POLISH-02 — Execute release checklist and update canonical status**
+- [x] **POLISH-02 — Execute release checklist and update canonical status**
   - Depends: POLISH-01
   - Read: every definition-of-done section, README, changelog, root context.
   - Change: `README.md`, `CONTEXT.md`, `CHANGELOG.md`, relevant folder docs; create
