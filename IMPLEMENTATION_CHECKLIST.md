@@ -1252,7 +1252,7 @@ storage formats, model providers, formulas, or field names.
 
 ## Milestone 7 — Local image capability, security, and release polish
 
-- [ ] **IMAGE-01 — Define image capability/result and deterministic asset keys**
+- [x] **IMAGE-01 — Define image capability/result and deterministic asset keys**
   - Depends: LLM-02, BUILD-08
   - Read: image prompt policy, threat model, campaign assets context.
   - Create: `src/llm/contracts/image.py`, `src/campaign/assets/{__init__,keys,prompts}.py`,
