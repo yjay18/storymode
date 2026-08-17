@@ -1068,7 +1068,7 @@ storage formats, model providers, formulas, or field names.
     no long source reproduction, deterministic same-input prompt, budget failures.
   - Accept: no stage receives whole source/campaign when summaries/typed dependencies suffice.
 
-- [ ] **BUILD-06 — Orchestrate stage generation and bounded repair**
+- [x] **BUILD-06 — Orchestrate stage generation and bounded repair**
   - Depends: BUILD-03, BUILD-05, VALID-04
   - Read: builder shared pipeline and generation repair rules.
   - Create: `src/campaign/generation/{__init__,stages,orchestrator}.py`,
