@@ -1,17 +1,32 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+import { defaultApiClient } from "../api/client";
 import { AppShell } from "../components/AppShell";
 import { AppRoutes } from "./index";
 
 describe("AppRoutes", () => {
-  it("renders library route on /", () => {
+  it("renders library route on /", async () => {
+    vi.spyOn(defaultApiClient, "getHealth").mockResolvedValue({
+      status: "ok",
+      version: "1.0.0",
+      ollama_reachable: true,
+      model_text_available: true,
+      model_image_available: false,
+      models: [],
+    });
+    vi.spyOn(defaultApiClient, "listCampaigns").mockResolvedValue([]);
+
     render(
       <MemoryRouter initialEntries={["/"]}>
         <AppRoutes />
       </MemoryRouter>,
     );
-    expect(screen.getByRole("heading", { name: "Campaign Library" })).toBeInTheDocument();
+
+    await waitFor(() => {
+      expect(screen.getByText("Local System Readiness")).toBeInTheDocument();
+      expect(screen.getByText("No Campaigns Found")).toBeInTheDocument();
+    });
   });
 
   it("renders guided builder route on /builder/guided", () => {

@@ -1157,7 +1157,7 @@ storage formats, model providers, formulas, or field names.
     CSS assertion and production build.
   - Accept: no placeholder state mutation controls and all routes can render empty state.
 
-- [ ] **UI-04 — Implement startup preflight and campaign library/detail**
+- [x] **UI-04 — Implement startup preflight and campaign library/detail**
   - Depends: UI-03
   - Read: screen map startup and builder/library relevant API.
   - Create: `src/ui/src/features/startup/*`, `features/campaigns/*`, tests.

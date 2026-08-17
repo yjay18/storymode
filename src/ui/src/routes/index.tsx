@@ -1,15 +1,67 @@
-import React from "react";
+import { useEffect, useState } from "react";
 import { Link, Navigate, Route, Routes } from "react-router-dom";
+import { defaultApiClient } from "../api/client";
+import type { CampaignSummary, HealthResponse } from "../api/schema";
 import { AppShell } from "../components/AppShell";
+import { CampaignDetail } from "../features/campaigns/CampaignDetail";
+import { CampaignList } from "../features/campaigns/CampaignList";
+import { PreflightCard } from "../features/startup/PreflightCard";
 
 export function LibraryScreen(): React.JSX.Element {
+  const [health, setHealth] = useState<HealthResponse | null>(null);
+  const [healthLoading, setHealthLoading] = useState<boolean>(true);
+  const [healthError, setHealthError] = useState<string | null>(null);
+
+  const [campaigns, setCampaigns] = useState<CampaignSummary[]>([]);
+  const [campaignsLoading, setCampaignsLoading] = useState<boolean>(true);
+  const [campaignsError, setCampaignsError] = useState<string | null>(null);
+
+  const fetchHealth = async () => {
+    setHealthLoading(true);
+    setHealthError(null);
+    try {
+      const h = await defaultApiClient.getHealth();
+      setHealth(h);
+    } catch (e) {
+      setHealthError(e instanceof Error ? e.message : "Health check failed");
+    } finally {
+      setHealthLoading(false);
+    }
+  };
+
+  const fetchCampaigns = async () => {
+    setCampaignsLoading(true);
+    setCampaignsError(null);
+    try {
+      const list = await defaultApiClient.listCampaigns();
+      setCampaigns(list);
+    } catch (e) {
+      setCampaignsError(e instanceof Error ? e.message : "Failed to load campaigns");
+    } finally {
+      setCampaignsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchHealth();
+    fetchCampaigns();
+  }, []);
+
   return (
-    <section aria-labelledby="library-heading">
-      <h1 id="library-heading">Campaign Library</h1>
-      <p style={{ color: "var(--color-text-secondary)", marginTop: "0.5rem" }}>
-        Select a campaign to play or create a new world.
-      </p>
-    </section>
+    <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+      <PreflightCard
+        health={health}
+        loading={healthLoading}
+        error={healthError}
+        onRetry={fetchHealth}
+      />
+      <CampaignList
+        campaigns={campaigns}
+        loading={campaignsLoading}
+        error={campaignsError}
+        onRetry={fetchCampaigns}
+      />
+    </div>
   );
 }
 
@@ -36,14 +88,7 @@ export function QuickBuilderScreen(): React.JSX.Element {
 }
 
 export function CampaignDetailScreen(): React.JSX.Element {
-  return (
-    <section aria-labelledby="campaign-detail-heading">
-      <h1 id="campaign-detail-heading">Campaign Details</h1>
-      <p style={{ color: "var(--color-text-secondary)", marginTop: "0.5rem" }}>
-        View campaign synopsis, characters, and save slots.
-      </p>
-    </section>
-  );
+  return <CampaignDetail />;
 }
 
 export function PlayScreen(): React.JSX.Element {
