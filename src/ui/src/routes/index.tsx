@@ -8,6 +8,7 @@ import { DraftWorkspace } from "../features/builder/DraftWorkspace";
 import { QuickPromptForm } from "../features/builder/QuickPromptForm";
 import { CampaignDetail } from "../features/campaigns/CampaignDetail";
 import { CampaignList } from "../features/campaigns/CampaignList";
+import { ExplorationScreen } from "../features/exploration/ExplorationScreen";
 import { PreflightCard } from "../features/startup/PreflightCard";
 
 export function LibraryScreen(): React.JSX.Element {
@@ -81,14 +82,7 @@ export function CampaignDetailScreen(): React.JSX.Element {
 }
 
 export function PlayScreen(): React.JSX.Element {
-  return (
-    <section aria-labelledby="play-heading">
-      <h1 id="play-heading">Active Adventure</h1>
-      <p style={{ color: "var(--color-text-secondary)", marginTop: "0.5rem" }}>
-        Explore the realm and engage in tactical encounters.
-      </p>
-    </section>
-  );
+  return <ExplorationScreen />;
 }
 
 export function RecoveryScreen(): React.JSX.Element {

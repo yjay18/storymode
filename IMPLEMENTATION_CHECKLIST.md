@@ -1191,7 +1191,7 @@ storage formats, model providers, formulas, or field names.
     warning vs error, publish confirmation/success/failure, keyboard/axe.
   - Accept: no raw writable JSON editor and valid prior stages remain visible.
 
-- [ ] **UI-07 — Implement exploration log, context rail, and free-text composer**
+- [x] **UI-07 — Implement exploration log, context rail, and free-text composer**
   - Depends: UI-04, LLM-09
   - Read: exploration UX and accessibility result order.
   - Create: `src/ui/src/features/exploration/{ExplorationScreen,NarrativeLog,ContextRail,
