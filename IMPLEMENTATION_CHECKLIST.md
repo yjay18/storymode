@@ -1133,7 +1133,7 @@ storage formats, model providers, formulas, or field names.
     or document/block dependency choice before proceeding.
   - Accept: lockfile committed, no CDN/analytics/cloud/fonts, tests use jsdom, build output ignored.
 
-- [ ] **UI-02 — Generate API types and implement resilient local fetch client**
+- [x] **UI-02 — Generate API types and implement resilient local fetch client**
   - Depends: UI-01, API-05, PROG-05, BUILD-09
   - Read: API component boundary and UI retry rule.
   - Create: checked-in `src/ui/src/api/schema.d.ts`, `client.ts`, `errors.ts`, `commands.ts`,
