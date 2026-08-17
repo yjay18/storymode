@@ -1288,7 +1288,7 @@ storage formats, model providers, formulas, or field names.
     dedupe, play with unavailable image model.
   - Accept: asset bytes are presentation only and response includes accessible description.
 
-- [ ] **IMAGE-04 — Render backgrounds/portraits with equivalent fallback and alt text**
+- [x] **IMAGE-04 — Render backgrounds/portraits with equivalent fallback and alt text**
   - Depends: IMAGE-03, UI-10
   - Read: exploration/combat visual and accessibility rules.
   - Create/change: UI scene background/enemy portrait/fallback components and tests.
