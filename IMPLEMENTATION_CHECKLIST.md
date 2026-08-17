@@ -1080,7 +1080,7 @@ storage formats, model providers, formulas, or field names.
     cancel/restart retains valid prior, timeout, no publish, fake transport only.
   - Accept: invalid partial campaign is inspectable draft and never playable.
 
-- [ ] **BUILD-07 — Implement typed review edits and complete validation report**
+- [x] **BUILD-07 — Implement typed review edits and complete validation report**
   - Depends: BUILD-06
   - Read: builder review/validation UX and schema diagnostics.
   - Create: `src/campaign/builder/review.py`,
