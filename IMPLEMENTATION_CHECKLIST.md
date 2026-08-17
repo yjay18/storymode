@@ -1044,7 +1044,7 @@ storage formats, model providers, formulas, or field names.
     loader refuses draft, source document not copied unless explicit bounded import policy.
   - Accept: valid completed stages survive retry/cancel and no partial JSON is authoritative.
 
-- [ ] **BUILD-04 — Define one strict design-generation contract per artifact**
+- [x] **BUILD-04 — Define one strict design-generation contract per artifact**
   - Depends: LLM-02, SCHEMA-09, BUILD-01
   - Read: campaign-generation prompt and campaign schema entirely.
   - Create: `src/llm/contracts/campaign_generation.py`,
