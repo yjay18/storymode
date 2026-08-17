@@ -25,6 +25,8 @@ def check_markdown_links(root: Path) -> list[str]:
     for md_file in root.rglob("*.md"):
         if any(part.startswith(".") and part != "." for part in md_file.parts):
             continue
+        if "node_modules" in md_file.parts or "dist" in md_file.parts:
+            continue
 
         try:
             content = md_file.read_text(encoding="utf-8")

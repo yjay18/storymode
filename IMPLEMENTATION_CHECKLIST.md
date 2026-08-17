@@ -1121,7 +1121,7 @@ storage formats, model providers, formulas, or field names.
 
 ## Milestone 6 — Local React UI
 
-- [ ] **UI-01 — Bootstrap strict React/Vite test project without product screens**
+- [x] **UI-01 — Bootstrap strict React/Vite test project without product screens**
   - Depends: API-01
   - Read: UI context/manual, screen map, accessibility, ADR-008/011.
   - Create: `src/ui/package.json`, `package-lock.json`, `tsconfig*.json`, `vite.config.ts`,
