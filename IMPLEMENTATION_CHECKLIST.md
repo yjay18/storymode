@@ -1008,7 +1008,7 @@ storage formats, model providers, formulas, or field names.
 
 ## Milestone 5 — Campaign builder and immutable publication
 
-- [ ] **BUILD-01 — Implement normalized builder brief and draft-state models**
+- [x] **BUILD-01 — Implement normalized builder brief and draft-state models**
   - Depends: SCHEMA-09
   - Read: builder UX, generation order, source handling.
   - Create: `src/campaign/builder/{__init__,models,normalization}.py`,

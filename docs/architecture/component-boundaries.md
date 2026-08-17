@@ -67,6 +67,17 @@ code, file paths, SQL, state patches, raw dice, final DCs, or arbitrary entity I
 Retries correct formatting only and may not broaden facts. At most two repair
 attempts are allowed before a deterministic failure/fallback.
 
+## Adaptive context retrieval and bounded selection
+
+To prevent prompt bloat and model context overpopulation during book-scale campaign
+building and runtime play, an adaptive context layer filters and scores facts before
+prompt rendering:
+- Source ingestion prunes redundant text and extracts compact regional/cultural entities;
+- Each generation stage receives only the direct dependencies of its owning artifact;
+- Runtime retrieval uses strict byte caps (12 KiB for action interpretation, 20 KiB
+  for narration/opportunities) and ranks optional facts by relevance to the active
+  area, party presence, and current milestone.
+
 ## Frontend contract
 
 The UI displays server-supplied authoritative state and allowed commands. It may
