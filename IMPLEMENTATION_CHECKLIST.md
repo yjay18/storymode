@@ -1056,7 +1056,7 @@ storage formats, model providers, formulas, or field names.
     extra field, oversized response, monolithic multiple-artifact attempt.
   - Accept: generated artifact can enter existing validation without dict reshaping.
 
-- [ ] **BUILD-05 — Add versioned templates for the seven generation stages**
+- [x] **BUILD-05 — Add versioned templates for the seven generation stages**
   - Depends: BUILD-04
   - Read: campaign prompt stages/rubric, prompt policy, worldbuilding document.
   - Create: `src/llm/prompts/campaign_generation_v1.py`, original few-shot fixture files,
