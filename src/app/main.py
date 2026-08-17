@@ -11,6 +11,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from api.routes import (
     actions,
+    assets,
     builder,
     campaigns,
     combat,
@@ -95,6 +96,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     # Register routers
     app.include_router(health.router)
     app.include_router(campaigns.router, prefix="/api/v1")
+    app.include_router(assets.router)
     app.include_router(builder.router, prefix="/api/v1")
     app.include_router(saves.router, prefix="/api/v1")
     app.include_router(actions.router, prefix="/api/v1")

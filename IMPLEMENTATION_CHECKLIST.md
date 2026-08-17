@@ -1276,7 +1276,7 @@ storage formats, model providers, formulas, or field names.
     bad dimensions, interrupted install, model output cannot escape asset root.
   - Accept: missing image never blocks campaign/play and no cloud/subprocess fallback.
 
-- [ ] **IMAGE-03 — Add deterministic fallback cards and asset API**
+- [x] **IMAGE-03 — Add deterministic fallback cards and asset API**
   - Depends: IMAGE-02, API-05
   - Read: image fallback and accessibility alt rules.
   - Create: `src/campaign/assets/fallback.py`, `src/api/schemas/assets.py`,
