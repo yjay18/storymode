@@ -6,7 +6,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, RedirectResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from api.routes import actions, campaigns, combat, health, party, plot, progression, saves
@@ -91,5 +91,10 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(party.router, prefix="/api/v1")
     app.include_router(progression.router, prefix="/api/v1")
     app.include_router(plot.router, prefix="/api/v1")
+
+    @app.get("/", include_in_schema=False)
+    async def root() -> RedirectResponse:
+        """Redirect root to interactive API documentation."""
+        return RedirectResponse(url="/docs")
 
     return app
