@@ -1298,7 +1298,7 @@ storage formats, model providers, formulas, or field names.
     remote URL, keyboard/axe/reduced-data-friendly behavior.
   - Accept: identical gameplay functionality with images disabled.
 
-- [ ] **SEC-01 — Run the complete local-boundary adversarial test matrix**
+- [x] **SEC-01 — Run the complete local-boundary adversarial test matrix**
   - Depends: IMAGE-03, BUILD-09, LLM-09
   - Read: threat model every control.
   - Create: focused `tests/integration/security/` modules; change code only for discovered bugs.
