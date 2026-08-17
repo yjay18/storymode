@@ -53,7 +53,7 @@ describe("AppRoutes", () => {
         <AppRoutes />
       </MemoryRouter>,
     );
-    expect(screen.getByRole("heading", { name: "Save Recovery" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /Save Recovery/i })).toBeInTheDocument();
   });
 
   it("renders 404 on unknown route", () => {

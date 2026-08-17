@@ -1236,7 +1236,7 @@ storage formats, model providers, formulas, or field names.
     flee/yield allowed/denied, victory/soft defeat/game-over, double/timeout, keyboard/focus/axe.
   - Accept: no free-text combat route and no client-computed mana/damage/order/reward.
 
-- [ ] **UI-11 — Implement save recovery and global accessibility/manual test record**
+- [x] **UI-11 — Implement save recovery and global accessibility/manual test record**
   - Depends: UI-09, UI-10, SAVE-04
   - Read: save recovery UX policy and accessibility manual matrix.
   - Create: `src/ui/src/features/saves/RecoveryScreen.tsx`, tests, and

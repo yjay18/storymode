@@ -10,6 +10,7 @@ import { CampaignDetail } from "../features/campaigns/CampaignDetail";
 import { CampaignList } from "../features/campaigns/CampaignList";
 import { CombatScreen } from "../features/combat/CombatScreen";
 import { ExplorationScreen } from "../features/exploration/ExplorationScreen";
+import { RecoveryScreen as SaveRecoveryScreen } from "../features/saves/RecoveryScreen";
 import { PreflightCard } from "../features/startup/PreflightCard";
 
 export function LibraryScreen(): React.JSX.Element {
@@ -87,14 +88,7 @@ export function PlayScreen(): React.JSX.Element {
 }
 
 export function RecoveryScreen(): React.JSX.Element {
-  return (
-    <section aria-labelledby="recovery-heading">
-      <h1 id="recovery-heading">Save Recovery</h1>
-      <p style={{ color: "var(--color-text-secondary)", marginTop: "0.5rem" }}>
-        Diagnose and restore corrupted or orphaned save files from snapshots.
-      </p>
-    </section>
-  );
+  return <SaveRecoveryScreen />;
 }
 
 export function NotFoundScreen(): React.JSX.Element {
