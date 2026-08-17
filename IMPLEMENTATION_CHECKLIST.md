@@ -1264,7 +1264,7 @@ storage formats, model providers, formulas, or field names.
     negative structure, hidden/player data absent, unsupported dimensions/MIME.
   - Accept: no image generated/analyzed and no model filename accepted.
 
-- [ ] **IMAGE-02 — Implement optional local generation adapter and validated cache install**
+- [x] **IMAGE-02 — Implement optional local generation adapter and validated cache install**
   - Depends: IMAGE-01
   - Read: Ollama/image capability rules and threat controls.
   - Create: `src/llm/orchestration/image_generator.py`,
