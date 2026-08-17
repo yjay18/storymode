@@ -1179,7 +1179,7 @@ storage formats, model providers, formulas, or field names.
     server 422, keyboard labels/focus/axe, no quick publish action.
   - Accept: API remains authoritative and both flows route to same progress/review.
 
-- [ ] **UI-06 — Implement generation progress, cancellation, diagnostics, and review**
+- [x] **UI-06 — Implement generation progress, cancellation, diagnostics, and review**
   - Depends: UI-05
   - Read: builder generation/review/publish UX.
   - Create: builder `GenerationProgress`, `ValidationReport`, artifact review forms/tabs,

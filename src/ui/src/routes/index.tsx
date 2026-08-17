@@ -4,6 +4,7 @@ import { defaultApiClient } from "../api/client";
 import type { CampaignSummary, HealthResponse } from "../api/schema";
 import { AppShell } from "../components/AppShell";
 import { BriefForm } from "../features/builder/BriefForm";
+import { DraftWorkspace } from "../features/builder/DraftWorkspace";
 import { QuickPromptForm } from "../features/builder/QuickPromptForm";
 import { CampaignDetail } from "../features/campaigns/CampaignDetail";
 import { CampaignList } from "../features/campaigns/CampaignList";
@@ -124,6 +125,7 @@ export function AppRoutes(): React.JSX.Element {
         <Route path="/" element={<LibraryScreen />} />
         <Route path="/builder/guided" element={<GuidedBuilderScreen />} />
         <Route path="/builder/quick" element={<QuickBuilderScreen />} />
+        <Route path="/builder/drafts/:draftId" element={<DraftWorkspace />} />
         <Route path="/builder" element={<Navigate to="/builder/guided" replace />} />
         <Route path="/campaigns/:campaignId" element={<CampaignDetailScreen />} />
         <Route path="/play/:campaignId/:saveId" element={<PlayScreen />} />
