@@ -27,7 +27,12 @@ from llm.contracts.campaign_generation import (
     WorldStageResponse,
 )
 from llm.prompts.campaign_generation_v1 import (
+    render_areas_prompt,
+    render_characters_prompt,
     render_meta_style_prompt,
+    render_plot_prompt,
+    render_skills_prompt,
+    render_world_prompt,
 )
 
 
@@ -68,17 +73,19 @@ class GenerationOrchestrator:
                 stage="rules",
                 draft=draft,
                 contract_cls=WorldStageResponse,
-                prompt_generator=lambda: (
-                    f"Generate Stage 2 World & Rules JSON for '{draft.brief.title}'."
+                prompt_generator=lambda: render_world_prompt(
+                    draft.brief, codex=codex, request_id=f"req-gen-world-{draft.revision}"
                 ),
-                context_summary="Stage 2 World Generation",
+                context_summary="Stage 2 World & Rules Generation",
             )
         elif stage == "areas":
             return await self.stage_runner.execute_stage(
                 stage="areas",
                 draft=draft,
                 contract_cls=AreasStageResponse,
-                prompt_generator=lambda: f"Generate Stage 3 Areas JSON for '{draft.brief.title}'.",
+                prompt_generator=lambda: render_areas_prompt(
+                    draft.brief, codex=codex, request_id=f"req-gen-areas-{draft.revision}"
+                ),
                 context_summary="Stage 3 Areas Generation",
             )
         elif stage == "plot":
@@ -86,7 +93,9 @@ class GenerationOrchestrator:
                 stage="plot",
                 draft=draft,
                 contract_cls=PlotStageResponse,
-                prompt_generator=lambda: f"Generate Stage 4 Plot JSON for '{draft.brief.title}'.",
+                prompt_generator=lambda: render_plot_prompt(
+                    draft.brief, codex=codex, request_id=f"req-gen-plot-{draft.revision}"
+                ),
                 context_summary="Stage 4 Plot Generation",
             )
         elif stage == "characters":
@@ -94,8 +103,8 @@ class GenerationOrchestrator:
                 stage="characters",
                 draft=draft,
                 contract_cls=CharactersStageResponse,
-                prompt_generator=lambda: (
-                    f"Generate Stage 5 Characters JSON for '{draft.brief.title}'."
+                prompt_generator=lambda: render_characters_prompt(
+                    draft.brief, codex=codex, request_id=f"req-gen-chars-{draft.revision}"
                 ),
                 context_summary="Stage 5 Characters Generation",
             )
@@ -104,7 +113,9 @@ class GenerationOrchestrator:
                 stage="skills",
                 draft=draft,
                 contract_cls=SkillsStageResponse,
-                prompt_generator=lambda: f"Generate Stage 6 Skills JSON for '{draft.brief.title}'.",
+                prompt_generator=lambda: render_skills_prompt(
+                    draft.brief, codex=codex, request_id=f"req-gen-skills-{draft.revision}"
+                ),
                 context_summary="Stage 6 Skills Generation",
             )
         elif stage == "review":

@@ -25,12 +25,8 @@ SKILLS_PROMPT_VERSION = "campaign-skills/1.0.0"
 STAGE_REPAIR_PROMPT_VERSION = "campaign-repair/1.0.0"
 
 
-def render_meta_style_prompt(
-    brief: BuilderBrief,
-    codex: WorldCodex | None = None,
-    request_id: str = "req-gen-1",
-) -> str:
-    """Render Stage 1 prompt: Campaign metadata and Style Bible."""
+def _extract_codex_context(brief: BuilderBrief, codex: WorldCodex | None) -> dict[str, str]:
+    """Helper to extract formatted cultural lore and world context."""
     cultural_context = ""
     if codex and codex.cultural_profiles:
         p = codex.cultural_profiles[0]
@@ -43,20 +39,26 @@ def render_meta_style_prompt(
             f"Magic Rules: {', '.join(p.magic_and_supernatural_rules)}\n"
             f"Dialects: {', '.join(p.dialects_and_idioms)}"
         )
+    elif brief.protected_facts:
+        cultural_context = "\n".join(brief.protected_facts)
 
-    brief_data = {
+    return {
         "title": brief.title,
         "premise": brief.premise,
-        "campaign_mode": brief.campaign_mode,
-        "custom_prompt": brief.custom_prompt,
         "genre": brief.genre,
         "theme": brief.theme,
         "tone": brief.tone,
-        "length": brief.length,
-        "difficulty": brief.difficulty,
         "cultural_context": cultural_context,
     }
 
+
+def render_meta_style_prompt(
+    brief: BuilderBrief,
+    codex: WorldCodex | None = None,
+    request_id: str = "req-gen-1",
+) -> str:
+    """Render Stage 1 prompt: Campaign metadata and Style Bible."""
+    ctx = _extract_codex_context(brief, codex)
     template = (
         "You are the Storymode Campaign Meta & Style Designer.\n"
         "Generate the Stage 1 response (Campaign metadata & Style Bible) matching this contract:\n"
@@ -109,7 +111,233 @@ def render_meta_style_prompt(
         "{brief_json}\n"
         ">>>\n"
     )
-    return render_template(template, {"brief_json": json.dumps(brief_data, indent=2)})
+    return render_template(template, {"brief_json": json.dumps(ctx, indent=2)})
+
+
+def render_world_prompt(
+    brief: BuilderBrief,
+    codex: WorldCodex | None = None,
+    request_id: str = "req-gen-world",
+) -> str:
+    """Render Stage 2 prompt: World rules, factions, and magic systems."""
+    ctx = _extract_codex_context(brief, codex)
+    template = (
+        "You are the Storymode World & Rules Architect.\n"
+        "Generate the Stage 2 response matching this contract:\n"
+        "{\n"
+        '  "contract_version": 1,\n'
+        f'  "prompt_version": "{WORLD_PROMPT_VERSION}",\n'
+        f'  "request_id": "{request_id}",\n'
+        '  "stage": "rules",\n'
+        '  "world": {\n'
+        '    "schema_version": 1,\n'
+        '    "campaign_id": "<campaign_id>",\n'
+        '    "campaign_version": "1.0.0",\n'
+        '    "lore": {\n'
+        '      "premise": "<premise>",\n'
+        '      "magic_system": "<magic rules>",\n'
+        '      "technology_level": "<tech level>",\n'
+        '      "cosmology": "<cosmology>",\n'
+        '      "history": ["<historical event 1>", "<historical event 2>"],\n'
+        '      "taboos": ["<taboo 1>", "<taboo 2>"]\n'
+        "    },\n"
+        '    "factions": [\n'
+        "      {\n"
+        '        "faction_id": "f_1",\n'
+        '        "name": "<name>",\n'
+        '        "archetype": "<archetype>",\n'
+        '        "description": "<desc>",\n'
+        '        "goals": ["<goal>"],\n'
+        '        "resources": ["<resource>"],\n'
+        '        "allies": [],\n'
+        '        "rivals": []\n'
+        "      }\n"
+        "    ]\n"
+        "  }\n"
+        "}\n\n"
+        "Context Brief:\n"
+        "<<<DATA\n"
+        "{brief_json}\n"
+        ">>>\n"
+    )
+    return render_template(template, {"brief_json": json.dumps(ctx, indent=2)})
+
+
+def render_areas_prompt(
+    brief: BuilderBrief,
+    codex: WorldCodex | None = None,
+    request_id: str = "req-gen-areas",
+) -> str:
+    """Render Stage 3 prompt: Explorable areas, locations, and landmarks."""
+    ctx = _extract_codex_context(brief, codex)
+    template = (
+        "You are the Storymode Environmental Designer.\n"
+        "Generate the Stage 3 response matching this contract:\n"
+        "{\n"
+        '  "contract_version": 1,\n'
+        f'  "prompt_version": "{AREAS_PROMPT_VERSION}",\n'
+        f'  "request_id": "{request_id}",\n'
+        '  "stage": "areas",\n'
+        '  "areas": {\n'
+        '    "schema_version": 1,\n'
+        '    "campaign_id": "<campaign_id>",\n'
+        '    "campaign_version": "1.0.0",\n'
+        '    "areas": [\n'
+        "      {\n"
+        '        "area_id": "area_1",\n'
+        '        "name": "<name>",\n'
+        '        "danger_level": 1,\n'
+        '        "summary": "<summary>",\n'
+        '        "description": "<sensory description>",\n'
+        '        "biome": "<biome>",\n'
+        '        "controlling_faction": "<faction_id>",\n'
+        '        "connected_areas": [],\n'
+        '        "landmarks": ["<landmark 1>"],\n'
+        '        "objects": []\n'
+        "      }\n"
+        "    ]\n"
+        "  }\n"
+        "}\n\n"
+        "Context Brief:\n"
+        "<<<DATA\n"
+        "{brief_json}\n"
+        ">>>\n"
+    )
+    return render_template(template, {"brief_json": json.dumps(ctx, indent=2)})
+
+
+def render_plot_prompt(
+    brief: BuilderBrief,
+    codex: WorldCodex | None = None,
+    request_id: str = "req-gen-plot",
+) -> str:
+    """Render Stage 4 prompt: Plot milestones, opportunities, and clocks."""
+    ctx = _extract_codex_context(brief, codex)
+    template = (
+        "You are the Storymode Narrative Director.\n"
+        "Generate the Stage 4 response matching this contract:\n"
+        "{\n"
+        '  "contract_version": 1,\n'
+        f'  "prompt_version": "{PLOT_PROMPT_VERSION}",\n'
+        f'  "request_id": "{request_id}",\n'
+        '  "stage": "plot",\n'
+        '  "plot": {\n'
+        '    "schema_version": 1,\n'
+        '    "campaign_id": "<campaign_id>",\n'
+        '    "campaign_version": "1.0.0",\n'
+        '    "milestones": [\n'
+        "      {\n"
+        '        "milestone_id": "ms_1",\n'
+        '        "title": "<title>",\n'
+        '        "summary": "<summary>",\n'
+        '        "required_conditions": [],\n'
+        '        "completion_outcomes": ["<outcome>"],\n'
+        '        "is_major": true\n'
+        "      }\n"
+        "    ],\n"
+        '    "clocks": []\n'
+        "  }\n"
+        "}\n\n"
+        "Context Brief:\n"
+        "<<<DATA\n"
+        "{brief_json}\n"
+        ">>>\n"
+    )
+    return render_template(template, {"brief_json": json.dumps(ctx, indent=2)})
+
+
+def render_characters_prompt(
+    brief: BuilderBrief,
+    codex: WorldCodex | None = None,
+    request_id: str = "req-gen-chars",
+) -> str:
+    """Render Stage 5 prompt: Major NPCs and recruitable companions."""
+    ctx = _extract_codex_context(brief, codex)
+    template = (
+        "You are the Storymode Character & NPC Designer.\n"
+        "Generate the Stage 5 response matching this contract:\n"
+        "{\n"
+        '  "contract_version": 1,\n'
+        f'  "prompt_version": "{CHARACTERS_PROMPT_VERSION}",\n'
+        f'  "request_id": "{request_id}",\n'
+        '  "stage": "characters",\n'
+        '  "characters": {\n'
+        '    "schema_version": 1,\n'
+        '    "campaign_id": "<campaign_id>",\n'
+        '    "campaign_version": "1.0.0",\n'
+        '    "characters": [\n'
+        "      {\n"
+        '        "character_id": "char_1",\n'
+        '        "name": "<name>",\n'
+        '        "archetype": "<archetype>",\n'
+        '        "cultural_origin": "<region>",\n'
+        '        "appearance": "<attire and physical appearance>",\n'
+        '        "personality": "<personality shaped by cultural values>",\n'
+        '        "dialogue_quirks": ["<idiom or speech pattern>"],\n'
+        '        "faction_id": "f_1",\n'
+        '        "home_area_id": "area_1"\n'
+        "      }\n"
+        "    ]\n"
+        "  }\n"
+        "}\n\n"
+        "Context Brief:\n"
+        "<<<DATA\n"
+        "{brief_json}\n"
+        ">>>\n"
+    )
+    return render_template(template, {"brief_json": json.dumps(ctx, indent=2)})
+
+
+def render_skills_prompt(
+    brief: BuilderBrief,
+    codex: WorldCodex | None = None,
+    request_id: str = "req-gen-skills",
+) -> str:
+    """Render Stage 6 prompt: Combat skills, items, enemies, and balance."""
+    ctx = _extract_codex_context(brief, codex)
+    template = (
+        "You are the Storymode Systems & Combat Balance Designer.\n"
+        "Generate the Stage 6 response (Skills, Items, Enemies, Balance) matching this contract:\n"
+        "{\n"
+        '  "contract_version": 1,\n'
+        f'  "prompt_version": "{SKILLS_PROMPT_VERSION}",\n'
+        f'  "request_id": "{request_id}",\n'
+        '  "stage": "skills",\n'
+        '  "skills": {\n'
+        '    "schema_version": 1,\n'
+        '    "campaign_id": "<campaign_id>",\n'
+        '    "campaign_version": "1.0.0",\n'
+        '    "skills": []\n'
+        "  },\n"
+        '  "items": {\n'
+        '    "schema_version": 1,\n'
+        '    "campaign_id": "<campaign_id>",\n'
+        '    "campaign_version": "1.0.0",\n'
+        '    "items": []\n'
+        "  },\n"
+        '  "enemies": {\n'
+        '    "schema_version": 1,\n'
+        '    "campaign_id": "<campaign_id>",\n'
+        '    "campaign_version": "1.0.0",\n'
+        '    "enemies": []\n'
+        "  },\n"
+        '  "balance": {\n'
+        '    "schema_version": 1,\n'
+        '    "campaign_id": "<campaign_id>",\n'
+        '    "campaign_version": "1.0.0",\n'
+        '    "difficulty_scalers": {\n'
+        '      "story": 0.8,\n'
+        '      "normal": 1.0,\n'
+        '      "hardcore": 1.3\n'
+        "    }\n"
+        "  }\n"
+        "}\n\n"
+        "Context Brief:\n"
+        "<<<DATA\n"
+        "{brief_json}\n"
+        ">>>\n"
+    )
+    return render_template(template, {"brief_json": json.dumps(ctx, indent=2)})
 
 
 def render_stage_repair_prompt(

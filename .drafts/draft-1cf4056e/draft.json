@@ -1,0 +1,104 @@
+{
+  "draft_id": "draft-1cf4056e",
+  "revision": 3,
+  "brief": {
+    "title": "the test",
+    "premise": "game of thrones",
+    "campaign_mode": "llm_decide",
+    "custom_prompt": null,
+    "genre": "dark fantasy",
+    "theme": "survival, honor, and political intrigue",
+    "tone": "grounded, gritty, and atmospheric",
+    "length": "medium",
+    "difficulty": "normal",
+    "content_boundaries": {
+      "excluded_topics": [],
+      "content_rating": "teen",
+      "violence_level": "gritty",
+      "romance_level": "none"
+    },
+    "art_direction": {
+      "visual_style": "painterly dark fantasy with rich contrast and muted earth tones",
+      "aspect_ratio": "16:9"
+    },
+    "source": {
+      "source_type": "prompt",
+      "title": null,
+      "author": null,
+      "provenance_note": null,
+      "raw_char_count": 0
+    },
+    "source_summary": "",
+    "protected_facts": []
+  },
+  "stages": {
+    "meta_style": {
+      "stage": "meta_style",
+      "status": "invalid",
+      "attempts": 1,
+      "diagnostics": [
+        {
+          "stage": "meta_style",
+          "code": "STAGE_FAILED",
+          "message": "Transport error: Failed to connect to Ollama at http://127.0.0.1:11434/api/chat",
+          "field_path": null,
+          "is_error": true
+        }
+      ],
+      "artifact_data": null
+    },
+    "rules": {
+      "stage": "rules",
+      "status": "not_started",
+      "attempts": 0,
+      "diagnostics": [],
+      "artifact_data": null
+    },
+    "areas": {
+      "stage": "areas",
+      "status": "not_started",
+      "attempts": 0,
+      "diagnostics": [],
+      "artifact_data": null
+    },
+    "plot": {
+      "stage": "plot",
+      "status": "not_started",
+      "attempts": 0,
+      "diagnostics": [],
+      "artifact_data": null
+    },
+    "characters": {
+      "stage": "characters",
+      "status": "not_started",
+      "attempts": 0,
+      "diagnostics": [],
+      "artifact_data": null
+    },
+    "skills": {
+      "stage": "skills",
+      "status": "not_started",
+      "attempts": 0,
+      "diagnostics": [],
+      "artifact_data": null
+    },
+    "review": {
+      "stage": "review",
+      "status": "not_started",
+      "attempts": 0,
+      "diagnostics": [],
+      "artifact_data": null
+    }
+  },
+  "diagnostics": [
+    {
+      "stage": "meta_style",
+      "code": "STAGE_FAILED",
+      "message": "Transport error: Failed to connect to Ollama at http://127.0.0.1:11434/api/chat",
+      "field_path": null,
+      "is_error": true
+    }
+  ],
+  "is_published": false,
+  "published_campaign_id": null
+}
