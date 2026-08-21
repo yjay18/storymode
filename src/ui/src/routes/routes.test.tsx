@@ -47,6 +47,15 @@ describe("AppRoutes", () => {
     expect(screen.getByRole("heading", { name: "Quick Prompt Builder" })).toBeInTheDocument();
   });
 
+  it("renders book import dropzone on /builder/import", () => {
+    render(
+      <MemoryRouter initialEntries={["/builder/import"]}>
+        <AppRoutes />
+      </MemoryRouter>,
+    );
+    expect(screen.getByRole("heading", { name: /Drop in an EPUB or Book/i })).toBeInTheDocument();
+  });
+
   it("renders recovery route on /recovery", () => {
     render(
       <MemoryRouter initialEntries={["/recovery"]}>

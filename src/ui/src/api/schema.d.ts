@@ -56,6 +56,13 @@ export interface QuickPromptInput {
   difficulty?: CampaignDifficulty | null;
 }
 
+export interface ImportBookInput {
+  filename: string;
+  content_base64: string;
+  genre?: string;
+  tone?: string;
+}
+
 export type DraftStage =
   | "meta_style"
   | "rules"

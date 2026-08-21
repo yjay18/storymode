@@ -7,6 +7,7 @@ import type {
   CampaignLength,
   CampaignMode,
 } from "../../api/schema";
+import { BuilderNav } from "./BuilderNav";
 
 export function BriefForm(): React.JSX.Element {
   const navigate = useNavigate();
@@ -67,6 +68,7 @@ export function BriefForm(): React.JSX.Element {
         gap: "1.5rem",
       }}
     >
+      <BuilderNav />
       <div>
         <h1 style={{ marginBottom: "0.5rem" }}>Guided Campaign Builder</h1>
         <p style={{ color: "var(--color-text-secondary)", fontSize: "var(--font-size-sm)" }}>

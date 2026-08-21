@@ -124,3 +124,94 @@ async def test_publish_unconfirmed_and_success_flow(
         f"/api/v1/builder/drafts/{draft_id}/publish", json={"confirmed": False}
     )
     assert pub_unconfirmed.status_code == 422
+
+
+@pytest.mark.anyio
+async def test_import_epub_and_text_draft_endpoints(test_app: httpx.AsyncClient) -> None:
+    import base64
+    import io
+    import zipfile
+
+    # Build test EPUB in memory
+    buf = io.BytesIO()
+    with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as zf:
+        zf.writestr("mimetype", "application/epub+zip")
+        zf.writestr(
+            "META-INF/container.xml",
+            """<?xml version="1.0"?>
+            <container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container">
+                <rootfiles>
+                    <rootfile full-path="OEBPS/content.opf"
+                              media-type="application/oebps-package+xml"/>
+                </rootfiles>
+            </container>""",
+        )
+        zf.writestr(
+            "OEBPS/content.opf",
+            """<?xml version="1.0"?>
+            <package xmlns="http://www.idpf.org/2007/opf" unique-identifier="BookId" version="2.0">
+                <metadata xmlns:dc="http://purl.org/dc/elements/1.1/">
+                    <dc:title>Realm of Whispers</dc:title>
+                </metadata>
+                <manifest>
+                    <item id="ch1" href="ch1.xhtml" media-type="application/xhtml+xml"/>
+                </manifest>
+                <spine>
+                    <itemref idref="ch1"/>
+                </spine>
+            </package>""",
+        )
+        zf.writestr(
+            "OEBPS/ch1.xhtml",
+            """<html><body><h1>Chapter 1</h1>
+            <p>In the Whispering Keep, the ancient law of silence is absolute.</p>
+            </body></html>""",
+        )
+
+    b64_epub = base64.b64encode(buf.getvalue()).decode("ascii")
+
+    # 1. Import EPUB
+    epub_resp = await test_app.post(
+        "/api/v1/builder/drafts/import",
+        json={
+            "filename": "whispers.epub",
+            "content_base64": b64_epub,
+            "genre": "gothic horror",
+            "tone": "eerie, quiet",
+        },
+    )
+    assert epub_resp.status_code == 201
+    epub_data = epub_resp.json()
+    assert epub_data["draft_id"].startswith("draft-")
+    assert epub_data["brief"]["title"] == "Realm of Whispers"
+    assert epub_data["brief"]["genre"] == "gothic horror"
+    assert epub_data["brief"]["source"]["source_type"] == "epub"
+
+    # 2. Import Plain Text
+    txt_content = (
+        "The Iron Citadel stood tall against the eastern sun. Faction wars tore the border."
+    )
+    b64_txt = base64.b64encode(txt_content.encode("utf-8")).decode("ascii")
+
+    txt_resp = await test_app.post(
+        "/api/v1/builder/drafts/import",
+        json={
+            "filename": "citadel_lore.txt",
+            "content_base64": b64_txt,
+            "genre": "fantasy",
+        },
+    )
+    assert txt_resp.status_code == 201
+    txt_data = txt_resp.json()
+    assert txt_data["brief"]["title"] == "citadel_lore"
+    assert txt_data["brief"]["source"]["source_type"] == "plain_text"
+
+    # 3. Invalid extension rejected
+    bad_ext_resp = await test_app.post(
+        "/api/v1/builder/drafts/import",
+        json={
+            "filename": "cover.png",
+            "content_base64": b64_txt,
+        },
+    )
+    assert bad_ext_resp.status_code == 422

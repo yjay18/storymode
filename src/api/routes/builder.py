@@ -1,7 +1,4 @@
-"""FastAPI routes for campaign creation, generation, review, and publication (BUILD-09)."""
-
-from __future__ import annotations
-
+import base64
 import uuid
 from pathlib import Path
 
@@ -12,11 +9,16 @@ from api.schemas.builder import (
     CreateQuickDraftRequest,
     EditStageRequest,
     GenerateStageRequest,
+    ImportBookRequest,
     PublishDraftRequest,
 )
 from campaign.builder.models import (
+    ArtDirection,
+    BuilderBrief,
+    ContentBoundaries,
     DraftStage,
     DraftState,
+    SourceMetadata,
 )
 from campaign.builder.normalization import (
     create_initial_draft_state,
@@ -25,6 +27,9 @@ from campaign.builder.normalization import (
 )
 from campaign.builder.review import DraftReviewService, ValidationReport
 from campaign.generation import GenerationOrchestrator, StageRunner
+from campaign.importers.compactor import SourceCompactor
+from campaign.importers.epub import EPUBImporter
+from campaign.importers.plain_text import PlainTextImporter
 from campaign.storage.drafts import (
     DraftNotFoundError,
     DraftRepository,
@@ -89,6 +94,81 @@ async def create_quick_draft(
     repo = _get_draft_repo(request)
     draft_id = EntityId(f"draft-{uuid.uuid4().hex[:8]}")
     brief = normalize_quick_prompt(payload.quick_input)
+    draft = create_initial_draft_state(draft_id, brief)
+    return repo.save_draft(draft)
+
+
+@router.post("/drafts/import", response_model=DraftState, status_code=201)
+async def create_imported_draft(
+    payload: ImportBookRequest,
+    request: Request,
+) -> DraftState:
+    """Create a new campaign draft by importing and compacting an EPUB or text book."""
+    try:
+        raw_bytes = base64.b64decode(payload.content_base64)
+    except Exception as e:
+        raise HTTPException(status_code=422, detail="Invalid base64 payload") from e
+
+    filename = payload.filename.strip()
+    file_stem = Path(filename).stem or "Imported Novel"
+    suffix = Path(filename).suffix.lower()
+
+    try:
+        if suffix == ".epub":
+            importer = EPUBImporter()
+            doc = importer.import_bytes(raw_bytes, default_title=file_stem)
+            source_type = "epub"
+        elif suffix in (".txt", ".text", ".md", ".markdown"):
+            text = raw_bytes.decode("utf-8", errors="replace")
+            txt_importer = PlainTextImporter()
+            doc = txt_importer.import_string(text, title=file_stem)
+            source_type = "plain_text"
+        else:
+            raise HTTPException(
+                status_code=422,
+                detail=f"Unsupported format: '{suffix}'. Supported: .epub, .txt, .md",
+            )
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=422, detail=f"Failed to parse book: {e}") from e
+
+    compactor = SourceCompactor()
+    codex = compactor.compact_document(doc)
+
+    protected_facts: list[str] = []
+    for cp in codex.cultural_profiles[:3]:
+        for taboo in cp.taboos_and_oaths[:2]:
+            protected_facts.append(f"[{cp.region_name} Taboo] {taboo}")
+        for magic in cp.magic_and_supernatural_rules[:2]:
+            protected_facts.append(f"[{cp.region_name} Law] {magic}")
+
+    summary_text = f"World adapted from '{doc.title}'. Regions: " + ", ".join(
+        a.name for a in codex.primary_areas[:3]
+    )
+
+    brief = BuilderBrief(
+        title=doc.title[:100],
+        premise=(
+            f"An adventure set in the world of {doc.title}. "
+            "Explore factions, regional taboos, and ancient secrets."
+        ),
+        campaign_mode="faithful_story",
+        genre=payload.genre,
+        tone=payload.tone,
+        source=SourceMetadata(
+            source_type=source_type,  # type: ignore[arg-type]
+            title=doc.title,
+            raw_char_count=doc.total_chars,
+        ),
+        source_summary=summary_text[:4000],
+        protected_facts=protected_facts[:10],
+        content_boundaries=ContentBoundaries(),
+        art_direction=ArtDirection(),
+    )
+
+    repo = _get_draft_repo(request)
+    draft_id = EntityId(f"draft-{uuid.uuid4().hex[:8]}")
     draft = create_initial_draft_state(draft_id, brief)
     return repo.save_draft(draft)
 

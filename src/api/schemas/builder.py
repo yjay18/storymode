@@ -26,6 +26,15 @@ class CreateQuickDraftRequest(FrozenModel):
     quick_input: QuickPromptInput
 
 
+class ImportBookRequest(FrozenModel):
+    """Payload for importing an EPUB or text file encoded in base64."""
+
+    filename: str = Field(min_length=1, max_length=255)
+    content_base64: str = Field(min_length=1)
+    genre: str = Field(default="fantasy", min_length=1, max_length=100)
+    tone: str = Field(default="grounded, atmospheric", min_length=1, max_length=100)
+
+
 class GenerateStageRequest(FrozenModel):
     """Payload for triggering stage or full generation."""
 

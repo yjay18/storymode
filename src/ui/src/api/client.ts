@@ -22,6 +22,7 @@ import type {
   DraftStage,
   DraftState,
   HealthResponse,
+  ImportBookInput,
   PublishResult,
   QuickPromptInput,
   RuntimeStateResponse,
@@ -156,6 +157,13 @@ export class ApiClient {
     return this.request<DraftState>("/api/v1/builder/drafts/quick", {
       method: "POST",
       body: JSON.stringify({ quick_input: quickInput }),
+    });
+  }
+
+  importBook(payload: ImportBookInput): Promise<DraftState> {
+    return this.request<DraftState>("/api/v1/builder/drafts/import", {
+      method: "POST",
+      body: JSON.stringify(payload),
     });
   }
 
