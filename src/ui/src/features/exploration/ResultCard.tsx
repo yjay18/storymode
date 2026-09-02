@@ -5,6 +5,7 @@ interface ResultCardProps {
   summary: string;
   narration?: string;
   errorReason?: string;
+  details?: string[];
 }
 
 export function ResultCard({
@@ -12,6 +13,7 @@ export function ResultCard({
   summary,
   narration,
   errorReason,
+  details,
 }: ResultCardProps): React.JSX.Element {
   let borderColor = "var(--color-border-subtle)";
   let badgeText = "Action Result";
@@ -62,6 +64,30 @@ export function ResultCard({
       <p style={{ fontWeight: "600", fontSize: "var(--font-size-sm)", marginBottom: "0.5rem" }}>
         {summary}
       </p>
+
+      {details && details.length > 0 && (
+        <dl
+          aria-label="Roll breakdown"
+          style={{
+            display: "grid",
+            gridTemplateColumns: "auto 1fr",
+            columnGap: "0.75rem",
+            rowGap: "0.15rem",
+            fontSize: "var(--font-size-xs)",
+            margin: "0 0 0.5rem",
+          }}
+        >
+          {details.map((line) => {
+            const [label, ...rest] = line.split(":");
+            return (
+              <React.Fragment key={line}>
+                <dt style={{ color: "var(--color-text-muted)" }}>{label}</dt>
+                <dd style={{ margin: 0, fontWeight: "600" }}>{rest.join(":").trim()}</dd>
+              </React.Fragment>
+            );
+          })}
+        </dl>
+      )}
 
       {narration && (
         <p

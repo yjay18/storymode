@@ -8,6 +8,7 @@ export interface LogEntry {
   status?: "success" | "check_required" | "rejected" | "combat_started";
   narration?: string;
   errorReason?: string;
+  details?: string[];
 }
 
 interface NarrativeLogProps {
@@ -70,6 +71,7 @@ export function NarrativeLog({ entries }: NarrativeLogProps): React.JSX.Element 
               summary={entry.content}
               narration={entry.narration}
               errorReason={entry.errorReason}
+              details={entry.details}
             />
           );
         })

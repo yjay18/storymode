@@ -1,15 +1,8 @@
 import React from "react";
-
-export interface PendingCheckData {
-  check_id: string;
-  skill_or_attribute: string;
-  dc: number;
-  stakes_description: string;
-  allow_luck_reroll: boolean;
-}
+import type { PendingCheck } from "../../api/schema";
 
 interface CheckPanelProps {
-  check: PendingCheckData;
+  check: PendingCheck;
   submitting: boolean;
   onResolve: (useLuck: boolean) => void;
   onCancel: () => void;
@@ -21,6 +14,9 @@ export function CheckPanel({
   onResolve,
   onCancel,
 }: CheckPanelProps): React.JSX.Element {
+  const trait = check.stat ?? check.skill_id ?? check.semantic_difficulty;
+  const modifierEntries = Object.entries(check.named_modifiers);
+
   return (
     <section
       aria-label="Pending Dice Check"
@@ -53,17 +49,38 @@ export function CheckPanel({
             fontWeight: "bold",
           }}
         >
-          DC {check.dc}
+          DC {check.final_dc}
         </span>
       </div>
 
       <div style={{ marginBottom: "1rem", fontSize: "var(--font-size-sm)" }}>
         <p style={{ marginBottom: "0.5rem" }}>
+          <strong>Action:</strong> {check.resolved_operation}
+        </p>
+        <p style={{ marginBottom: "0.5rem" }}>
           <strong>Governing Trait:</strong>{" "}
-          <span style={{ textTransform: "capitalize" }}>{check.skill_or_attribute}</span>
+          <span style={{ textTransform: "capitalize" }}>{trait}</span>
+        </p>
+        {check.skill_id && (
+          <p style={{ marginBottom: "0.5rem" }}>
+            <strong>Skill:</strong> {check.skill_id}
+          </p>
+        )}
+
+        <p style={{ marginBottom: "0.25rem" }}>
+          <strong>Modifiers:</strong>{" "}
+          {modifierEntries.length === 0
+            ? "none"
+            : modifierEntries
+                .map(([name, value]) => `${name} ${value >= 0 ? "+" : ""}${value}`)
+                .join(", ")}
+        </p>
+        <p style={{ marginBottom: "0.25rem", color: "var(--color-text-secondary)" }}>
+          Base DC {check.base_dc} {check.difficulty_adjustment >= 0 ? "+" : ""}
+          {check.difficulty_adjustment} = Final DC {check.final_dc}
         </p>
         <p style={{ color: "var(--color-text-secondary)" }}>
-          <strong>Stakes:</strong> {check.stakes_description}
+          <strong>Stakes:</strong> {check.stakes}
         </p>
       </div>
 
@@ -82,21 +99,19 @@ export function CheckPanel({
           {submitting ? "Rolling..." : "Roll d20 Check"}
         </button>
 
-        {check.allow_luck_reroll && (
-          <button
-            type="button"
-            disabled={submitting}
-            onClick={() => onResolve(true)}
-            style={{
-              backgroundColor: "var(--color-warning)",
-              color: "var(--color-bg-base)",
-              fontWeight: "bold",
-              fontSize: "var(--font-size-sm)",
-            }}
-          >
-            {submitting ? "Rolling..." : "Spend Luck & Roll"}
-          </button>
-        )}
+        <button
+          type="button"
+          disabled={submitting}
+          onClick={() => onResolve(true)}
+          style={{
+            backgroundColor: "var(--color-warning)",
+            color: "var(--color-bg-base)",
+            fontWeight: "bold",
+            fontSize: "var(--font-size-sm)",
+          }}
+        >
+          {submitting ? "Rolling..." : "Spend Luck & Roll"}
+        </button>
 
         <button
           type="button"

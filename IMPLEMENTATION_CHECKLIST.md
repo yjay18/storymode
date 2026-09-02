@@ -1388,7 +1388,7 @@ Working rules for this milestone, in addition to the global ones:
   - Accept: route test passes and fails when a client path is misspelled; UI typecheck
     passes with no `any` added; existing UI tests updated, not deleted.
 
-- [ ] **PLAY-02 — Exploration screen drives the real action pipeline**
+- [x] **PLAY-02 — Exploration screen drives the real action pipeline**
   - Depends: PLAY-01
   - Read: `docs/ux/exploration-ui.md`, `src/api/routes/actions.py`,
     `src/api/schemas/actions.py`, `src/ui/src/features/exploration/*.tsx`.
