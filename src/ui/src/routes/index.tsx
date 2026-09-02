@@ -124,10 +124,7 @@ export function AppRoutes(): React.JSX.Element {
         <Route path="/builder" element={<Navigate to="/builder/guided" replace />} />
         <Route path="/campaigns/:campaignId" element={<CampaignDetailScreen />} />
         <Route path="/play/:campaignId/:saveId" element={<PlayScreen />} />
-        <Route
-          path="/play/:campaignId/:saveId/combat/:combatId"
-          element={<CombatScreen />}
-        />
+        <Route path="/play/:campaignId/:saveId/combat" element={<CombatScreen />} />
         <Route path="/recovery" element={<RecoveryScreen />} />
         <Route path="*" element={<NotFoundScreen />} />
       </Routes>

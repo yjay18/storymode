@@ -41,11 +41,34 @@ const pendingCheck: PendingCheck = {
   allowed_outcomes: { natural_1: [], low: [], standard: [], strong: [], natural_20: [] },
 };
 
+function mockNoCombatAndCampaign() {
+  vi.spyOn(defaultApiClient, "getCombatView").mockResolvedValue({
+    save_id: "save-1",
+    campaign_id: "world-1",
+    revision: 1,
+    combat: null,
+    allowed_actions: [],
+  });
+  vi.spyOn(defaultApiClient, "getCampaign").mockResolvedValue({
+    campaign_id: "world-1",
+    title: "World",
+    description: "",
+    version: "1.0.0",
+    status: "published",
+    campaign_length: "medium",
+    backgrounds: [],
+    areas: [],
+    area_count: 0,
+    has_valid_point_buy: true,
+  });
+}
+
 function renderScreen() {
   return render(
     <MemoryRouter initialEntries={["/play/world-1/save-1"]}>
       <Routes>
         <Route path="/play/:campaignId/:saveId" element={<ExplorationScreen />} />
+        <Route path="/play/:campaignId/:saveId/combat" element={<div>Combat Route</div>} />
       </Routes>
     </MemoryRouter>,
   );
@@ -69,6 +92,7 @@ describe("ExplorationScreen", () => {
       narration: "The lock yields with a soft click.",
     };
 
+    mockNoCombatAndCampaign();
     const getSaveSpy = vi.spyOn(defaultApiClient, "getSave");
     getSaveSpy.mockResolvedValueOnce(baseSave); // initial load (rev 1)
     getSaveSpy.mockResolvedValue({ ...baseSave, revision: 2 }); // refreshes after submit
@@ -107,6 +131,7 @@ describe("ExplorationScreen", () => {
   });
 
   it("shows the narrator-offline banner on a 503 and keeps the composer usable", async () => {
+    mockNoCombatAndCampaign();
     vi.spyOn(defaultApiClient, "getSave").mockResolvedValue(baseSave);
     vi.spyOn(defaultApiClient, "submitAction").mockRejectedValue(
       new ApiHttpError(503, "interpreter_not_configured", "Action interpreter unavailable"),

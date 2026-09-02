@@ -3,8 +3,11 @@
 ## Entry
 
 Before lock-in, exploration supports negotiation, preparation, inspection, and flee
-where the scene allows. When the server starts combat, focus moves to the combat
-heading and the exploration composer is removed, not merely disabled off-screen.
+where the scene allows. The exploration context rail lists the current area's
+encounters (served in `GET /api/v1/campaigns/{id}` under `areas[].encounters`); an
+"Engage" button posts `POST /api/v1/combat/start` and routes to
+`/play/{campaign}/{save}/combat`. When the server starts combat, focus moves to the
+combat heading and the exploration composer is removed, not merely disabled off-screen.
 
 ## Layout
 

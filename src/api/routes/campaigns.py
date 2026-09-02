@@ -5,7 +5,13 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException
 
-from api.schemas.campaigns import CampaignDetail, CampaignSummary, CampaignValidationResponse
+from api.schemas.campaigns import (
+    CampaignAreaView,
+    CampaignDetail,
+    CampaignSummary,
+    CampaignValidationResponse,
+    EncounterView,
+)
 from app.config import Settings
 from app.dependencies import get_settings
 from domain.models.campaign_meta import CampaignMeta
@@ -104,6 +110,7 @@ def get_campaign(
                 campaign_length=meta.campaign_length,
                 content_fingerprint=meta.content_fingerprint,
                 backgrounds=[],
+                areas=[],
                 area_count=0,
                 has_valid_point_buy=False,
             )
@@ -119,6 +126,21 @@ def get_campaign(
         campaign_length=pack.meta.campaign_length,
         content_fingerprint=pack.meta.content_fingerprint,
         backgrounds=pack.characters.protagonist_backgrounds,
+        areas=[
+            CampaignAreaView(
+                id=area.id,
+                name=area.name,
+                encounters=[
+                    EncounterView(
+                        id=e.id,
+                        enemy_archetype_ids=e.enemy_archetype_ids,
+                        condition=e.condition,
+                    )
+                    for e in area.encounters
+                ],
+            )
+            for area in pack.areas.areas
+        ],
         area_count=len(pack.areas.areas),
         has_valid_point_buy=pack.skills.point_buy is not None,
     )

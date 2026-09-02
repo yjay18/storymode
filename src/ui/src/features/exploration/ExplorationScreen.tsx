@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { defaultApiClient } from "../../api/client";
 import { generateCommandId } from "../../api/commands";
 import { ApiConflictError, ApiHttpError } from "../../api/errors";
-import type { PendingCheck, SaveSummaryResponse } from "../../api/schema";
+import type { EncounterView, PendingCheck, SaveSummaryResponse } from "../../api/schema";
 import { ActionComposer } from "./ActionComposer";
 import { CheckPanel } from "./CheckPanel";
 import { ContextRail } from "./ContextRail";
@@ -19,10 +19,13 @@ function isInterpreterUnavailable(err: unknown): boolean {
 
 export function ExplorationScreen(): React.JSX.Element {
   const { campaignId, saveId } = useParams<{ campaignId: string; saveId: string }>();
+  const navigate = useNavigate();
 
   const [state, setState] = useState<SaveSummaryResponse | null>(null);
+  const [encounters, setEncounters] = useState<EncounterView[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [submitting, setSubmitting] = useState<boolean>(false);
+  const [engaging, setEngaging] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [narratorOffline, setNarratorOffline] = useState<boolean>(false);
   const [entries, setEntries] = useState<LogEntry[]>([]);
@@ -35,7 +38,19 @@ export function ExplorationScreen(): React.JSX.Element {
       setLoading(true);
       setError(null);
       try {
-        setState(await defaultApiClient.getSave(campaignId, saveId));
+        const save = await defaultApiClient.getSave(campaignId, saveId);
+        setState(save);
+
+        // Resume an in-progress combat rather than stranding the player in exploration.
+        const combatView = await defaultApiClient.getCombatView(campaignId, saveId);
+        if (combatView.combat) {
+          navigate(`/play/${campaignId}/${saveId}/combat`);
+          return;
+        }
+
+        const campaign = await defaultApiClient.getCampaign(campaignId);
+        const area = campaign.areas.find((a) => a.id === save.current_area_id);
+        setEncounters(area?.encounters ?? []);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to load adventure state");
       } finally {
@@ -44,7 +59,25 @@ export function ExplorationScreen(): React.JSX.Element {
     };
 
     loadState();
-  }, [campaignId, saveId]);
+  }, [campaignId, saveId, navigate]);
+
+  const handleEngage = async (encounterId: string) => {
+    if (!campaignId || !saveId || !state) return;
+    setEngaging(true);
+    try {
+      await defaultApiClient.startCombat({
+        campaign_id: campaignId,
+        save_id: saveId,
+        encounter_id: encounterId,
+        command_id: generateCommandId(),
+        expected_revision: state.revision,
+      });
+      navigate(`/play/${campaignId}/${saveId}/combat`);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to start combat");
+      setEngaging(false);
+    }
+  };
 
   const refresh = async (): Promise<SaveSummaryResponse | null> => {
     if (!campaignId || !saveId) return null;
@@ -286,7 +319,12 @@ export function ExplorationScreen(): React.JSX.Element {
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
-          <ContextRail save={state} />
+          <ContextRail
+            save={state}
+            encounters={encounters}
+            engaging={engaging}
+            onEngage={handleEngage}
+          />
           <RollHistory history={rollHistory} />
         </div>
       </div>

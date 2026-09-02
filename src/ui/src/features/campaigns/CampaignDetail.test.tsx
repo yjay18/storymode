@@ -26,6 +26,7 @@ describe("CampaignDetail", () => {
           starting_fact_ids: [],
         },
       ],
+      areas: [],
       area_count: 4,
       has_valid_point_buy: true,
     };

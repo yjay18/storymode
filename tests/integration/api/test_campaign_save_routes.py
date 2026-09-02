@@ -52,6 +52,12 @@ def test_get_campaign_detail(client: TestClient) -> None:
     assert data["campaign_id"] == "minimal-campaign"
     assert "backgrounds" in data
     assert len(data["backgrounds"]) >= 1
+    # Areas expose encounter IDs so the UI can start combat (PLAY-03).
+    assert data["area_count"] == len(data["areas"])
+    area = next(a for a in data["areas"] if a["id"] == "area-1")
+    encounter = next(e for e in area["encounters"] if e["id"] == "encounter-1")
+    assert isinstance(encounter["enemy_archetype_ids"], list)
+    assert "condition" in encounter
 
 
 def test_get_campaign_not_found(client: TestClient) -> None:

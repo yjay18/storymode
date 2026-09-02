@@ -1405,7 +1405,7 @@ Working rules for this milestone, in addition to the global ones:
     roll breakdown (die, modifiers, total, DC, outcome) exactly as `docs/ux/exploration-ui.md`
     specifies.
 
-- [ ] **PLAY-03 — Combat is reachable and the combat screen sends commands**
+- [x] **PLAY-03 — Combat is reachable and the combat screen sends commands**
   - Depends: PLAY-01
   - Read: `docs/ux/combat-ui.md`, `docs/game-design/combat-rules.md`,
     `src/api/routes/combat.py`, `src/api/schemas/combat.py`,

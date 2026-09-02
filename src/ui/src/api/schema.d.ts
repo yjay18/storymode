@@ -52,6 +52,18 @@ export interface BackgroundDefinition {
   starting_fact_ids: string[];
 }
 
+export interface EncounterView {
+  id: string;
+  enemy_archetype_ids: string[];
+  condition: string;
+}
+
+export interface CampaignAreaView {
+  id: string;
+  name: string;
+  encounters: EncounterView[];
+}
+
 export interface CampaignDetail {
   campaign_id: string;
   title: string;
@@ -61,6 +73,7 @@ export interface CampaignDetail {
   campaign_length: CampaignLength;
   content_fingerprint?: string | null;
   backgrounds: BackgroundDefinition[];
+  areas: CampaignAreaView[];
   area_count: number;
   has_valid_point_buy: boolean;
 }

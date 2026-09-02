@@ -1,11 +1,19 @@
 import React from "react";
-import type { SaveSummaryResponse } from "../../api/schema";
+import type { EncounterView, SaveSummaryResponse } from "../../api/schema";
 
 interface ContextRailProps {
   save: SaveSummaryResponse;
+  encounters: EncounterView[];
+  engaging: boolean;
+  onEngage: (encounterId: string) => void;
 }
 
-export function ContextRail({ save }: ContextRailProps): React.JSX.Element {
+export function ContextRail({
+  save,
+  encounters,
+  engaging,
+  onEngage,
+}: ContextRailProps): React.JSX.Element {
   return (
     <aside
       aria-label="Adventure Context Rail"
@@ -57,6 +65,57 @@ export function ContextRail({ save }: ContextRailProps): React.JSX.Element {
         >
           {save.slot_name} • Rev {save.revision}
         </div>
+      </div>
+
+      <div>
+        <h3
+          style={{
+            fontSize: "var(--font-size-xs)",
+            color: "var(--color-text-muted)",
+            textTransform: "uppercase",
+            marginBottom: "0.5rem",
+          }}
+        >
+          Encounters
+        </h3>
+        {encounters.length === 0 ? (
+          <p style={{ fontSize: "var(--font-size-xs)", color: "var(--color-text-muted)" }}>
+            No combat encounters here.
+          </p>
+        ) : (
+          <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+            {encounters.map((enc) => (
+              <li
+                key={enc.id}
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  gap: "0.5rem",
+                  fontSize: "var(--font-size-xs)",
+                }}
+              >
+                <span>
+                  {enc.id}
+                  {enc.condition ? ` — ${enc.condition}` : ""}
+                </span>
+                <button
+                  type="button"
+                  disabled={engaging}
+                  onClick={() => onEngage(enc.id)}
+                  style={{
+                    backgroundColor: "var(--color-danger)",
+                    color: "var(--color-bg-base)",
+                    fontWeight: "600",
+                    fontSize: "var(--font-size-xs)",
+                  }}
+                >
+                  Engage
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
     </aside>
   );

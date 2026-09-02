@@ -1,25 +1,26 @@
 import React from "react";
+import type { AllowedCombatAction } from "../../api/schema";
 
 interface CombatCommandBarProps {
-  availableSkills: string[];
-  canFlee: boolean;
-  canYield: boolean;
+  allowedActions: AllowedCombatAction[];
   isPlayerTurn: boolean;
   submitting: boolean;
   selectedTargetId: string | null;
-  onExecuteCommand: (type: "skill" | "defend" | "flee" | "yield", skillId?: string) => void;
+  onExecute: (action: AllowedCombatAction) => void;
+}
+
+function needsManualTarget(action: AllowedCombatAction): boolean {
+  return action.target_rule === "single_enemy" || action.target_rule === "single_ally";
 }
 
 export function CombatCommandBar({
-  availableSkills,
-  canFlee,
-  canYield,
+  allowedActions,
   isPlayerTurn,
   submitting,
   selectedTargetId,
-  onExecuteCommand,
+  onExecute,
 }: CombatCommandBarProps): React.JSX.Element {
-  const disabled = !isPlayerTurn || submitting;
+  const baseDisabled = !isPlayerTurn || submitting;
 
   return (
     <section
@@ -31,79 +32,70 @@ export function CombatCommandBar({
         borderRadius: "var(--radius-lg)",
       }}
     >
-      <h3 style={{ fontSize: "var(--font-size-sm)", color: "var(--color-text-muted)", textTransform: "uppercase", marginBottom: "0.75rem" }}>
+      <h3
+        style={{
+          fontSize: "var(--font-size-sm)",
+          color: "var(--color-text-muted)",
+          textTransform: "uppercase",
+          marginBottom: "0.75rem",
+        }}
+      >
         Tactical Commands
       </h3>
 
       <div style={{ display: "flex", flexWrap: "wrap", gap: "0.75rem", marginBottom: "1rem" }}>
-        {availableSkills.map((skill) => (
-          <button
-            key={skill}
-            type="button"
-            disabled={disabled || !selectedTargetId}
-            onClick={() => onExecuteCommand("skill", skill)}
-            style={{
-              backgroundColor: "var(--color-accent)",
-              color: "var(--color-bg-base)",
-              fontWeight: "bold",
-              fontSize: "var(--font-size-sm)",
-            }}
-          >
-            Use {skill}
-          </button>
-        ))}
+        {allowedActions.map((action, idx) => {
+          if (action.action_kind === "use_skill") {
+            const missingTarget = needsManualTarget(action) && !selectedTargetId;
+            return (
+              <button
+                key={action.skill_id ?? `skill-${idx}`}
+                type="button"
+                disabled={baseDisabled || missingTarget}
+                onClick={() => onExecute(action)}
+                style={{
+                  backgroundColor: "var(--color-accent)",
+                  color: "var(--color-bg-base)",
+                  fontWeight: "bold",
+                  fontSize: "var(--font-size-sm)",
+                }}
+              >
+                Use {action.skill_name ?? action.skill_id} · {action.mana_cost} MP
+                {action.target_rule ? ` · ${action.target_rule}` : ""}
+              </button>
+            );
+          }
 
-        <button
-          type="button"
-          disabled={disabled}
-          onClick={() => onExecuteCommand("defend")}
-          style={{
-            backgroundColor: "var(--color-bg-elevated)",
-            color: "var(--color-text-primary)",
-            fontSize: "var(--font-size-sm)",
-          }}
-        >
-          🛡️ Defend (Guard)
-        </button>
-
-        {canFlee && (
-          <button
-            type="button"
-            disabled={disabled}
-            onClick={() => onExecuteCommand("flee")}
-            style={{
-              backgroundColor: "transparent",
-              border: "1px solid var(--color-warning)",
-              color: "var(--color-warning)",
-              fontSize: "var(--font-size-sm)",
-            }}
-          >
-            🏃 Attempt Flee
-          </button>
-        )}
-
-        {canYield && (
-          <button
-            type="button"
-            disabled={disabled}
-            onClick={() => onExecuteCommand("yield")}
-            style={{
-              backgroundColor: "transparent",
-              border: "1px solid var(--color-danger)",
-              color: "var(--color-danger)",
-              fontSize: "var(--font-size-sm)",
-            }}
-          >
-            🏳️ Yield
-          </button>
-        )}
+          const label =
+            action.action_kind === "defend"
+              ? "🛡️ Defend"
+              : action.action_kind === "flee"
+                ? "🏃 Flee"
+                : "🏳️ Yield";
+          return (
+            <button
+              key={action.action_kind}
+              type="button"
+              disabled={baseDisabled}
+              onClick={() => onExecute(action)}
+              style={{
+                backgroundColor: "var(--color-bg-elevated)",
+                color: "var(--color-text-primary)",
+                fontSize: "var(--font-size-sm)",
+              }}
+            >
+              {label}
+            </button>
+          );
+        })}
       </div>
 
-      {!selectedTargetId && (
-        <p style={{ color: "var(--color-text-muted)", fontSize: "var(--font-size-xs)" }}>
-          Select a target enemy above to execute offensive skills.
-        </p>
-      )}
+      {allowedActions.some((a) => a.action_kind === "use_skill" && needsManualTarget(a)) &&
+        !selectedTargetId && (
+          <p style={{ color: "var(--color-text-muted)", fontSize: "var(--font-size-xs)" }}>
+            Select a target enemy above to use a targeted skill.
+          </p>
+        )}
     </section>
   );
 }

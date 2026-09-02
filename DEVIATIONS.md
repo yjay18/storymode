@@ -87,6 +87,23 @@ breakdown therefore shows Total = Die, lists the named modifiers (which adjusted
 and shows Base DC + adjustment = Final DC. This mirrors the actual mechanic rather than
 inventing a roll-side total the contract does not carry.
 
+### PLAY-03 — CampaignDetail extended with areas/encounters (backend)
+
+**Original spec:** PLAY-03 says the context rail lists "the current area's `encounters`
+(from the campaign detail)" and lists only UI files in its Change set; the milestone rule
+says the backend routes/schemas are the contract and the UI should match them.
+
+**Deviation (user-authorised):** the served `CampaignDetail` exposed only `area_count`, so
+no endpoint carried encounter IDs and combat was unreachable from the UI. With the user's
+explicit approval, `CampaignDetail` gained `areas: list[CampaignAreaView]`, each with its
+`encounters` (`id`, `enemy_archetype_ids`, `condition`) — the minimal data the play loop
+needs to call `POST /combat/start`. Contract test added in
+`tests/integration/api/test_campaign_save_routes.py::test_get_campaign_detail`; documented
+in `docs/ux/combat-ui.md`. This is an additive, backward-compatible response change.
+
+Also: the combat route lost its `:combatId` segment (`/play/{c}/{s}/combat`) since combat
+is keyed by save, matching `GET /combat/view?campaign_id&save_id`.
+
 ### Live model evidence
 
 **Original spec:** No slice ran a prompt against a real model; all 577 tests use `httpx.MockTransport`.

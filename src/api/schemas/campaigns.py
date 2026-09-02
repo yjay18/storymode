@@ -18,6 +18,22 @@ class CampaignSummary(StrictModel):
     content_fingerprint: str | None = None
 
 
+class EncounterView(StrictModel):
+    """A combat encounter the UI can present as an 'Engage' option."""
+
+    id: EntityId
+    enemy_archetype_ids: list[EntityId]
+    condition: str
+
+
+class CampaignAreaView(StrictModel):
+    """An area with the encounter IDs the play loop can start."""
+
+    id: EntityId
+    name: str
+    encounters: list[EncounterView]
+
+
 class CampaignDetail(StrictModel):
     """Detailed campaign information."""
 
@@ -29,6 +45,7 @@ class CampaignDetail(StrictModel):
     campaign_length: CampaignLength
     content_fingerprint: str | None = None
     backgrounds: list[BackgroundDefinition]
+    areas: list[CampaignAreaView]
     area_count: int
     has_valid_point_buy: bool
 
