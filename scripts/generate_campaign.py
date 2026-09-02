@@ -14,7 +14,7 @@ import uuid
 from pathlib import Path
 
 from app.config import Settings
-from campaign.builder.models import QuickPromptInput
+from campaign.builder.models import ALL_DRAFT_STAGES, QuickPromptInput
 from campaign.builder.normalization import create_initial_draft_state, normalize_quick_prompt
 from campaign.builder.review import DraftReviewService
 from campaign.generation.orchestrator import GenerationOrchestrator
@@ -68,7 +68,11 @@ async def generate_and_publish(
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser = argparse.ArgumentParser(
+        description=__doc__.splitlines()[0],
+        epilog="Stages run in order: " + ", ".join(ALL_DRAFT_STAGES),
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
     parser.add_argument("premise", nargs="?", help="Campaign premise (omit when using --draft)")
     parser.add_argument("--title", default=None)
     parser.add_argument("--draft", default=None, help="Resume an existing draft id")

@@ -118,6 +118,21 @@ recipe data is served. Upgrade and loadout post their routes and render the retu
 rule logic. The panel is a self-contained container (fetches its own progression) and is
 not yet mounted in a play screen — that wiring is outside PLAY-04's listed files.
 
+### PLAY-05 — extra test file touched; num_predict heuristic
+
+**Original spec:** PLAY-05 lists `test_generation_orchestrator.py` and `test_schema_hints.py`
+as the test changes.
+
+**Deviation:** `tests/integration/campaign/test_campaign_publish.py` also had to change — its
+`_build_full_valid_draft` helper packed skills+items+enemies+balance into one `skills` stage,
+which no longer assembles a full pack after the split. It now builds the three stages. This
+was a required consequence of the stage split, not a new feature.
+
+The per-stage `num_predict` bound is a heuristic (`max(2048, min(8192, len(skeleton)))`,
+tokens sized from the skeleton character length) marked with a `ponytail:` comment and a
+tuning note; it is a fail-fast cap, not a tuned generation budget. PLAY-06 live evidence
+should confirm no legitimate stage response is truncated by it.
+
 ### Live model evidence
 
 **Original spec:** No slice ran a prompt against a real model; all 577 tests use `httpx.MockTransport`.

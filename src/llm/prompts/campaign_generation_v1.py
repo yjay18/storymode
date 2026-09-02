@@ -22,6 +22,8 @@ AREAS_PROMPT_VERSION = "campaign-areas/1.0.0"
 PLOT_PROMPT_VERSION = "campaign-plot/1.0.0"
 CHARACTERS_PROMPT_VERSION = "campaign-characters/1.0.0"
 SKILLS_PROMPT_VERSION = "campaign-skills/1.0.0"
+ITEMS_ENEMIES_PROMPT_VERSION = "campaign-items_enemies/1.0.0"
+BALANCE_PROMPT_VERSION = "campaign-balance/1.0.0"
 STAGE_REPAIR_PROMPT_VERSION = "campaign-repair/1.0.0"
 
 
@@ -255,25 +257,63 @@ def render_skills_prompt(
     codex: WorldCodex | None = None,
     request_id: str = "req-gen-skills",
 ) -> str:
-    """Render Stage 6 prompt: combat and non-combat skills, items, enemies, and balance."""
+    """Render Stage 6 prompt: combat and non-combat skills and skill trees only."""
     return _render_stage_prompt(
         "Mechanics Designer",
-        "Stage 6 (skills, items, enemies, balance)",
+        "Stage 6 (skills and skill trees)",
         SKILLS_PROMPT_VERSION,
         request_id,
         [
-            "Define every skill-, item-, enemy-, and tree- id that earlier stages reference "
-            "(see the index) plus 4-6 combat skills, 3-5 non-combat skills, 4-8 items, and "
-            "2-4 enemy archetypes in total.",
+            "Define every skill- and tree- id that earlier stages reference (see the index) "
+            "plus 4-6 combat skills and 3-5 non-combat skills in total.",
             "Each combat skill has exactly five levels numbered 1 to 5 with mana_cost 0-10; "
             "base_effects use kinds damage, heal, buff, debuff, resource_drain, or "
             "resource_restore with integer magnitude; status_id stays null.",
             "acquisition_source_ids are background, faction, companion, or milestone ids.",
             "Each skill_tree has an owner_companion_id from the characters stage and nodes "
             "whose skill_id exist here; edges reference node ids.",
-            "Each enemy has at least one combat_skill_ids entry defined here, "
+            "fusion_recipes is an empty list.",
+        ],
+        brief,
+        codex,
+    )
+
+
+def render_items_enemies_prompt(
+    brief: BuilderBrief,
+    codex: WorldCodex | None = None,
+    request_id: str = "req-gen-items-enemies",
+) -> str:
+    """Render Stage 7 prompt: items and enemy archetypes only."""
+    return _render_stage_prompt(
+        "Mechanics Designer",
+        "Stage 7 (items and enemies)",
+        ITEMS_ENEMIES_PROMPT_VERSION,
+        request_id,
+        [
+            "Define every item- and enemy- id that earlier stages reference (see the index) "
+            "plus 4-8 items and 2-4 enemy archetypes in total.",
+            "Each enemy has at least one combat_skill_ids entry defined in the skills stage, "
             "escape_policy_id escape-default, and loot_table weights summing to at most "
             "power_rating.",
+        ],
+        brief,
+        codex,
+    )
+
+
+def render_balance_prompt(
+    brief: BuilderBrief,
+    codex: WorldCodex | None = None,
+    request_id: str = "req-gen-balance",
+) -> str:
+    """Render Stage 8 prompt: point-buy, DC bands, XP thresholds, difficulty profiles."""
+    return _render_stage_prompt(
+        "Mechanics Designer",
+        "Stage 8 (balance)",
+        BALANCE_PROMPT_VERSION,
+        request_id,
+        [
             "point_buy is fixed: budget 27, minimum 8, maximum_before_bonus 15, "
             "maximum_after_bonus 17, cost_map 8:0,9:1,10:2,11:3,12:4,13:5,14:7,15:9.",
             "dc_bands are fixed: easy 8, standard 12, difficult 15, expert 18, "
@@ -281,7 +321,6 @@ def render_skills_prompt(
             'level_xp_thresholds start at "1": 0 and strictly increase for 5 levels.',
             "difficulty_profiles story/normal/hard use rational ratios as "
             "numerator/denominator objects; other balance dicts may be empty objects.",
-            "fusion_recipes is an empty list.",
         ],
         brief,
         codex,

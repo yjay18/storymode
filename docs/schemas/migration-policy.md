@@ -50,6 +50,18 @@ Support policy is all versions created before v1 release during development; aft
 release, support at least the latest two persisted schema versions unless an ADR and
 release note state a longer policy.
 
+## Draft migration: stage 6 split (PLAY-05)
+
+Campaign generation stage 6 was split from one `skills` stage (holding skills, items,
+enemies, and balance) into three stages: `skills` (skills only), `items_enemies`, and
+`balance`. Drafts written before the split are migrated on load
+(`campaign.storage.drafts._migrate_legacy_skills_stage`): a `skills` stage whose
+`artifact_data` still carries `items`, `enemies`, or `balance` keys is fanned out into the
+three stages, each marked `valid`, reusing the original envelope fields and attempt count.
+The migration is idempotent (skipped when the split stages already exist), does not touch
+the on-disk file (the transform happens in memory before validation), and only ever runs
+for drafts, never for published campaign packs.
+
 ## Campaign fingerprint changes
 
 A save never silently rebinds to changed campaign content. A campaign update declares

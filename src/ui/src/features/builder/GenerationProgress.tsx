@@ -7,8 +7,10 @@ const STAGE_LABELS: Record<DraftStage, string> = {
   areas: "3. Geography & Areas",
   plot: "4. Plot & Milestones",
   characters: "5. Characters & Companions",
-  skills: "6. Skills, Items & Balance",
-  review: "7. Review & Validation",
+  skills: "6. Skills & Trees",
+  items_enemies: "7. Items & Enemies",
+  balance: "8. Balance & Tuning",
+  review: "9. Review & Validation",
 };
 
 interface GenerationProgressProps {
@@ -46,6 +48,8 @@ export function GenerationProgress({
     "plot",
     "characters",
     "skills",
+    "items_enemies",
+    "balance",
     "review",
   ];
 

@@ -78,10 +78,26 @@ class CharactersStageResponse(BaseStageDraftResponse):
 
 
 class SkillsStageResponse(BaseStageDraftResponse):
-    """Stage 6: Skills, items, enemies, and balance generation."""
+    """Stage 6: Skills and skill trees generation.
+
+    Stage 6 was split (PLAY-05) so a local model emits skills, then items+enemies, then
+    balance in three bounded responses instead of one oversized reply.
+    """
 
     stage: Literal["skills"] = "skills"
     skills: SkillsFile
+
+
+class ItemsEnemiesStageResponse(BaseStageDraftResponse):
+    """Stage 7: Items and enemy archetypes generation."""
+
+    stage: Literal["items_enemies"] = "items_enemies"
     items: ItemsFile
     enemies: EnemiesFile
+
+
+class BalanceStageResponse(BaseStageDraftResponse):
+    """Stage 8: Point-buy, DC bands, XP thresholds, and difficulty profiles."""
+
+    stage: Literal["balance"] = "balance"
     balance: BalanceFile

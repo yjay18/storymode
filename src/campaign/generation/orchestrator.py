@@ -20,7 +20,9 @@ from campaign.storage.drafts import DraftRepository
 from domain.models.common import EntityId
 from llm.contracts.campaign_generation import (
     AreasStageResponse,
+    BalanceStageResponse,
     CharactersStageResponse,
+    ItemsEnemiesStageResponse,
     MetaStyleStageResponse,
     PlotStageResponse,
     SkillsStageResponse,
@@ -28,7 +30,9 @@ from llm.contracts.campaign_generation import (
 )
 from llm.prompts.campaign_generation_v1 import (
     render_areas_prompt,
+    render_balance_prompt,
     render_characters_prompt,
+    render_items_enemies_prompt,
     render_meta_style_prompt,
     render_plot_prompt,
     render_skills_prompt,
@@ -117,6 +121,26 @@ class GenerationOrchestrator:
                     draft.brief, codex=codex, request_id=f"req-gen-skills-{draft.revision}"
                 ),
                 context_summary="Stage 6 Skills Generation",
+            )
+        elif stage == "items_enemies":
+            return await self.stage_runner.execute_stage(
+                stage="items_enemies",
+                draft=draft,
+                contract_cls=ItemsEnemiesStageResponse,
+                prompt_generator=lambda: render_items_enemies_prompt(
+                    draft.brief, codex=codex, request_id=f"req-gen-items-enemies-{draft.revision}"
+                ),
+                context_summary="Stage 7 Items & Enemies Generation",
+            )
+        elif stage == "balance":
+            return await self.stage_runner.execute_stage(
+                stage="balance",
+                draft=draft,
+                contract_cls=BalanceStageResponse,
+                prompt_generator=lambda: render_balance_prompt(
+                    draft.brief, codex=codex, request_id=f"req-gen-balance-{draft.revision}"
+                ),
+                context_summary="Stage 8 Balance Generation",
             )
         elif stage == "review":
             # Review stage evaluates all prior stages

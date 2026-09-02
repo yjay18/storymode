@@ -10,6 +10,7 @@ from campaign.generation.stages import (
 )
 from domain.models.common import EntityId
 from llm.contracts.campaign_generation import (
+    ItemsEnemiesStageResponse,
     MetaStyleStageResponse,
     SkillsStageResponse,
     WorldStageResponse,
@@ -73,8 +74,10 @@ def test_meta_style_hints_state_lengths_enums_and_item_bounds() -> None:
 
 
 def test_hints_follow_refs_lists_and_nested_models() -> None:
-    hints = schema_constraint_hints(SkillsStageResponse)
+    skills_hints = schema_constraint_hints(SkillsStageResponse)
+    assert "skills.combat_skills[].levels[].mana_cost: integer 0..10" in skills_hints
+    assert len(skills_hints) < 6000
 
-    assert "skills.combat_skills[].levels[].mana_cost: integer 0..10" in hints
-    assert "enemies.enemy_archetypes[].base_hp: integer 1..10000" in hints
-    assert len(hints) < 6000
+    # Stage 6 was split (PLAY-05): enemies now live in the items_enemies contract.
+    items_enemies_hints = schema_constraint_hints(ItemsEnemiesStageResponse)
+    assert "enemies.enemy_archetypes[].base_hp: integer 1..10000" in items_enemies_hints

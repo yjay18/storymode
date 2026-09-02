@@ -1442,7 +1442,7 @@ Working rules for this milestone, in addition to the global ones:
   - Accept: token count decrements and skill level increments from the mocked response;
     no client-side rule logic.
 
-- [ ] **PLAY-05 — Split generation stage 6 into three model responses**
+- [x] **PLAY-05 — Split generation stage 6 into three model responses**
   - Depends: BUILD-06
   - Read: `DEVIATIONS.md` "Stage prompts 2-6", `src/campaign/generation/{stages,orchestrator}.py`,
     `src/llm/contracts/campaign_generation.py`, `src/llm/prompts/campaign_generation_v1.py`,

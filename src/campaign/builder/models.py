@@ -30,6 +30,8 @@ DraftStage = Literal[
     "plot",
     "characters",
     "skills",
+    "items_enemies",
+    "balance",
     "review",
 ]
 
@@ -48,6 +50,8 @@ ALL_DRAFT_STAGES: tuple[DraftStage, ...] = (
     "plot",
     "characters",
     "skills",
+    "items_enemies",
+    "balance",
     "review",
 )
 

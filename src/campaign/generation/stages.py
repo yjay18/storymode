@@ -213,6 +213,11 @@ class StageRunner:
             + artifact_id_index(updated_draft)
         )
         prompt = prompt_generator() + limits
+        # ponytail: cap generation length from the skeleton size so an oversized or
+        # runaway reply is cut and fails validation fast, rather than grinding to the 16k
+        # context limit (stage 6 used to be cut off mid-JSON around 1,600 lines). Tune the
+        # multiplier if a legitimately large stage response is ever truncated.
+        num_predict = max(2048, min(8192, len(skeleton)))
         last_raw_response = ""
         last_diagnostics: list[str] = []
 
@@ -224,7 +229,7 @@ class StageRunner:
                     messages=[ChatMessage(role="user", content=prompt)],
                     format_json=True,
                     # Skeleton + limits + id index + brief exceed Ollama's 4k default window.
-                    options=ChatOptions(num_ctx=16384),
+                    options=ChatOptions(num_ctx=16384, num_predict=num_predict),
                 )
                 last_raw_response = chat_res.message.content
 

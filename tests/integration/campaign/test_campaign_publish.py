@@ -78,12 +78,17 @@ def _build_full_valid_draft(draft_id: EntityId) -> DraftState:
     stages["skills"] = DraftStageState(
         stage="skills",
         status="valid",
-        artifact_data={
-            "skills": skills_json,
-            "items": items_json,
-            "enemies": enemies_json,
-            "balance": balance_json,
-        },
+        artifact_data={"skills": skills_json},
+    )
+    stages["items_enemies"] = DraftStageState(
+        stage="items_enemies",
+        status="valid",
+        artifact_data={"items": items_json, "enemies": enemies_json},
+    )
+    stages["balance"] = DraftStageState(
+        stage="balance",
+        status="valid",
+        artifact_data={"balance": balance_json},
     )
 
     # review

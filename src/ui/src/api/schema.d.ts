@@ -120,6 +120,8 @@ export type DraftStage =
   | "plot"
   | "characters"
   | "skills"
+  | "items_enemies"
+  | "balance"
   | "review";
 
 export type StageStatus = "not_started" | "running" | "valid" | "invalid" | "cancelled";

@@ -13,10 +13,49 @@ import json
 import os
 import shutil
 from pathlib import Path
+from typing import Any
 
 from campaign.builder.models import DraftState
 from domain.models.common import EntityId
 from engine.state.errors import UnsafePathError
+
+
+def _migrate_legacy_skills_stage(data: dict[str, Any]) -> dict[str, Any]:
+    """Split a pre-PLAY-05 four-key ``skills`` stage into skills/items_enemies/balance.
+
+    Older drafts stored skills, items, enemies, and balance in one ``skills`` artifact.
+    Stage 6 is now three stages, so on load we fan the extra keys out into the new stages
+    (documented in ``docs/schemas/migration-policy.md``). Idempotent: a draft that already
+    has the split stages is returned unchanged.
+    """
+    stages = data.get("stages")
+    if not isinstance(stages, dict):
+        return data
+    skills_stage = stages.get("skills")
+    if not isinstance(skills_stage, dict):
+        return data
+    art = skills_stage.get("artifact_data")
+    if not isinstance(art, dict) or not any(k in art for k in ("items", "enemies", "balance")):
+        return data
+    if "balance" in stages or "items_enemies" in stages:
+        return data
+
+    envelope = {k: art.get(k) for k in ("contract_version", "prompt_version", "request_id")}
+    attempts = skills_stage.get("attempts", 1)
+
+    def make_stage(name: str, keys: tuple[str, ...]) -> dict[str, Any]:
+        return {
+            "stage": name,
+            "status": "valid",
+            "attempts": attempts,
+            "diagnostics": [],
+            "artifact_data": {**envelope, "stage": name, **{k: art[k] for k in keys if k in art}},
+        }
+
+    stages["skills"] = make_stage("skills", ("skills",))
+    stages["items_enemies"] = make_stage("items_enemies", ("items", "enemies"))
+    stages["balance"] = make_stage("balance", ("balance",))
+    return data
 
 
 class DraftError(Exception):
@@ -99,7 +138,7 @@ class DraftRepository:
 
         try:
             raw_text = draft_file.read_text(encoding="utf-8")
-            data = json.loads(raw_text)
+            data = _migrate_legacy_skills_stage(json.loads(raw_text))
             return DraftState.model_validate(data)
         except Exception as e:
             raise DraftError(f"Failed to load draft '{draft_id}': {e}") from e

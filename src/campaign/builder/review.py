@@ -31,7 +31,9 @@ from engine.validation.graphs import validate_graphs
 from engine.validation.references import index_campaign_entities, validate_references
 from llm.contracts.campaign_generation import (
     AreasStageResponse,
+    BalanceStageResponse,
     CharactersStageResponse,
+    ItemsEnemiesStageResponse,
     MetaStyleStageResponse,
     PlotStageResponse,
     SkillsStageResponse,
@@ -45,6 +47,8 @@ STAGE_CONTRACT_MAP: dict[DraftStage, type[BaseModel]] = {
     "plot": PlotStageResponse,
     "characters": CharactersStageResponse,
     "skills": SkillsStageResponse,
+    "items_enemies": ItemsEnemiesStageResponse,
+    "balance": BalanceStageResponse,
 }
 
 
@@ -265,10 +269,12 @@ class DraftReviewService:
             elif stage_name == "skills":
                 if "skills" in data:
                     files["skills.json"] = json.dumps(data["skills"])
+            elif stage_name == "items_enemies":
                 if "items" in data:
                     files["items.json"] = json.dumps(data["items"])
                 if "enemies" in data:
                     files["enemies.json"] = json.dumps(data["enemies"])
+            elif stage_name == "balance":
                 if "balance" in data:
                     files["balance.json"] = json.dumps(data["balance"])
         return files
@@ -283,9 +289,9 @@ class DraftReviewService:
             "plot.json": "plot",
             "characters.json": "characters",
             "skills.json": "skills",
-            "items.json": "skills",
-            "enemies.json": "skills",
-            "balance.json": "skills",
+            "items.json": "items_enemies",
+            "enemies.json": "items_enemies",
+            "balance.json": "balance",
         }
         target_stage: DraftStage = stage_map.get(d.file or "", "review")  # type: ignore[assignment]
         return StageDiagnostic(
