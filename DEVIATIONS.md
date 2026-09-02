@@ -138,3 +138,43 @@ should confirm no legitimate stage response is truncated by it.
 **Original spec:** No slice ran a prompt against a real model; all 577 tests use `httpx.MockTransport`.
 
 **Resolution:** `tests/live/` holds opt-in tests gated by `STORYMODE_LIVE_OLLAMA=1` and the `live_ollama` marker. CI does not run them. `scripts/generate_campaign.py` produces the bundled sample campaign through the real pipeline.
+
+### PLAY-06 — live verification run (2026-09-02, qwen3.5:9b, Apple Silicon)
+
+User-authorised live run. Results:
+
+- **Live tests (`make live`): 2 of 3 pass.**
+  - `test_configured_model_is_installed` — PASS.
+  - `test_meta_style_stage_produces_valid_artifact` — PASS (stage 1 validates against the
+    real model).
+  - `test_interpreter_and_narrator_round_trip` — **FAIL (422)**. The action interpreter
+    rejects the model's proposal with `Request ID mismatch: expected 'act-cmd-live-1', got
+    'act-search-room-1'`. The interpreter (`llm/orchestration/action_interpreter.py:100`)
+    requires the model to echo `packet.request_id` verbatim, but the interpreter prompt
+    (`llm/prompts/action_interpreter_v1.py`) never instructs it to, so qwen3.5:9b invents
+    an id. Pre-existing (LLM-04), outside Milestone 8's changed files; not fixed here and
+    the guard was not weakened. **Recommended follow-up slice:** have the interpreter treat
+    `request_id` as a server-owned correlation field (inject the packet's id before
+    validation) or add an explicit "echo request_id exactly" instruction + few-shot, with
+    contract tests.
+
+- **Full generation (`make generate`): stalls at stage 2.** meta_style validates on the
+  first attempt; `rules` (WorldStageResponse) fails all 3 attempts because the model omits
+  the required `world.factions[].relationship_edges` field on one faction. Model-compliance
+  reliability on the WorldFile contract, non-deterministic, unrelated to the PLAY-05 stage-6
+  split (stages 1-5 are unchanged). No pack published in this run. (A direct
+  `scripts/generate_campaign.py --draft <id>` resume is the documented recovery, but the run
+  environment's classifier only permits the `make` targets.)
+
+- **Browser walk: not completed.** No freshly generated pack published, and the free-text
+  "look"/"check" path is blocked by the same interpreter request_id issue. The mechanical
+  combat path (engage → skill → defend → yield) does not depend on the interpreter and is
+  covered by `scripts/run_smoke_test.py` and the PLAY-03 Vitest suite against real response
+  shapes.
+
+**Assessment:** the Milestone 8 wiring verified where the model permits — routes reachable
+with correct 503/422 envelopes, stage-1 generation valid, and the split pipeline publishes a
+`load_campaign`-valid pack in the mocked all-stages test. The two live failures are
+pre-existing model-compliance gaps outside this milestone's scope; PLAY-06 is left unchecked
+pending either a larger/more-compliant model (e.g. the installed `qwen3.8`) or the
+interpreter/generation follow-up slices above.
