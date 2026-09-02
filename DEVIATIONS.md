@@ -104,6 +104,20 @@ in `docs/ux/combat-ui.md`. This is an additive, backward-compatible response cha
 Also: the combat route lost its `:combatId` segment (`/play/{c}/{s}/combat`) since combat
 is keyed by save, matching `GET /combat/view?campaign_id&save_id`.
 
+### PLAY-04 — no XP threshold or fusion-recipe data in the contract
+
+**Original spec:** the character panel shows "XP to next threshold" and Fusion "lists
+recipes whose conditions are met".
+
+**Deviation:** `ProgressionViewResponse` exposes `xp` and `upgrade_tokens` but no level
+threshold, and no served endpoint lists fusion recipes. Computing a threshold client-side
+would be the forbidden client-side rule logic, so the panel shows level, raw XP, and
+tokens; the Fusion section is a read-only placeholder ("No eligible fusion recipes") until
+recipe data is served. Upgrade and loadout post their routes and render the returned
+`player` view (and the server's typed error message on rejection), with no client-side
+rule logic. The panel is a self-contained container (fetches its own progression) and is
+not yet mounted in a play screen — that wiring is outside PLAY-04's listed files.
+
 ### Live model evidence
 
 **Original spec:** No slice ran a prompt against a real model; all 577 tests use `httpx.MockTransport`.

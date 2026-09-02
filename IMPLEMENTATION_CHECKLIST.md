@@ -1427,7 +1427,7 @@ Working rules for this milestone, in addition to the global ones:
   - Accept: start -> skill -> defend -> yield completes against mocked responses and the
     screen matches `docs/ux/combat-ui.md` mode guards (no exploration input in combat).
 
-- [ ] **PLAY-04 — Progression controls: tokens, loadout, upgrade**
+- [x] **PLAY-04 — Progression controls: tokens, loadout, upgrade**
   - Depends: PLAY-01
   - Read: `docs/game-design/progression-and-skills.md`, `src/api/routes/progression.py`,
     `src/api/schemas/progression.py`, `CharacterPanel.tsx`.
