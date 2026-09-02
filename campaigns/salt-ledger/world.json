@@ -1,0 +1,139 @@
+{
+  "schema_version": 1,
+  "campaign_id": "salt-ledger",
+  "campaign_version": "1.0.0",
+  "world": {
+    "name": "Marrow Quay",
+    "core_conflict": "Who forged the Salt Ledger, and who drowns when the spring flood comes",
+    "power_system": {
+      "rules": [
+        "Tide-craft draws on the moon's pull; it works only within sight of open water",
+        "Every working must be paid in salt, weighed and recorded"
+      ],
+      "costs": [
+        "Salt, by the ounce",
+        "Memory of a specific day, lost for good"
+      ],
+      "access_restrictions": [
+        "Only sworn tide-priests may keep a salt-scale"
+      ],
+      "side_effects": [
+        "Skin cracks and whitens",
+        "Cold that no fire lifts"
+      ]
+    },
+    "values": [
+      "Debt is sacred",
+      "The tide keeps no favourites",
+      "Paper outlives people"
+    ],
+    "factions": [
+      {
+        "id": "fac-tide-priests",
+        "name": "The Tide-Priests of Marrow Quay",
+        "goals": [
+          "Keep the salt monopoly",
+          "Be seen to hold back the flood"
+        ],
+        "resources": [
+          "Salt-scales",
+          "The tithe barges",
+          "The city's guilt"
+        ],
+        "hypocrisy": "They sell forgiveness while quietly forging the ledger that condemns",
+        "language_style": "Liturgical, everything in ounces and grains",
+        "visual_markings": "White-cracked hands, grey robes hemmed with salt",
+        "relationship_edges": [
+          {
+            "target_faction_id": "fac-harbour-chain",
+            "stance": -40,
+            "summary": "Rivals for the barges"
+          },
+          {
+            "target_faction_id": "fac-customs-house",
+            "stance": 30,
+            "summary": "The clerks stamp what the priests weigh"
+          }
+        ]
+      },
+      {
+        "id": "fac-harbour-chain",
+        "name": "The Harbour Chain",
+        "goals": [
+          "Own the water",
+          "Break the salt monopoly"
+        ],
+        "resources": [
+          "The harbour chain and its winch",
+          "Cellars under the quay",
+          "Runners"
+        ],
+        "hypocrisy": "They call themselves the city's protectors and flood the poor wards to move cargo",
+        "language_style": "Terse, everything timed to the tide",
+        "visual_markings": "A link of chain worn at the wrist",
+        "relationship_edges": [
+          {
+            "target_faction_id": "fac-tide-priests",
+            "stance": -40,
+            "summary": "Rivals for the barges"
+          },
+          {
+            "target_faction_id": "fac-customs-house",
+            "stance": -60,
+            "summary": "The clerks seized their cellars once"
+          }
+        ]
+      },
+      {
+        "id": "fac-customs-house",
+        "name": "The Customs House",
+        "goals": [
+          "Keep the Ledger authoritative",
+          "Survive the audit"
+        ],
+        "resources": [
+          "The Salt Ledger",
+          "Seals and forms",
+          "A dwindling guard"
+        ],
+        "hypocrisy": "They preach the sanctity of the record and sold its blank pages",
+        "language_style": "Procedural, cites forms by number",
+        "visual_markings": "Ink-stained cuffs, brass seal on a cord",
+        "relationship_edges": [
+          {
+            "target_faction_id": "fac-tide-priests",
+            "stance": 30,
+            "summary": "Mutual convenience"
+          },
+          {
+            "target_faction_id": "fac-harbour-chain",
+            "stance": -60,
+            "summary": "Old seizure, old grudge"
+          }
+        ]
+      }
+    ],
+    "major_locations": [
+      {
+        "id": "loc-customs-house",
+        "name": "The Customs House",
+        "summary": "A leaning brick hall where the Ledger is kept"
+      },
+      {
+        "id": "loc-marrow-quay",
+        "name": "Marrow Quay",
+        "summary": "The working harbour, chain and tithe barges"
+      },
+      {
+        "id": "loc-lower-wards",
+        "name": "The Lower Wards",
+        "summary": "Half-drowned streets below the flood line"
+      }
+    ],
+    "material_conditions": [
+      "Salt is currency and sacrament",
+      "The spring flood comes in six tides",
+      "Paper rots; only sealed pages count"
+    ]
+  }
+}

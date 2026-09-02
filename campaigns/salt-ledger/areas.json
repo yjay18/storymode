@@ -1,0 +1,371 @@
+{
+  "schema_version": 1,
+  "campaign_id": "salt-ledger",
+  "campaign_version": "1.0.0",
+  "areas": [
+    {
+      "id": "area-customs-hall",
+      "name": "Customs Hall",
+      "major_location_id": "loc-customs-house",
+      "description": "A long hall of desks under a sagging roof; the Ledger sits chained on a lectern",
+      "art_prompt": "Brick customs hall, chained ledger on lectern, grey light, ink and damp",
+      "danger_level": 1,
+      "connected_area_ids": [
+        "area-marrow-quay"
+      ],
+      "local_faction_ids": [
+        "fac-customs-house"
+      ],
+      "residents": [
+        {
+          "id": "npc-harrow",
+          "name": "Chief Clerk Harrow",
+          "role": "Your former superior",
+          "faction_id": "fac-customs-house",
+          "availability": "available",
+          "location_anchor": "the raised desk",
+          "initial_disposition": -20,
+          "knowledge_tags": [
+            "ledger",
+            "audit",
+            "seals"
+          ],
+          "personal_goal": "Survive the audit with his seal intact",
+          "interaction_hooks": [
+            "Demands you return your seal",
+            "Knows which pages were reissued"
+          ]
+        },
+        {
+          "id": "npc-pell",
+          "name": "Pell",
+          "role": "Junior clerk, still loyal to you",
+          "faction_id": "fac-customs-house",
+          "availability": "available",
+          "location_anchor": "the copying bench",
+          "initial_disposition": 40,
+          "knowledge_tags": [
+            "ledger",
+            "gossip"
+          ],
+          "personal_goal": "Not be blamed for anything",
+          "interaction_hooks": [
+            "Whispers about the missing blank pages",
+            "Can copy a seal, badly"
+          ]
+        }
+      ],
+      "objects": [
+        {
+          "id": "obj-salt-ledger",
+          "name": "The Salt Ledger",
+          "description": "The city's record of every ounce of salt weighed and forgiven",
+          "location_anchor": "the lectern",
+          "state": "chained, open to the spring tithe",
+          "interactable_tags": [
+            "read",
+            "inspect",
+            "compare"
+          ],
+          "capability_requirements": [
+            "appraisal"
+          ],
+          "allowed_effect_ids": []
+        },
+        {
+          "id": "obj-seal-press",
+          "name": "Seal press",
+          "description": "A brass press that stamps the Customs seal",
+          "location_anchor": "the back office",
+          "state": "unlocked, recently used",
+          "interactable_tags": [
+            "inspect",
+            "use"
+          ],
+          "capability_requirements": [],
+          "allowed_effect_ids": []
+        }
+      ],
+      "encounters": [],
+      "secrets": [
+        {
+          "id": "secret-reissued-pages",
+          "summary": "Three ledger pages carry a seal pressed after the ink dried",
+          "lead_fact_ids": [
+            "obj-seal-press"
+          ],
+          "reveal_conditions": [
+            "Compare the seal impressions under lamp light"
+          ],
+          "core_clue": true
+        }
+      ]
+    },
+    {
+      "id": "area-marrow-quay",
+      "name": "Marrow Quay",
+      "major_location_id": "loc-marrow-quay",
+      "description": "Wet stone, the great harbour chain, tithe barges rocking under grey sky",
+      "art_prompt": "Harbour quay, giant chain across the water, tithe barges, fog, gulls",
+      "danger_level": 3,
+      "connected_area_ids": [
+        "area-customs-hall",
+        "area-chain-cellars",
+        "area-drowned-ward"
+      ],
+      "local_faction_ids": [
+        "fac-tide-priests",
+        "fac-harbour-chain"
+      ],
+      "residents": [
+        {
+          "id": "npc-brannock",
+          "name": "Winchmaster Brannock",
+          "role": "Keeper of the harbour chain",
+          "faction_id": "fac-harbour-chain",
+          "availability": "available",
+          "location_anchor": "the winch house",
+          "initial_disposition": -10,
+          "knowledge_tags": [
+            "tides",
+            "smuggling",
+            "cellars"
+          ],
+          "personal_goal": "Keep the cellars unsearched until the flood",
+          "interaction_hooks": [
+            "Trades tide tables for favours",
+            "Will not say who paid for blank pages"
+          ]
+        },
+        {
+          "id": "npc-mother-esk",
+          "name": "Mother Esk",
+          "role": "Senior tide-priest at the salt-scale",
+          "faction_id": "fac-tide-priests",
+          "availability": "available",
+          "location_anchor": "the tithe altar",
+          "initial_disposition": 10,
+          "knowledge_tags": [
+            "salt",
+            "forgiveness",
+            "ledger"
+          ],
+          "personal_goal": "Keep the priests' name off the forgery",
+          "interaction_hooks": [
+            "Offers to weigh your guilt for a fee",
+            "Hints the Ledger was altered before it left her altar"
+          ]
+        }
+      ],
+      "objects": [
+        {
+          "id": "obj-tithe-scale",
+          "name": "The tithe scale",
+          "description": "A brass salt-scale, chained to the altar, its weights worn smooth",
+          "location_anchor": "the tithe altar",
+          "state": "balanced, one weight missing",
+          "interactable_tags": [
+            "inspect",
+            "weigh"
+          ],
+          "capability_requirements": [
+            "tidelore"
+          ],
+          "allowed_effect_ids": []
+        },
+        {
+          "id": "obj-tide-board",
+          "name": "Tide board",
+          "description": "A slate listing the next six tides in chalk",
+          "location_anchor": "the winch house wall",
+          "state": "current",
+          "interactable_tags": [
+            "read"
+          ],
+          "capability_requirements": [],
+          "allowed_effect_ids": []
+        }
+      ],
+      "encounters": [
+        {
+          "id": "enc-quay-runners",
+          "enemy_archetype_ids": [
+            "enemy-chain-runner",
+            "enemy-chain-runner"
+          ],
+          "condition": "Caught reading the tide board after dark",
+          "weight": 40,
+          "escape_policy_id": "ms-quay",
+          "consequence_ids": []
+        }
+      ],
+      "secrets": [
+        {
+          "id": "secret-missing-weight",
+          "summary": "The missing scale weight is the exact mass of a page's worth of salt",
+          "lead_fact_ids": [
+            "obj-tithe-scale"
+          ],
+          "reveal_conditions": [
+            "Weigh a ledger page against the remaining weights"
+          ],
+          "core_clue": true
+        }
+      ]
+    },
+    {
+      "id": "area-chain-cellars",
+      "name": "Chain Cellars",
+      "major_location_id": "loc-marrow-quay",
+      "description": "Vaulted cellars under the winch house, ankle-deep in seawater, crates on sawhorses",
+      "art_prompt": "Flooded stone cellar, crates on sawhorses, lantern light, chain shadows",
+      "danger_level": 6,
+      "connected_area_ids": [
+        "area-marrow-quay"
+      ],
+      "local_faction_ids": [
+        "fac-harbour-chain"
+      ],
+      "residents": [
+        {
+          "id": "npc-drusk",
+          "name": "Drusk",
+          "role": "Cellar foreman with a clerk's handwriting",
+          "faction_id": "fac-harbour-chain",
+          "availability": "available",
+          "location_anchor": "the dry shelf",
+          "initial_disposition": -50,
+          "knowledge_tags": [
+            "forgery",
+            "seals",
+            "cellars"
+          ],
+          "personal_goal": "Get paid and get out before the flood",
+          "interaction_hooks": [
+            "Carries a bundle of blank sealed pages",
+            "Will bargain if cornered"
+          ]
+        }
+      ],
+      "objects": [
+        {
+          "id": "obj-page-crate",
+          "name": "Crate of blank pages",
+          "description": "Ledger pages, pre-stamped with the Customs seal, wrapped in oilcloth",
+          "location_anchor": "the dry shelf",
+          "state": "sealed",
+          "interactable_tags": [
+            "open",
+            "inspect",
+            "take"
+          ],
+          "capability_requirements": [],
+          "allowed_effect_ids": []
+        }
+      ],
+      "encounters": [
+        {
+          "id": "enc-cellar-guard",
+          "enemy_archetype_ids": [
+            "enemy-chain-runner",
+            "enemy-chain-bruiser"
+          ],
+          "condition": "Approach the dry shelf without Drusk's leave",
+          "weight": 70,
+          "escape_policy_id": "ms-cellars",
+          "consequence_ids": []
+        }
+      ],
+      "secrets": [
+        {
+          "id": "secret-who-paid",
+          "summary": "The pages were bought with tithe salt: the priests paid the Chain to forge the Ledger",
+          "lead_fact_ids": [
+            "obj-page-crate",
+            "npc-drusk"
+          ],
+          "reveal_conditions": [
+            "Open the crate",
+            "Make Drusk talk"
+          ],
+          "core_clue": true
+        }
+      ]
+    },
+    {
+      "id": "area-drowned-ward",
+      "name": "The Drowned Ward",
+      "major_location_id": "loc-lower-wards",
+      "description": "Streets under a hand of water, doors nailed shut, something moving under the surface",
+      "art_prompt": "Flooded street at dusk, nailed doors, phosphor glow in the water",
+      "danger_level": 7,
+      "connected_area_ids": [
+        "area-marrow-quay"
+      ],
+      "local_faction_ids": [],
+      "residents": [
+        {
+          "id": "npc-widow-tam",
+          "name": "Widow Tam",
+          "role": "Last resident who refuses to leave",
+          "faction_id": null,
+          "availability": "available",
+          "location_anchor": "her upper window",
+          "initial_disposition": 20,
+          "knowledge_tags": [
+            "flood",
+            "priests",
+            "the drowned"
+          ],
+          "personal_goal": "See the priests answer for the last flood",
+          "interaction_hooks": [
+            "Saw a tithe barge unload pages at night",
+            "Asks you to carry a debt-token to the altar"
+          ]
+        }
+      ],
+      "objects": [
+        {
+          "id": "obj-flood-mark",
+          "name": "Flood mark",
+          "description": "Last spring's high-water line, scratched with a date and a weight",
+          "location_anchor": "the chapel wall",
+          "state": "fading",
+          "interactable_tags": [
+            "read",
+            "inspect"
+          ],
+          "capability_requirements": [
+            "tidelore"
+          ],
+          "allowed_effect_ids": []
+        }
+      ],
+      "encounters": [
+        {
+          "id": "enc-drowned",
+          "enemy_archetype_ids": [
+            "enemy-drowned-thing"
+          ],
+          "condition": "Wade past the chapel after the third tide",
+          "weight": 50,
+          "escape_policy_id": "ms-quay",
+          "consequence_ids": []
+        }
+      ],
+      "secrets": [
+        {
+          "id": "secret-flood-date",
+          "summary": "The flood mark's date matches the reissued ledger pages",
+          "lead_fact_ids": [
+            "obj-flood-mark"
+          ],
+          "reveal_conditions": [
+            "Read the mark by daylight"
+          ],
+          "core_clue": false
+        }
+      ]
+    }
+  ]
+}

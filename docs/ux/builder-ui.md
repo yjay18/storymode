@@ -16,6 +16,16 @@ direction. Each step saves a draft locally and can be revisited before generatio
 Source import shows accepted types/sizes, provenance field, local-only notice, and a
 plain-text preview. It never executes content or sends it outside the local process.
 
+The book drop zone (`/builder/import`) accepts one `.epub`, `.txt`, or `.md` file by
+drag-and-drop or file picker, posts it to `POST /api/v1/builder/drafts/import`, and opens
+the resulting draft. The server runs the importer and two-pass compactor synchronously
+and returns a draft whose brief carries a source summary (title, primary regions) and
+protected facts (regional taboos and magic laws) distilled from the `WorldCodex`, so the
+user can see what was extracted before generating. Optional genre and
+tone fields sit beside the drop zone. Failures (unsupported type, oversized file,
+unreadable EPUB) are shown inline with the server's diagnostic; nothing is retried
+automatically. See ADR-012.
+
 ## Generation progress
 
 Show the exact stage, local model, attempts, elapsed time, cancellation, and validation

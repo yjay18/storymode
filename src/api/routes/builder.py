@@ -61,8 +61,13 @@ def _get_review_service(request: Request) -> DraftReviewService:
 
 def _get_orchestrator(request: Request) -> GenerationOrchestrator:
     repo = _get_draft_repo(request)
-    client = OllamaClient(base_url=str(request.app.state.settings.ollama_url))
-    runner = StageRunner(client, repo)
+    settings = request.app.state.settings
+    client = OllamaClient(
+        base_url=str(settings.ollama_url),
+        default_timeout=settings.ollama_timeout_seconds,
+        max_response_bytes=settings.ollama_max_response_bytes,
+    )
+    runner = StageRunner(client, repo, settings.model_text)
     return GenerationOrchestrator(runner, repo)
 
 

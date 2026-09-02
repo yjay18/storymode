@@ -1,0 +1,114 @@
+{
+  "schema_version": 1,
+  "campaign_id": "salt-ledger",
+  "campaign_version": "1.0.0",
+  "items": [
+    {
+      "id": "item-clerks-knife",
+      "name": "Clerk's knife",
+      "type": "weapon",
+      "rarity": "common",
+      "mechanics": [
+        {
+          "effect_id": "it-knife",
+          "kind": "damage",
+          "magnitude": 1,
+          "duration": null,
+          "status_id": null,
+          "stacking_key": null
+        }
+      ],
+      "requirements": [],
+      "capability_tags": [
+        "cut"
+      ],
+      "stacking_key": null,
+      "flavour_text": "For trimming quills. It has trimmed other things.",
+      "provenance": "Customs House issue",
+      "max_stack": 1
+    },
+    {
+      "id": "item-oilskin-coat",
+      "name": "Oilskin coat",
+      "type": "armour",
+      "rarity": "common",
+      "mechanics": [
+        {
+          "effect_id": "it-coat",
+          "kind": "buff",
+          "magnitude": 2,
+          "duration": null,
+          "status_id": null,
+          "stacking_key": null
+        }
+      ],
+      "requirements": [],
+      "capability_tags": [],
+      "stacking_key": "armour-body",
+      "flavour_text": "Smells of tar and someone else's sweat.",
+      "provenance": "Harbour Chain stores",
+      "max_stack": 1
+    },
+    {
+      "id": "item-brine-tonic",
+      "name": "Brine tonic",
+      "type": "consumable",
+      "rarity": "common",
+      "mechanics": [
+        {
+          "effect_id": "it-tonic",
+          "kind": "heal",
+          "magnitude": 5,
+          "duration": null,
+          "status_id": null,
+          "stacking_key": null
+        }
+      ],
+      "requirements": [],
+      "capability_tags": [],
+      "stacking_key": null,
+      "flavour_text": "Salt water and something that is not quite rum.",
+      "provenance": "Sold at the tithe altar",
+      "max_stack": 5
+    },
+    {
+      "id": "item-salt-charm",
+      "name": "Salt charm",
+      "type": "accessory",
+      "rarity": "uncommon",
+      "mechanics": [
+        {
+          "effect_id": "it-charm",
+          "kind": "buff",
+          "magnitude": 1,
+          "duration": 3,
+          "status_id": null,
+          "stacking_key": null
+        }
+      ],
+      "requirements": [],
+      "capability_tags": [
+        "tidelore"
+      ],
+      "stacking_key": "charm",
+      "flavour_text": "A scale weight on a cord. It is the missing one.",
+      "provenance": "Taken from the tithe scale",
+      "max_stack": 1
+    },
+    {
+      "id": "item-forged-seal",
+      "name": "Forged Customs seal",
+      "type": "quest",
+      "rarity": "unique",
+      "mechanics": [],
+      "requirements": [],
+      "capability_tags": [
+        "forgery"
+      ],
+      "stacking_key": null,
+      "flavour_text": "Cut a shade too deep. Harrow would never notice. The Assessor would.",
+      "provenance": "Drusk's bundle",
+      "max_stack": 1
+    }
+  ]
+}

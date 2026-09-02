@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "campaign_id": "salt-ledger",
+  "campaign_version": "1.0.0",
+  "style_bible": {
+    "style_id": "style-brine",
+    "tone": "Grounded, damp, and quietly desperate; dread comes from tide tables, not monsters",
+    "narrative_voice": "Second person, present tense, close and plain",
+    "sensory_palette": {
+      "sounds": [
+        "chain links grinding",
+        "gulls over offal",
+        "bells muffled by fog",
+        "dripping"
+      ],
+      "smells": [
+        "brine and tar",
+        "wet wool",
+        "lamp oil",
+        "fish salt",
+        "incense gone sour"
+      ],
+      "materials": [
+        "black oak pilings",
+        "green copper",
+        "salt-crusted rope",
+        "wet slate"
+      ],
+      "lighting": [
+        "grey dawn",
+        "guttering tallow",
+        "phosphor on the water",
+        "storm dusk"
+      ],
+      "textures": [
+        "swollen paper",
+        "barnacled stone",
+        "slick ladders",
+        "cold iron"
+      ]
+    },
+    "faction_language_notes": "Priests speak in weights and measures; the Chain speaks in tides; clerks cite forms",
+    "naming_conventions": "Short Saxon-sounding surnames, ward names from what drowned there",
+    "banned_phrases": [
+      "suddenly",
+      "a sense of dread",
+      "little did they know",
+      "eldritch"
+    ],
+    "description_requirements": "One concrete sensory detail per beat; name the material before the mood",
+    "examples": [
+      "The ledger's spine has swollen with damp. When you open it the pages part with a wet sigh.",
+      "Ysolde weighs the coin on her palm as if it were a sin, then pockets it anyway."
+    ],
+    "anti_examples": [
+      "An eldritch sense of dread washed over you as the ancient tome revealed its secrets.",
+      "Suddenly, everything changed forever."
+    ],
+    "art_direction": "Painterly, low horizon, wet greys and rust with one cold blue accent"
+  }
+}

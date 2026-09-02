@@ -1,0 +1,111 @@
+{
+  "schema_version": 1,
+  "campaign_id": "salt-ledger",
+  "campaign_version": "1.0.0",
+  "protagonist_backgrounds": [
+    {
+      "id": "bg-clerk",
+      "name": "Disgraced Clerk",
+      "description": "You kept the Ledger until three pages went missing on your watch",
+      "stat_bonus": "intelligence",
+      "stat_bonus_value": 2,
+      "starting_skill_ids": [
+        "skill-ledger-strike",
+        "skill-salt-ward"
+      ],
+      "starting_item_ids": [
+        "item-clerks-knife",
+        "item-brine-tonic"
+      ],
+      "starting_fact_ids": [
+        "secret-reissued-pages"
+      ]
+    },
+    {
+      "id": "bg-dockhand",
+      "name": "Quay Dockhand",
+      "description": "You hauled chain for Brannock until you saw what came off the barges",
+      "stat_bonus": "strength",
+      "stat_bonus_value": 2,
+      "starting_skill_ids": [
+        "skill-brine-lash",
+        "skill-salt-ward"
+      ],
+      "starting_item_ids": [
+        "item-oilskin-coat",
+        "item-brine-tonic"
+      ],
+      "starting_fact_ids": [
+        "obj-tide-board"
+      ]
+    }
+  ],
+  "major_npcs": [
+    {
+      "id": "npc-the-assessor",
+      "name": "The Assessor",
+      "role": "Crown auditor sent to close the Customs House",
+      "faction_id": null,
+      "home_area_id": "area-customs-hall",
+      "knowledge_tags": [
+        "audit",
+        "law",
+        "the crown"
+      ],
+      "goal": "Find someone to hang for the forgery before the flood",
+      "interaction_hooks": [
+        "Offers your seal back for a name",
+        "Cannot be bribed with salt"
+      ]
+    }
+  ],
+  "companions": [
+    {
+      "id": "comp-ysolde",
+      "name": "Ysolde",
+      "role": "Apostate tide-priest who kept her salt-scale",
+      "faction_id": "fac-tide-priests",
+      "home_area_id": "area-marrow-quay",
+      "knowledge_tags": [
+        "salt",
+        "tide-craft",
+        "priests"
+      ],
+      "goal": "Prove Mother Esk forged the Ledger without drowning anyone else",
+      "interaction_hooks": [
+        "Will weigh anything you bring her",
+        "Refuses to enter the tithe altar"
+      ],
+      "combat_role": "Support: wards and mending",
+      "base_stats": {
+        "strength": 8,
+        "dexterity": 12,
+        "intelligence": 13,
+        "charisma": 10,
+        "constitution": 10,
+        "wisdom": 15
+      },
+      "skill_tree_id": "tree-ysolde",
+      "starting_skill_ids": [
+        "skill-mend",
+        "skill-salt-ward"
+      ],
+      "starting_loadout": [
+        "skill-mend",
+        "skill-salt-ward"
+      ],
+      "relationship_rules": [
+        "Trust rises when you refuse priestly bribes",
+        "Trust falls if you sell pages"
+      ],
+      "story_hook_ids": [
+        "ms-quay",
+        "opp-tams-token"
+      ],
+      "availability_rules": [
+        "Joins after you weigh the missing scale weight with her"
+      ],
+      "minimum_usable_actions": 2
+    }
+  ]
+}

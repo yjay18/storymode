@@ -29,11 +29,7 @@ campaigns/*/saves/*
 !package-lock.json
 *.bak
 
-# Agent / AI scaffold files — local only, never tracked
-AGENT.md
-AGENTS.md
-CONTEXT.md
-**/AGENT.md
-**/AGENTS.md
-**/CONTEXT.md
+# Builder drafts are local work-in-progress; only published campaign packs are tracked
+.drafts/
+
 .agent/

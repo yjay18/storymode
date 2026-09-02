@@ -1,0 +1,99 @@
+{
+  "schema_version": 1,
+  "campaign_id": "salt-ledger",
+  "campaign_version": "1.0.0",
+  "enemy_archetypes": [
+    {
+      "id": "enemy-chain-runner",
+      "name": "Chain runner",
+      "description": "A quick smuggler with a wet chain and no wish to die for cargo",
+      "faction_id": "fac-harbour-chain",
+      "base_hp": 12,
+      "base_armour": 2,
+      "speed": 12,
+      "dexterity": 13,
+      "base_mana": 4,
+      "mana_regen": 1,
+      "combat_skill_ids": [
+        "skill-brine-lash"
+      ],
+      "behavior_profile": "Strikes first, flees under half health",
+      "escape_policy_id": "ms-quay",
+      "power_rating": 6,
+      "loot_table": [
+        {
+          "item_id": "item-brine-tonic",
+          "minimum_quantity": 0,
+          "maximum_quantity": 1,
+          "weight": 3
+        }
+      ],
+      "portrait_prompt": "Lean smuggler, chain at wrist, wet hair, lantern light",
+      "art_style_ref": "style-brine"
+    },
+    {
+      "id": "enemy-chain-bruiser",
+      "name": "Chain bruiser",
+      "description": "Winch muscle in an oilskin, slow and hard to put down",
+      "faction_id": "fac-harbour-chain",
+      "base_hp": 24,
+      "base_armour": 5,
+      "speed": 6,
+      "dexterity": 9,
+      "base_mana": 6,
+      "mana_regen": 1,
+      "combat_skill_ids": [
+        "skill-brine-lash",
+        "skill-salt-ward"
+      ],
+      "behavior_profile": "Wards early, then trades blows",
+      "escape_policy_id": "ms-cellars",
+      "power_rating": 12,
+      "loot_table": [
+        {
+          "item_id": "item-oilskin-coat",
+          "minimum_quantity": 0,
+          "maximum_quantity": 1,
+          "weight": 2
+        },
+        {
+          "item_id": "item-brine-tonic",
+          "minimum_quantity": 1,
+          "maximum_quantity": 2,
+          "weight": 4
+        }
+      ],
+      "portrait_prompt": "Broad dockhand in oilskin, chain over shoulder, cellar shadows",
+      "art_style_ref": "style-brine"
+    },
+    {
+      "id": "enemy-drowned-thing",
+      "name": "Drowned thing",
+      "description": "What the last flood left behind; it remembers a debt",
+      "faction_id": null,
+      "base_hp": 30,
+      "base_armour": 0,
+      "speed": 4,
+      "dexterity": 6,
+      "base_mana": 10,
+      "mana_regen": 2,
+      "combat_skill_ids": [
+        "skill-tide-pull",
+        "skill-brine-lash"
+      ],
+      "behavior_profile": "Pulls the floor, then closes",
+      "escape_policy_id": "ms-quay",
+      "power_rating": 15,
+      "loot_table": [
+        {
+          "item_id": "item-salt-charm",
+          "minimum_quantity": 1,
+          "maximum_quantity": 1,
+          "weight": 5
+        }
+      ],
+      "portrait_prompt": "Bloated figure under water, phosphor eyes, salt-white skin",
+      "art_style_ref": "style-brine"
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "campaign_id": "salt-ledger",
+  "campaign_version": "1.0.0",
+  "title": "The Salt Ledger",
+  "theme": "fantasy",
+  "source_type": "prompt",
+  "source_summary": "Marrow Quay is a port half-swallowed by the sea. Tide-priests sell forgiveness by the ounce, the Harbour Chain guild owns the water, and the Customs House pretends to own the law. A disgraced clerk must learn who forged the Salt Ledger before the spring flood drowns the lower wards.",
+  "default_difficulty": "normal",
+  "campaign_length": "short",
+  "art_style_ref": "style-brine",
+  "created_at": "2026-09-02T12:00:00Z",
+  "content_fingerprint": "9ca01d70931bc6a9827df0639788455b2425c5f316f09003afcd4748faf8c1af",
+  "status": "published"
+}

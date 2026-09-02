@@ -2,6 +2,26 @@
 
 All notable changes are recorded here. Versions follow semantic versioning.
 
+## [Unreleased]
+
+### Added
+- Bundled sample campaign **The Salt Ledger** (`campaigns/salt-ledger`), validated with zero diagnostics.
+- `scripts/first_run.py` and `make play`: verify Ollama and the configured model, generate a campaign if the library is empty, start API and UI.
+- `scripts/generate_campaign.py` and `make generate`: headless quick-prompt to published pack.
+- Opt-in live Ollama tests in `tests/live/` (`STORYMODE_LIVE_OLLAMA=1`, `make live`).
+- Schema-derived JSON skeleton, field limits, and prior-stage id index appended to every generation and repair prompt; stage 2-6 templates no longer hand-write shapes that had drifted from the contracts (no real model could pass stage 2 before).
+- `ChatOptions.num_ctx`; generation stages request a 16k context window.
+- ADR-012 documenting book import as a campaign source.
+
+### Fixed
+- Ollama adapters (interpreter, narrator, opportunity planner) are now wired on server startup; previously a real server returned `503 interpreter_not_configured` for every free-text action.
+- Builder generation route honours `STORYMODE_MODEL_TEXT` and the configured timeout instead of a hard-coded model.
+- Ollama chat requests disable model "thinking", which made qwen3-family models time out with empty content.
+- `ollama_timeout_seconds` ceiling raised to 3600 so generation stages can run on slow local GPUs.
+
+### Changed
+- `CONTEXT.md` / `AGENT.md` files are tracked; `.drafts/` is ignored and the accidentally committed draft removed.
+
 ## [1.0.0] - 2026-08-17
 
 ### Added

@@ -1,0 +1,966 @@
+{
+  "schema_version": 1,
+  "campaign_id": "salt-ledger",
+  "campaign_version": "1.0.0",
+  "point_buy": {
+    "budget": 27,
+    "minimum": 8,
+    "maximum_before_bonus": 15,
+    "maximum_after_bonus": 17,
+    "cost_map": {
+      "8": 0,
+      "9": 1,
+      "10": 2,
+      "11": 3,
+      "12": 4,
+      "13": 5,
+      "14": 7,
+      "15": 9
+    }
+  },
+  "non_combat_skills": [
+    {
+      "id": "eskill-appraisal",
+      "name": "Appraisal",
+      "description": "Judge seals, ink, paper, and what a page is worth",
+      "stat": "intelligence",
+      "rank_min": 0,
+      "rank_max": 5,
+      "availability_tags": [
+        "clerk"
+      ],
+      "capability_tags": [
+        "appraisal",
+        "inspect"
+      ]
+    },
+    {
+      "id": "eskill-forgery",
+      "name": "Forgery",
+      "description": "Copy a hand or a seal well enough to pass a tired eye",
+      "stat": "dexterity",
+      "rank_min": 0,
+      "rank_max": 5,
+      "availability_tags": [
+        "clerk",
+        "chain"
+      ],
+      "capability_tags": [
+        "forgery"
+      ]
+    },
+    {
+      "id": "eskill-tidelore",
+      "name": "Tidelore",
+      "description": "Read tide boards, flood marks, and salt-scales",
+      "stat": "wisdom",
+      "rank_min": 0,
+      "rank_max": 5,
+      "availability_tags": [
+        "quay"
+      ],
+      "capability_tags": [
+        "tidelore",
+        "weigh"
+      ]
+    },
+    {
+      "id": "eskill-haggle",
+      "name": "Haggle",
+      "description": "Turn a debt into a favour and a favour into a name",
+      "stat": "charisma",
+      "rank_min": 0,
+      "rank_max": 5,
+      "availability_tags": [],
+      "capability_tags": [
+        "persuade",
+        "trade"
+      ]
+    }
+  ],
+  "combat_skills": [
+    {
+      "id": "skill-ledger-strike",
+      "name": "Ledger Strike",
+      "description": "A clerk's knife driven where the seams of a coat meet",
+      "tags": [
+        "melee",
+        "precise"
+      ],
+      "acquisition_source_ids": [
+        "bg-clerk"
+      ],
+      "levels": [
+        {
+          "level": 1,
+          "mana_cost": 0,
+          "target_rule": "single_enemy",
+          "base_effects": [
+            {
+              "effect_id": "ls-l1",
+              "kind": "damage",
+              "magnitude": 3,
+              "duration": null,
+              "status_id": null,
+              "stacking_key": null
+            }
+          ],
+          "effect_die": {
+            "natural_1": [],
+            "low": [],
+            "standard": [
+              {
+                "effect_id": "ls-l1-std",
+                "kind": "damage",
+                "magnitude": 1,
+                "duration": null,
+                "status_id": null,
+                "stacking_key": null
+              }
+            ],
+            "strong": [
+              {
+                "effect_id": "ls-l1-strong",
+                "kind": "damage",
+                "magnitude": 2,
+                "duration": null,
+                "status_id": null,
+                "stacking_key": null
+              }
+            ],
+            "natural_20": [
+              {
+                "effect_id": "ls-l1-crit",
+                "kind": "damage",
+                "magnitude": 3,
+                "duration": null,
+                "status_id": null,
+                "stacking_key": null
+              }
+            ]
+          },
+          "prerequisite": null
+        },
+        {
+          "level": 2,
+          "mana_cost": 1,
+          "target_rule": "single_enemy",
+          "base_effects": [
+            {
+              "effect_id": "ls-l2",
+              "kind": "damage",
+              "magnitude": 4,
+              "duration": null,
+              "status_id": null,
+              "stacking_key": null
+            }
+          ],
+          "effect_die": {
+            "natural_1": [],
+            "low": [],
+            "standard": [
+              {
+                "effect_id": "ls-l2-std",
+                "kind": "damage",
+                "magnitude": 2,
+                "duration": null,
+                "status_id": null,
+                "stacking_key": null
+              }
+            ],
+            "strong": [
+              {
+                "effect_id": "ls-l2-strong",
+                "kind": "damage",
+                "magnitude": 4,
+                "duration": null,
+                "status_id": null,
+                "stacking_key": null
+              }
+            ],
+            "natural_20": [
+              {
+                "effect_id": "ls-l2-crit",
+                "kind": "damage",
+                "magnitude": 6,
+                "duration": null,
+                "status_id": null,
+                "stacking_key": null
+              }
+            ]
+          },
+          "prerequisite": "Reach level 2"
+        },
+        {
+          "level": 3,
+          "mana_cost": 2,
+          "target_rule": "single_enemy",
+          "base_effects": [
+            {
+              "effect_id": "ls-l3",
+              "kind": "damage",
+              "magnitude": 5,
+              "duration": null,
+              "status_id": null,
+              "stacking_key": null
+            }
+          ],
+          "effect_die": {
+            "natural_1": [],
+            "low": [],
+            "standard": [
+              {
+                "effect_id": "ls-l3-std",
+                "kind": "damage",
+                "magnitude": 2,
+                "duration": null,
+                "status_id": null,
+                "stacking_key": null
+              }
+            ],
+            "strong": [
+              {
+                "effect_id": "ls-l3-strong",
+                "kind": "damage",
+                "magnitude": 4,
+                "duration": null,
+                "status_id": null,
+                "stacking_key": null
+              }
+            ],
+            "natural_20": [
+              {
+                "effect_id": "ls-l3-crit",
+                "kind": "damage",
+                "magnitude": 6,
+                "duration": null,
+                "status_id": null,
+                "stacking_key": null
+              }
+            ]
+          },
+          "prerequisite": "Reach level 3"
+        },
+        {
+          "level": 4,
+          "mana_cost": 3,
+          "target_rule": "single_enemy",
+          "base_effects": [
+            {
+              "effect_id": "ls-l4",
+              "kind": "damage",
+              "magnitude": 6,
+              "duration": null,
+              "status_id": null,
+              "stacking_key": null
+            }
+          ],
+          "effect_die": {
+            "natural_1": [],
+            "low": [],
+            "standard": [
+              {
+                "effect_id": "ls-l4-std",
+                "kind": "damage",
+                "magnitude": 3,
+                "duration": null,
+                "status_id": null,
+                "stacking_key": null
+              }
+            ],
+            "strong": [
+              {
+                "effect_id": "ls-l4-strong",
+                "kind": "damage",
+                "magnitude": 6,
+                "duration": null,
+                "status_id": null,
+                "stacking_key": null
+              }
+            ],
+            "natural_20": [
+              {
+                "effect_id": "ls-l4-crit",
+                "kind": "damage",
+                "magnitude": 9,
+                "duration": null,
+                "status_id": null,
+                "stacking_key": null
+              }
+            ]
+          },
+          "prerequisite": "Reach level 4"
+        },
+        {
+          "level": 5,
+          "mana_cost": 4,
+          "target_rule": "single_enemy",
+          "base_effects": [
+            {
+              "effect_id": "ls-l5",
+              "kind": "damage",
+              "magnitude": 7,
+              "duration": null,
+              "status_id": null,
+              "stacking_key": null
+            }
+          ],
+          "effect_die": {
+            "natural_1": [],
+            "low": [],
+            "standard": [
+              {
+                "effect_id": "ls-l5-std",
+                "kind": "damage",
+                "magnitude": 3,
+                "duration": null,
+                "status_id": null,
+                "stacking_key": null
+              }
+            ],
+            "strong": [
+              {
+                "effect_id": "ls-l5-strong",
+                "kind": "damage",
+                "magnitude": 6,
+                "duration": null,
+                "status_id": null,
+                "stacking_key": null
+              }
+            ],
+            "natural_20": [
+              {
+                "effect_id": "ls-l5-crit",
+                "kind": "damage",
+                "magnitude": 9,
+                "duration": null,
+                "status_id": null,
+                "stacking_key": null
+              }
+            ]
+          },
+          "prerequisite": "Reach level 5"
+        }
+      ],
+      "allowed_actor_types": [
+        "protagonist"
+      ]
+    },
+    {
+      "id": "skill-brine-lash",
+      "name": "Brine Lash",
+      "description": "A wet length of chain swung low; it stings and it stays",
+      "tags": [
+        "melee",
+        "chain"
+      ],
+      "acquisition_source_ids": [
+        "bg-dockhand",
+        "fac-harbour-chain"
+      ],
+      "levels": [
+        {
+          "level": 1,
+          "mana_cost": 1,
+          "target_rule": "single_enemy",
+          "base_effects": [
+            {
+              "effect_id": "bl-l1",
+              "kind": "damage",
+              "magnitude": 4,
+              "duration": null,
+              "status_id": null,
+              "stacking_key": null
+            }
+          ],
+          "effect_die": {
+            "natural_1": [],
+            "low": [],
+            "standard": [
+              {
+                "effect_id": "bl-l1-std",
+                "kind": "damage",
+                "magnitude": 1,
+                "duration": null,
+                "status_id": null,
+                "stacking_key": null
+              }
+            ],
+            "strong": [
+              {
+                "effect_id": "bl-l1-strong",
+                "kind": "damage",
+                "magnitude": 2,
+                "duration": null,
+                "status_id": null,
+                "stacking_key": null
+              }
+            ],
+            "natural_20": [
+              {
+                "effect_id": "bl-l1-crit",
+                "kind": "damage",
+                "magnitude": 3,
+                "duration": null,
+                "status_id": null,
+                "stacking_key": null
+              }
+            ]
+          },
+          "prerequisite": null
+        },
+        {
+          "level": 2,
+          "mana_cost": 2,
+          "target_rule": "single_enemy",
+          "base_effects": [
+            {
+              "effect_id": "bl-l2",
+              "kind": "damage",
+              "magnitude": 5,
+              "duration": null,
+              "status_id": null,
+              "stacking_key": null
+            }
+          ],
+          "effect_die": {
+            "natural_1": [],
+            "low": [],
+            "standard": [
+              {
+                "effect_id": "bl-l2-std",
+                "kind": "damage",
+                "magnitude": 2,
+                "duration": null,
+                "status_id": null,
+                "stacking_key": null
+              }
+            ],
+            "strong": [
+              {
+                "effect_id": "bl-l2-strong",
+                "kind": "damage",
+                "magnitude": 4,
+                "duration": null,
+                "status_id": null,
+                "stacking_key": null
+              }
+            ],
+            "natural_20": [
+              {
+                "effect_id": "bl-l2-crit",
+                "kind": "damage",
+                "magnitude": 6,
+                "duration": null,
+                "status_id": null,
+                "stacking_key": null
+              }
+            ]
+          },
+          "prerequisite": "Reach level 2"
+        },
+        {
+          "level": 3,
+          "mana_cost": 3,
+          "target_rule": "single_enemy",
+          "base_effects": [
+            {
+              "effect_id": "bl-l3",
+              "kind": "damage",
+              "magnitude": 6,
+              "duration": null,
+              "status_id": null,
+              "stacking_key": null
+            }
+          ],
+          "effect_die": {
+            "natural_1": [],
+            "low": [],
+            "standard": [
+              {
+                "effect_id": "bl-l3-std",
+                "kind": "damage",
+                "magnitude": 2,
+                "duration": null,
+                "status_id": null,
+                "stacking_key": null
+              }
+            ],
+            "strong": [
+              {
+                "effect_id": "bl-l3-strong",
+                "kind": "damage",
+                "magnitude": 4,
+                "duration": null,
+                "status_id": null,
+                "stacking_key": null
+              }
+            ],
+            "natural_20": [
+              {
+                "effect_id": "bl-l3-crit",
+                "kind": "damage",
+                "magnitude": 6,
+                "duration": null,
+                "status_id": null,
+                "stacking_key": null
+              }
+            ]
+          },
+          "prerequisite": "Reach level 3"
+        },
+        {
+          "level": 4,
+          "mana_cost": 4,
+          "target_rule": "single_enemy",
+          "base_effects": [
+            {
+              "effect_id": "bl-l4",
+              "kind": "damage",
+              "magnitude": 7,
+              "duration": null,
+              "status_id": null,
+              "stacking_key": null
+            }
+          ],
+          "effect_die": {
+            "natural_1": [],
+            "low": [],
+            "standard": [
+              {
+                "effect_id": "bl-l4-std",
+                "kind": "damage",
+                "magnitude": 3,
+                "duration": null,
+                "status_id": null,
+                "stacking_key": null
+              }
+            ],
+            "strong": [
+              {
+                "effect_id": "bl-l4-strong",
+                "kind": "damage",
+                "magnitude": 6,
+                "duration": null,
+                "status_id": null,
+                "stacking_key": null
+              }
+            ],
+            "natural_20": [
+              {
+                "effect_id": "bl-l4-crit",
+                "kind": "damage",
+                "magnitude": 9,
+                "duration": null,
+                "status_id": null,
+                "stacking_key": null
+              }
+            ]
+          },
+          "prerequisite": "Reach level 4"
+        },
+        {
+          "level": 5,
+          "mana_cost": 5,
+          "target_rule": "single_enemy",
+          "base_effects": [
+            {
+              "effect_id": "bl-l5",
+              "kind": "damage",
+              "magnitude": 8,
+              "duration": null,
+              "status_id": null,
+              "stacking_key": null
+            }
+          ],
+          "effect_die": {
+            "natural_1": [],
+            "low": [],
+            "standard": [
+              {
+                "effect_id": "bl-l5-std",
+                "kind": "damage",
+                "magnitude": 3,
+                "duration": null,
+                "status_id": null,
+                "stacking_key": null
+              }
+            ],
+            "strong": [
+              {
+                "effect_id": "bl-l5-strong",
+                "kind": "damage",
+                "magnitude": 6,
+                "duration": null,
+                "status_id": null,
+                "stacking_key": null
+              }
+            ],
+            "natural_20": [
+              {
+                "effect_id": "bl-l5-crit",
+                "kind": "damage",
+                "magnitude": 9,
+                "duration": null,
+                "status_id": null,
+                "stacking_key": null
+              }
+            ]
+          },
+          "prerequisite": "Reach level 5"
+        }
+      ],
+      "allowed_actor_types": [
+        "protagonist",
+        "companion"
+      ]
+    },
+    {
+      "id": "skill-salt-ward",
+      "name": "Salt Ward",
+      "description": "A ring of salt that turns the first blow aside",
+      "tags": [
+        "ward",
+        "tide-craft"
+      ],
+      "acquisition_source_ids": [
+        "fac-tide-priests",
+        "bg-clerk",
+        "bg-dockhand"
+      ],
+      "levels": [
+        {
+          "level": 1,
+          "mana_cost": 2,
+          "target_rule": "self",
+          "base_effects": [
+            {
+              "effect_id": "sw-l1",
+              "kind": "buff",
+              "magnitude": 2,
+              "duration": 2,
+              "status_id": null,
+              "stacking_key": null
+            }
+          ],
+          "effect_die": null,
+          "prerequisite": null
+        },
+        {
+          "level": 2,
+          "mana_cost": 3,
+          "target_rule": "self",
+          "base_effects": [
+            {
+              "effect_id": "sw-l2",
+              "kind": "buff",
+              "magnitude": 3,
+              "duration": 2,
+              "status_id": null,
+              "stacking_key": null
+            }
+          ],
+          "effect_die": null,
+          "prerequisite": "Reach level 2"
+        },
+        {
+          "level": 3,
+          "mana_cost": 4,
+          "target_rule": "self",
+          "base_effects": [
+            {
+              "effect_id": "sw-l3",
+              "kind": "buff",
+              "magnitude": 4,
+              "duration": 2,
+              "status_id": null,
+              "stacking_key": null
+            }
+          ],
+          "effect_die": null,
+          "prerequisite": "Reach level 3"
+        },
+        {
+          "level": 4,
+          "mana_cost": 5,
+          "target_rule": "self",
+          "base_effects": [
+            {
+              "effect_id": "sw-l4",
+              "kind": "buff",
+              "magnitude": 5,
+              "duration": 2,
+              "status_id": null,
+              "stacking_key": null
+            }
+          ],
+          "effect_die": null,
+          "prerequisite": "Reach level 4"
+        },
+        {
+          "level": 5,
+          "mana_cost": 6,
+          "target_rule": "self",
+          "base_effects": [
+            {
+              "effect_id": "sw-l5",
+              "kind": "buff",
+              "magnitude": 6,
+              "duration": 2,
+              "status_id": null,
+              "stacking_key": null
+            }
+          ],
+          "effect_die": null,
+          "prerequisite": "Reach level 5"
+        }
+      ],
+      "allowed_actor_types": [
+        "protagonist",
+        "companion"
+      ]
+    },
+    {
+      "id": "skill-tide-pull",
+      "name": "Tide Pull",
+      "description": "The floor tilts toward the water; everyone stumbles",
+      "tags": [
+        "control",
+        "tide-craft"
+      ],
+      "acquisition_source_ids": [
+        "fac-tide-priests",
+        "comp-ysolde"
+      ],
+      "levels": [
+        {
+          "level": 1,
+          "mana_cost": 3,
+          "target_rule": "all_enemies",
+          "base_effects": [
+            {
+              "effect_id": "tp-l1",
+              "kind": "debuff",
+              "magnitude": 1,
+              "duration": 1,
+              "status_id": null,
+              "stacking_key": null
+            }
+          ],
+          "effect_die": null,
+          "prerequisite": null
+        },
+        {
+          "level": 2,
+          "mana_cost": 4,
+          "target_rule": "all_enemies",
+          "base_effects": [
+            {
+              "effect_id": "tp-l2",
+              "kind": "debuff",
+              "magnitude": 2,
+              "duration": 1,
+              "status_id": null,
+              "stacking_key": null
+            }
+          ],
+          "effect_die": null,
+          "prerequisite": "Reach level 2"
+        },
+        {
+          "level": 3,
+          "mana_cost": 5,
+          "target_rule": "all_enemies",
+          "base_effects": [
+            {
+              "effect_id": "tp-l3",
+              "kind": "debuff",
+              "magnitude": 3,
+              "duration": 1,
+              "status_id": null,
+              "stacking_key": null
+            }
+          ],
+          "effect_die": null,
+          "prerequisite": "Reach level 3"
+        },
+        {
+          "level": 4,
+          "mana_cost": 6,
+          "target_rule": "all_enemies",
+          "base_effects": [
+            {
+              "effect_id": "tp-l4",
+              "kind": "debuff",
+              "magnitude": 4,
+              "duration": 1,
+              "status_id": null,
+              "stacking_key": null
+            }
+          ],
+          "effect_die": null,
+          "prerequisite": "Reach level 4"
+        },
+        {
+          "level": 5,
+          "mana_cost": 7,
+          "target_rule": "all_enemies",
+          "base_effects": [
+            {
+              "effect_id": "tp-l5",
+              "kind": "debuff",
+              "magnitude": 5,
+              "duration": 1,
+              "status_id": null,
+              "stacking_key": null
+            }
+          ],
+          "effect_die": null,
+          "prerequisite": "Reach level 5"
+        }
+      ],
+      "allowed_actor_types": [
+        "protagonist",
+        "companion"
+      ]
+    },
+    {
+      "id": "skill-mend",
+      "name": "Mend",
+      "description": "Salt packed into a wound; it burns, then it holds",
+      "tags": [
+        "heal",
+        "tide-craft"
+      ],
+      "acquisition_source_ids": [
+        "fac-tide-priests",
+        "comp-ysolde"
+      ],
+      "levels": [
+        {
+          "level": 1,
+          "mana_cost": 2,
+          "target_rule": "single_ally",
+          "base_effects": [
+            {
+              "effect_id": "md-l1",
+              "kind": "heal",
+              "magnitude": 4,
+              "duration": null,
+              "status_id": null,
+              "stacking_key": null
+            }
+          ],
+          "effect_die": null,
+          "prerequisite": null
+        },
+        {
+          "level": 2,
+          "mana_cost": 3,
+          "target_rule": "single_ally",
+          "base_effects": [
+            {
+              "effect_id": "md-l2",
+              "kind": "heal",
+              "magnitude": 6,
+              "duration": null,
+              "status_id": null,
+              "stacking_key": null
+            }
+          ],
+          "effect_die": null,
+          "prerequisite": "Reach level 2"
+        },
+        {
+          "level": 3,
+          "mana_cost": 4,
+          "target_rule": "single_ally",
+          "base_effects": [
+            {
+              "effect_id": "md-l3",
+              "kind": "heal",
+              "magnitude": 8,
+              "duration": null,
+              "status_id": null,
+              "stacking_key": null
+            }
+          ],
+          "effect_die": null,
+          "prerequisite": "Reach level 3"
+        },
+        {
+          "level": 4,
+          "mana_cost": 5,
+          "target_rule": "single_ally",
+          "base_effects": [
+            {
+              "effect_id": "md-l4",
+              "kind": "heal",
+              "magnitude": 10,
+              "duration": null,
+              "status_id": null,
+              "stacking_key": null
+            }
+          ],
+          "effect_die": null,
+          "prerequisite": "Reach level 4"
+        },
+        {
+          "level": 5,
+          "mana_cost": 6,
+          "target_rule": "single_ally",
+          "base_effects": [
+            {
+              "effect_id": "md-l5",
+              "kind": "heal",
+              "magnitude": 12,
+              "duration": null,
+              "status_id": null,
+              "stacking_key": null
+            }
+          ],
+          "effect_die": null,
+          "prerequisite": "Reach level 5"
+        }
+      ],
+      "allowed_actor_types": [
+        "protagonist",
+        "companion"
+      ]
+    }
+  ],
+  "skill_trees": [
+    {
+      "id": "tree-ysolde",
+      "owner_companion_id": "comp-ysolde",
+      "nodes": [
+        {
+          "id": "node-mend",
+          "skill_id": "skill-mend",
+          "cost": 1
+        },
+        {
+          "id": "node-ward",
+          "skill_id": "skill-salt-ward",
+          "cost": 1
+        },
+        {
+          "id": "node-pull",
+          "skill_id": "skill-tide-pull",
+          "cost": 2
+        }
+      ],
+      "edges": [
+        {
+          "source_node_id": "node-mend",
+          "target_node_id": "node-pull"
+        },
+        {
+          "source_node_id": "node-ward",
+          "target_node_id": "node-pull"
+        }
+      ]
+    }
+  ],
+  "fusion_recipes": []
+}

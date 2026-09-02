@@ -23,16 +23,32 @@ from api.routes import (
 )
 from api.schemas.common import create_error_response
 from app.config import Settings, get_settings
+from llm.ollama_client import OllamaClient
+from llm.orchestration.action_interpreter import ActionInterpreter
+from llm.orchestration.narrator import NarratorOrchestrator
+from llm.orchestration.opportunity_planner import OpportunityPlannerAdapter
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
-    """Manage application lifecycle."""
-    # Startup: Initialize resources (HTTP clients, etc.)
-    # Currently nothing needed for milestone 1E
+    """Wire the local Ollama adapters on server startup.
+
+    Tests build the app without running lifespan and inject their own adapters (or none,
+    to exercise the 503 path), so this only runs under a real ASGI server.
+    """
+    settings: Settings = app.state.settings
+    if getattr(app.state, "ollama_client", None) is None:
+        client = OllamaClient(
+            base_url=settings.ollama_url,
+            default_timeout=settings.ollama_timeout_seconds,
+            max_response_bytes=settings.ollama_max_response_bytes,
+        )
+        model, timeout = settings.model_text, settings.ollama_timeout_seconds
+        app.state.ollama_client = client
+        app.state.action_interpreter = ActionInterpreter(client, model, timeout)
+        app.state.narrator_orchestrator = NarratorOrchestrator(client, model, timeout)
+        app.state.opportunity_planner = OpportunityPlannerAdapter(client, model, timeout)
     yield
-    # Shutdown: Clean up resources
-    pass
 
 
 def create_app(settings: Settings | None = None) -> FastAPI:

@@ -1,0 +1,152 @@
+{
+  "schema_version": 1,
+  "campaign_id": "salt-ledger",
+  "campaign_version": "1.0.0",
+  "start_milestone_ids": [
+    "ms-audit"
+  ],
+  "milestones": [
+    {
+      "id": "ms-audit",
+      "canonical_truth": "The Assessor has arrived and the Ledger shows three reissued pages",
+      "narrative_purpose": "Establish the stakes and the clock",
+      "required_outcome_ids": [],
+      "allowed_approach_tags": [
+        "inspect",
+        "talk",
+        "appraisal"
+      ],
+      "forbidden_changes": [
+        "The Ledger cannot be destroyed"
+      ],
+      "preconditions": [],
+      "valid_next_milestone_ids": [
+        "ms-quay"
+      ],
+      "difficulty_band": "easy",
+      "pacing_weight": 10,
+      "cycle_allowed": false
+    },
+    {
+      "id": "ms-quay",
+      "canonical_truth": "The missing scale weight matches one page of salt; the priests weighed the forgery",
+      "narrative_purpose": "Turn suspicion from the Customs House to the altar",
+      "required_outcome_ids": [],
+      "allowed_approach_tags": [
+        "weigh",
+        "talk",
+        "sneak"
+      ],
+      "forbidden_changes": [
+        "Mother Esk cannot die here"
+      ],
+      "preconditions": [
+        "Reached Marrow Quay"
+      ],
+      "valid_next_milestone_ids": [
+        "ms-cellars",
+        "ms-reckoning"
+      ],
+      "difficulty_band": "standard",
+      "pacing_weight": 30,
+      "cycle_allowed": false
+    },
+    {
+      "id": "ms-cellars",
+      "canonical_truth": "The Chain forged the pages for the priests' salt; Drusk's bundle proves it",
+      "narrative_purpose": "Give the player the proof and a choice of who to sell it to",
+      "required_outcome_ids": [],
+      "allowed_approach_tags": [
+        "fight",
+        "bargain",
+        "sneak"
+      ],
+      "forbidden_changes": [
+        "The crate of pages must survive"
+      ],
+      "preconditions": [
+        "Learned of the cellars"
+      ],
+      "valid_next_milestone_ids": [
+        "ms-reckoning"
+      ],
+      "difficulty_band": "difficult",
+      "pacing_weight": 40,
+      "cycle_allowed": false
+    },
+    {
+      "id": "ms-reckoning",
+      "canonical_truth": "Someone answers to the Assessor before the sixth tide",
+      "narrative_purpose": "Ending: who hangs and who drowns",
+      "required_outcome_ids": [],
+      "allowed_approach_tags": [
+        "talk",
+        "present-proof",
+        "flee"
+      ],
+      "forbidden_changes": [],
+      "preconditions": [
+        "Sixth tide or proof in hand"
+      ],
+      "valid_next_milestone_ids": [],
+      "difficulty_band": "expert",
+      "pacing_weight": 20,
+      "cycle_allowed": false
+    }
+  ],
+  "authored_opportunities": [
+    {
+      "id": "opp-tams-token",
+      "parent_milestone_id": "ms-quay",
+      "title": "Widow Tam's debt-token",
+      "description": "Carry Tam's token to the altar and watch who flinches",
+      "referenced_entity_ids": [
+        "npc-widow-tam",
+        "npc-mother-esk"
+      ],
+      "allowed_outcome_ids": [],
+      "preconditions": [
+        "Spoke with Widow Tam"
+      ],
+      "expiry_conditions": [
+        "Fourth tide"
+      ],
+      "balance_rating": 30
+    },
+    {
+      "id": "opp-brannocks-table",
+      "parent_milestone_id": "ms-quay",
+      "title": "Brannock's tide table",
+      "description": "Trade a favour for the hour the cellars are unwatched",
+      "referenced_entity_ids": [
+        "npc-brannock",
+        "obj-tide-board"
+      ],
+      "allowed_outcome_ids": [],
+      "preconditions": [
+        "Brannock not hostile"
+      ],
+      "expiry_conditions": [
+        "Cellars searched"
+      ],
+      "balance_rating": 40
+    }
+  ],
+  "ending_milestone_ids": [
+    "ms-reckoning"
+  ],
+  "clock_definitions": [
+    {
+      "id": "clock-spring-flood",
+      "name": "The spring flood",
+      "maximum": 6,
+      "visibility": "public",
+      "trigger_event_types": [
+        "area_transition",
+        "combat_end",
+        "rest"
+      ],
+      "completion_effect_ids": []
+    }
+  ]
+}

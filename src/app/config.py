@@ -21,7 +21,10 @@ class Settings(BaseSettings):
     ollama_url: str = Field(default="http://127.0.0.1:11434")
     model_text: str = Field(default="llama3.1:8b")
     model_image: str = Field(default="stable-diffusion")
-    ollama_timeout_seconds: float = Field(default=30.0, ge=1.0, le=300.0)
+    # Campaign generation stages emit several thousand JSON tokens; on a slow local GPU
+    # that legitimately takes 10-20 minutes, so the ceiling is generous. Play-time calls
+    # should stay near the default.
+    ollama_timeout_seconds: float = Field(default=30.0, ge=1.0, le=3600.0)
     ollama_max_response_bytes: int = Field(default=1024 * 1024, ge=1024)
     log_level: str = Field(default="INFO")
 

@@ -170,3 +170,30 @@ Status values are `Accepted`, `Superseded`, or `Proposed`.
 - **Alternatives rejected:** Large application frameworks; dependency-free HTTP/schema
   implementations; preemptive libraries without a current slice.
 - **Affected modules/docs/tests:** `pyproject.toml`, future UI package files, README, CI.
+
+## ADR-012 — Imported books are a campaign source, not campaign content
+
+- **Date:** 2026-09-02
+- **Status:** Accepted (retroactive; shipped after v1.0.0 without a checklist slice)
+- **Decision:** A local EPUB or plain-text book may seed a builder draft. The importer
+  chunks the text, the two-pass compactor distills a bounded `WorldCodex` (cultural
+  profiles, key characters, primary areas), and every generation stage receives that
+  codex as quoted context alongside the brief. Book text never reaches the engine, a
+  save, or a prompt as instructions. Entry points are `scripts/import_book.py`, the
+  `POST /api/v1/builder/drafts/import` route, and the web builder's drop zone.
+- **Context:** BUILD-02 specified the importer and compactor; the CLI, API route, UI, and
+  stage-prompt injection were added afterwards to make "turn this novel into a campaign"
+  a one-step flow. Builder drafts under `.drafts/` are local work-in-progress and are not
+  tracked; only published packs under `campaigns/` are.
+- **Consequences:** The codex is bounded by the same context budgets as other prompts.
+  Faithfulness to the book is best-effort; the published pack is still validated by the
+  same schema and graph checks as a prompt-only campaign. Imported text is treated as
+  untrusted data in the threat model.
+- **Alternatives rejected:** Retrieval over the full book at play time (violates the
+  bounded-context rule and the immutable-pack rule); letting the model author pack files
+  directly from raw chapters (unbounded prompts, no cultural synthesis).
+- **Affected modules/docs/tests:** `src/campaign/importers/`, `src/llm/prompts/campaign_generation_v1.py`,
+  `src/campaign/generation/orchestrator.py`, `src/api/routes/builder.py`,
+  `src/ui/src/features/builder/BookImportDropzone.tsx`, `docs/ux/builder-ui.md`,
+  `tests/integration/campaign/test_book_import_cli_and_compactor.py`,
+  `tests/integration/api/test_builder_routes.py`.

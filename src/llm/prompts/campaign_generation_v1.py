@@ -114,53 +114,60 @@ def render_meta_style_prompt(
     return render_template(template, {"brief_json": json.dumps(ctx, indent=2)})
 
 
-def render_world_prompt(
+def _render_stage_prompt(
+    role: str,
+    stage_label: str,
+    version: str,
+    request_id: str,
+    rules: Sequence[str],
     brief: BuilderBrief,
-    codex: WorldCodex | None = None,
-    request_id: str = "req-gen-world",
+    codex: WorldCodex | None,
 ) -> str:
-    """Render Stage 2 prompt: World rules, factions, and magic systems."""
+    """Shared body for stages 2-6.
+
+    The JSON shape, the hard field limits, and the index of IDs defined by earlier stages
+    are appended by the stage runner straight from the Pydantic contracts, so this text
+    never restates the schema by hand (the hand-written copies drifted from the models).
+    """
     ctx = _extract_codex_context(brief, codex)
+    rule_lines = "".join(f"- {r}\n" for r in rules)
     template = (
-        "You are the Storymode World & Rules Architect.\n"
-        "Generate the Stage 2 response matching this contract:\n"
-        "{\n"
-        '  "contract_version": 1,\n'
-        f'  "prompt_version": "{WORLD_PROMPT_VERSION}",\n'
-        f'  "request_id": "{request_id}",\n'
-        '  "stage": "rules",\n'
-        '  "world": {\n'
-        '    "schema_version": 1,\n'
-        '    "campaign_id": "<campaign_id>",\n'
-        '    "campaign_version": "1.0.0",\n'
-        '    "lore": {\n'
-        '      "premise": "<premise>",\n'
-        '      "magic_system": "<magic rules>",\n'
-        '      "technology_level": "<tech level>",\n'
-        '      "cosmology": "<cosmology>",\n'
-        '      "history": ["<historical event 1>", "<historical event 2>"],\n'
-        '      "taboos": ["<taboo 1>", "<taboo 2>"]\n'
-        "    },\n"
-        '    "factions": [\n'
-        "      {\n"
-        '        "faction_id": "f_1",\n'
-        '        "name": "<name>",\n'
-        '        "archetype": "<archetype>",\n'
-        '        "description": "<desc>",\n'
-        '        "goals": ["<goal>"],\n'
-        '        "resources": ["<resource>"],\n'
-        '        "allies": [],\n'
-        '        "rivals": []\n'
-        "      }\n"
-        "    ]\n"
-        "  }\n"
-        "}\n\n"
+        f"You are the Storymode {role}.\n"
+        f"Generate the {stage_label} response as one JSON object. Its exact shape, the hard "
+        "field limits, and the IDs already defined by earlier stages follow the brief. Every "
+        "ID you reference must appear in that index or be defined in this response. IDs are "
+        "lowercase kebab-case, 3-64 chars, starting with a letter.\n"
+        f'Set "prompt_version" to "{version}" and "request_id" to "{request_id}". '
+        "Use the campaign_id and campaign_version from the meta stage.\n\n"
+        f"Rules:\n{rule_lines}\n"
         "Context Brief:\n"
         "<<<DATA\n"
         "{brief_json}\n"
         ">>>\n"
     )
     return render_template(template, {"brief_json": json.dumps(ctx, indent=2)})
+
+
+def render_world_prompt(
+    brief: BuilderBrief,
+    codex: WorldCodex | None = None,
+    request_id: str = "req-gen-world",
+) -> str:
+    """Render Stage 2 prompt: world, power system, factions, and major locations."""
+    return _render_stage_prompt(
+        "World & Rules Architect",
+        "Stage 2 (world)",
+        WORLD_PROMPT_VERSION,
+        request_id,
+        [
+            "Define 2-4 factions with concrete goals, resources, and a real hypocrisy.",
+            "relationship_edges reference other faction ids from this response; no self edges.",
+            "Define 3-5 major_locations; later stages attach areas to these ids.",
+            "Ground the power system in local materials and costs from the brief.",
+        ],
+        brief,
+        codex,
+    )
 
 
 def render_areas_prompt(
@@ -168,42 +175,25 @@ def render_areas_prompt(
     codex: WorldCodex | None = None,
     request_id: str = "req-gen-areas",
 ) -> str:
-    """Render Stage 3 prompt: Explorable areas, locations, and landmarks."""
-    ctx = _extract_codex_context(brief, codex)
-    template = (
-        "You are the Storymode Environmental Designer.\n"
-        "Generate the Stage 3 response matching this contract:\n"
-        "{\n"
-        '  "contract_version": 1,\n'
-        f'  "prompt_version": "{AREAS_PROMPT_VERSION}",\n'
-        f'  "request_id": "{request_id}",\n'
-        '  "stage": "areas",\n'
-        '  "areas": {\n'
-        '    "schema_version": 1,\n'
-        '    "campaign_id": "<campaign_id>",\n'
-        '    "campaign_version": "1.0.0",\n'
-        '    "areas": [\n'
-        "      {\n"
-        '        "area_id": "area_1",\n'
-        '        "name": "<name>",\n'
-        '        "danger_level": 1,\n'
-        '        "summary": "<summary>",\n'
-        '        "description": "<sensory description>",\n'
-        '        "biome": "<biome>",\n'
-        '        "controlling_faction": "<faction_id>",\n'
-        '        "connected_areas": [],\n'
-        '        "landmarks": ["<landmark 1>"],\n'
-        '        "objects": []\n'
-        "      }\n"
-        "    ]\n"
-        "  }\n"
-        "}\n\n"
-        "Context Brief:\n"
-        "<<<DATA\n"
-        "{brief_json}\n"
-        ">>>\n"
+    """Render Stage 3 prompt: explorable areas with residents, objects, encounters, secrets."""
+    return _render_stage_prompt(
+        "Area Designer",
+        "Stage 3 (areas)",
+        AREAS_PROMPT_VERSION,
+        request_id,
+        [
+            "Define 3-6 areas; the first is the safe starting area with no encounters.",
+            "major_location_id and local_faction_ids must be ids from the world stage.",
+            "connected_area_ids must be symmetric and every area must be reachable.",
+            "Each area has 1-3 residents, 1-3 objects, 0-2 encounters, and 1-2 secrets.",
+            "Encounters may reference enemy ids of the form enemy-<name>; the skills stage "
+            "must define every one of them. escape_policy_id may be escape-default.",
+            "At least one secret in the campaign is a core clue with a lead_fact_id that is "
+            "an object or resident id.",
+        ],
+        brief,
+        codex,
     )
-    return render_template(template, {"brief_json": json.dumps(ctx, indent=2)})
 
 
 def render_plot_prompt(
@@ -211,39 +201,25 @@ def render_plot_prompt(
     codex: WorldCodex | None = None,
     request_id: str = "req-gen-plot",
 ) -> str:
-    """Render Stage 4 prompt: Plot milestones, opportunities, and clocks."""
-    ctx = _extract_codex_context(brief, codex)
-    template = (
-        "You are the Storymode Narrative Director.\n"
-        "Generate the Stage 4 response matching this contract:\n"
-        "{\n"
-        '  "contract_version": 1,\n'
-        f'  "prompt_version": "{PLOT_PROMPT_VERSION}",\n'
-        f'  "request_id": "{request_id}",\n'
-        '  "stage": "plot",\n'
-        '  "plot": {\n'
-        '    "schema_version": 1,\n'
-        '    "campaign_id": "<campaign_id>",\n'
-        '    "campaign_version": "1.0.0",\n'
-        '    "milestones": [\n'
-        "      {\n"
-        '        "milestone_id": "ms_1",\n'
-        '        "title": "<title>",\n'
-        '        "summary": "<summary>",\n'
-        '        "required_conditions": [],\n'
-        '        "completion_outcomes": ["<outcome>"],\n'
-        '        "is_major": true\n'
-        "      }\n"
-        "    ],\n"
-        '    "clocks": []\n'
-        "  }\n"
-        "}\n\n"
-        "Context Brief:\n"
-        "<<<DATA\n"
-        "{brief_json}\n"
-        ">>>\n"
+    """Render Stage 4 prompt: milestones, authored opportunities, and clocks."""
+    return _render_stage_prompt(
+        "Plot Architect",
+        "Stage 4 (plot)",
+        PLOT_PROMPT_VERSION,
+        request_id,
+        [
+            "Define 3-6 milestones forming a graph from start_milestone_ids to "
+            "ending_milestone_ids; every milestone must reach an ending.",
+            "valid_next_milestone_ids, start and ending ids reference milestones in this "
+            "response; cycle_allowed is false unless a cycle is intended.",
+            "difficulty_band is one of easy, standard, difficult, expert, exceptional.",
+            "Each opportunity has a parent_milestone_id from this response and "
+            "referenced_entity_ids from the earlier stages' index.",
+            "Define 0-2 clocks with maximum between 3 and 12.",
+        ],
+        brief,
+        codex,
     )
-    return render_template(template, {"brief_json": json.dumps(ctx, indent=2)})
 
 
 def render_characters_prompt(
@@ -251,41 +227,27 @@ def render_characters_prompt(
     codex: WorldCodex | None = None,
     request_id: str = "req-gen-chars",
 ) -> str:
-    """Render Stage 5 prompt: Major NPCs and recruitable companions."""
-    ctx = _extract_codex_context(brief, codex)
-    template = (
-        "You are the Storymode Character & NPC Designer.\n"
-        "Generate the Stage 5 response matching this contract:\n"
-        "{\n"
-        '  "contract_version": 1,\n'
-        f'  "prompt_version": "{CHARACTERS_PROMPT_VERSION}",\n'
-        f'  "request_id": "{request_id}",\n'
-        '  "stage": "characters",\n'
-        '  "characters": {\n'
-        '    "schema_version": 1,\n'
-        '    "campaign_id": "<campaign_id>",\n'
-        '    "campaign_version": "1.0.0",\n'
-        '    "characters": [\n'
-        "      {\n"
-        '        "character_id": "char_1",\n'
-        '        "name": "<name>",\n'
-        '        "archetype": "<archetype>",\n'
-        '        "cultural_origin": "<region>",\n'
-        '        "appearance": "<attire and physical appearance>",\n'
-        '        "personality": "<personality shaped by cultural values>",\n'
-        '        "dialogue_quirks": ["<idiom or speech pattern>"],\n'
-        '        "faction_id": "f_1",\n'
-        '        "home_area_id": "area_1"\n'
-        "      }\n"
-        "    ]\n"
-        "  }\n"
-        "}\n\n"
-        "Context Brief:\n"
-        "<<<DATA\n"
-        "{brief_json}\n"
-        ">>>\n"
+    """Render Stage 5 prompt: protagonist backgrounds, major NPCs, and companions."""
+    return _render_stage_prompt(
+        "Character Designer",
+        "Stage 5 (characters)",
+        CHARACTERS_PROMPT_VERSION,
+        request_id,
+        [
+            "Define 2-3 protagonist_backgrounds with stat_bonus_value 1 or 2.",
+            "starting_skill_ids use skill-<name> ids and starting_item_ids use item-<name> "
+            "ids; the skills stage must define every one of them.",
+            "starting_fact_ids are secret, object, or resident ids from the areas stage.",
+            "home_area_id is an area id; faction_id is a faction id or null.",
+            "Define 1-2 companions. base_stats are 8-15 each with total point-buy cost at "
+            "most 35 (8=0,9=1,10=2,11=3,12=4,13=5,14=7,15=9).",
+            "starting_loadout is a subset of starting_skill_ids with at most 4 entries and "
+            "at least minimum_usable_actions entries; skill_tree_id is tree-<name>.",
+            "story_hook_ids are milestone or opportunity ids from the plot stage.",
+        ],
+        brief,
+        codex,
     )
-    return render_template(template, {"brief_json": json.dumps(ctx, indent=2)})
 
 
 def render_skills_prompt(
@@ -293,51 +255,37 @@ def render_skills_prompt(
     codex: WorldCodex | None = None,
     request_id: str = "req-gen-skills",
 ) -> str:
-    """Render Stage 6 prompt: Combat skills, items, enemies, and balance."""
-    ctx = _extract_codex_context(brief, codex)
-    template = (
-        "You are the Storymode Systems & Combat Balance Designer.\n"
-        "Generate the Stage 6 response (Skills, Items, Enemies, Balance) matching this contract:\n"
-        "{\n"
-        '  "contract_version": 1,\n'
-        f'  "prompt_version": "{SKILLS_PROMPT_VERSION}",\n'
-        f'  "request_id": "{request_id}",\n'
-        '  "stage": "skills",\n'
-        '  "skills": {\n'
-        '    "schema_version": 1,\n'
-        '    "campaign_id": "<campaign_id>",\n'
-        '    "campaign_version": "1.0.0",\n'
-        '    "skills": []\n'
-        "  },\n"
-        '  "items": {\n'
-        '    "schema_version": 1,\n'
-        '    "campaign_id": "<campaign_id>",\n'
-        '    "campaign_version": "1.0.0",\n'
-        '    "items": []\n'
-        "  },\n"
-        '  "enemies": {\n'
-        '    "schema_version": 1,\n'
-        '    "campaign_id": "<campaign_id>",\n'
-        '    "campaign_version": "1.0.0",\n'
-        '    "enemies": []\n'
-        "  },\n"
-        '  "balance": {\n'
-        '    "schema_version": 1,\n'
-        '    "campaign_id": "<campaign_id>",\n'
-        '    "campaign_version": "1.0.0",\n'
-        '    "difficulty_scalers": {\n'
-        '      "story": 0.8,\n'
-        '      "normal": 1.0,\n'
-        '      "hardcore": 1.3\n'
-        "    }\n"
-        "  }\n"
-        "}\n\n"
-        "Context Brief:\n"
-        "<<<DATA\n"
-        "{brief_json}\n"
-        ">>>\n"
+    """Render Stage 6 prompt: combat and non-combat skills, items, enemies, and balance."""
+    return _render_stage_prompt(
+        "Mechanics Designer",
+        "Stage 6 (skills, items, enemies, balance)",
+        SKILLS_PROMPT_VERSION,
+        request_id,
+        [
+            "Define every skill-, item-, enemy-, and tree- id that earlier stages reference "
+            "(see the index) plus 4-6 combat skills, 3-5 non-combat skills, 4-8 items, and "
+            "2-4 enemy archetypes in total.",
+            "Each combat skill has exactly five levels numbered 1 to 5 with mana_cost 0-10; "
+            "base_effects use kinds damage, heal, buff, debuff, resource_drain, or "
+            "resource_restore with integer magnitude; status_id stays null.",
+            "acquisition_source_ids are background, faction, companion, or milestone ids.",
+            "Each skill_tree has an owner_companion_id from the characters stage and nodes "
+            "whose skill_id exist here; edges reference node ids.",
+            "Each enemy has at least one combat_skill_ids entry defined here, "
+            "escape_policy_id escape-default, and loot_table weights summing to at most "
+            "power_rating.",
+            "point_buy is fixed: budget 27, minimum 8, maximum_before_bonus 15, "
+            "maximum_after_bonus 17, cost_map 8:0,9:1,10:2,11:3,12:4,13:5,14:7,15:9.",
+            "dc_bands are fixed: easy 8, standard 12, difficult 15, expert 18, "
+            "exceptional 22, near_impossible 25.",
+            'level_xp_thresholds start at "1": 0 and strictly increase for 5 levels.',
+            "difficulty_profiles story/normal/hard use rational ratios as "
+            "numerator/denominator objects; other balance dicts may be empty objects.",
+            "fusion_recipes is an empty list.",
+        ],
+        brief,
+        codex,
     )
-    return render_template(template, {"brief_json": json.dumps(ctx, indent=2)})
 
 
 def render_stage_repair_prompt(

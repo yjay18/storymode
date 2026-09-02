@@ -22,9 +22,28 @@ All 7 milestones (`CORE`, `SAVE`, `LLM`, `API`, `BUILD`, `UI`, `IMAGE/SEC/POLISH
 ### 1. Prerequisites
 - Python 3.12+ and `uv`
 - Node.js 22+ and `npm`
-- (Optional) Local [Ollama](https://ollama.com) instance running on `http://127.0.0.1:11434`
+- [Ollama](https://ollama.com) running on `http://127.0.0.1:11434` with a text model (default `llama3.1:8b`; override with `STORYMODE_MODEL_TEXT`)
 
-### 2. Install Dependencies
+### 2. First run
+```bash
+make setup
+make play
+```
+`make play` checks Ollama, pulls the configured model if it is missing, generates a campaign with the local model if the library is empty, then starts the API on `127.0.0.1:8000` and the web UI on `localhost:5173`. Ctrl-C stops both.
+
+The repository ships one published campaign, **The Salt Ledger** (`campaigns/salt-ledger`): four areas, three factions, a companion, five combat skills, three enemy archetypes, and a four-milestone plot with a flood clock. It is the reference pack for playtesting and for settling the balance numbers the design docs leave open. Model choice matters: a 3B model cannot satisfy the generation contracts, and thinking models must have thinking disabled (the client does this).
+
+To generate another campaign headlessly:
+```bash
+make generate PREMISE="A lighthouse keeper guards a door that should not exist."
+```
+
+To run the opt-in tests against your real local model (everything else uses mocks):
+```bash
+make live
+```
+
+### 2b. Manual install
 ```bash
 # Install Python backend dependencies
 uv sync --all-groups

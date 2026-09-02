@@ -74,6 +74,7 @@ class ChatOptions(FrozenModel):
     temperature: float = 0.0
     seed: int | None = None
     num_predict: int | None = None
+    num_ctx: int | None = None
 
 
 class ChatResponse(FrozenModel):
@@ -187,6 +188,10 @@ class OllamaClient:
             "model": model.strip(),
             "messages": [{"role": m.role, "content": m.content} for m in messages],
             "stream": False,
+            # Thinking models (qwen3, deepseek-r1) otherwise spend the whole timeout in a
+            # hidden `thinking` field and return empty content. Accepted by non-thinking
+            # models too.
+            "think": False,
         }
 
         if format_json:
@@ -198,6 +203,8 @@ class OllamaClient:
                 opt_dict["seed"] = options.seed
             if options.num_predict is not None:
                 opt_dict["num_predict"] = options.num_predict
+            if options.num_ctx is not None:
+                opt_dict["num_ctx"] = options.num_ctx
             payload["options"] = opt_dict
 
         async def _do(c: httpx.AsyncClient) -> ChatResponse:
