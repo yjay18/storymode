@@ -1343,6 +1343,147 @@ storage formats, model providers, formulas, or field names.
 
 ---
 
+## Milestone 8 — Make the play loop real
+
+Context (2026-09-02, see `DEVIATIONS.md` "Post-v1.0.0"): the engine, saves, and API are
+sound and covered by the smoke test, but the browser cannot play. The UI client calls
+routes the backend does not serve, the combat screen never sends a command, nothing
+starts combat, and the character panel has no progression controls. Separately, campaign
+generation stage 6 is too large for a local model to emit in one response.
+
+Working rules for this milestone, in addition to the global ones:
+
+- **Do not run Ollama or any local model while implementing.** Every test uses
+  `httpx.MockTransport` or the in-memory harness. The only model run is the final
+  verification in PLAY-06, and only after asking the user first (it lags their laptop).
+- The backend routes are the contract. Change the UI to match them, never the reverse,
+  unless a slice says otherwise. `src/api/schemas/*.py` are the response shapes.
+- One slice per commit on a branch off `main`; run the full backend and frontend gates
+  before each commit.
+
+- [ ] **PLAY-01 — Pin the UI client to the real API and guard against drift**
+  - Depends: UI-02, API-06
+  - Read: `src/ui/src/api/client.ts`, `src/ui/src/api/schema.d.ts`, every
+    `src/api/routes/*.py` router prefix and handler, `src/api/schemas/*.py`,
+    `src/app/main.py` (router mounting), `scripts/run_smoke_test.py` (the ASGI section is
+    a worked example of every play call in order).
+  - Create: `tests/integration/api/test_ui_client_routes.py`.
+  - Change: `src/ui/src/api/client.ts`, `src/ui/src/api/schema.d.ts`, the feature
+    components and tests that consume changed types (`saves`, `exploration`, `combat`,
+    `character`, `inventory`).
+  - Do: replace every play path in the client with the served one: `POST /api/v1/saves`,
+    `GET /api/v1/saves/{campaign_id}/{save_id}`, `POST /api/v1/actions/submit`,
+    `POST /api/v1/actions/resolve-check`, `POST /api/v1/actions/cancel-check`,
+    `GET /api/v1/combat/view?campaign_id&save_id`, `POST /api/v1/combat/{start,skill,defend,flee,yield}`,
+    `GET/POST /api/v1/saves/{campaign_id}/{save_id}/{party,progression,plot}/...`. Request
+    and response TypeScript types must mirror the Pydantic schemas field for field
+    (`command_id`, `expected_revision`, `allowed_actions`, `combat`, `logs`, ...). Delete
+    hand-invented types such as `CombatStateResponse`. The new backend test builds the app,
+    reads `app.openapi()["paths"]`, extracts every `/api/v1/...` template literal from
+    `client.ts` with a regex (normalising `${...}` to `{}`), and asserts each one exists
+    with the method used. Update the README status paragraph to say the browser play loop
+    is being wired in this milestone.
+  - Test: `uv run pytest tests/integration/api/test_ui_client_routes.py -q`; then the four
+    `npm --prefix src/ui run ...` gates.
+  - Accept: route test passes and fails when a client path is misspelled; UI typecheck
+    passes with no `any` added; existing UI tests updated, not deleted.
+
+- [ ] **PLAY-02 — Exploration screen drives the real action pipeline**
+  - Depends: PLAY-01
+  - Read: `docs/ux/exploration-ui.md`, `src/api/routes/actions.py`,
+    `src/api/schemas/actions.py`, `src/ui/src/features/exploration/*.tsx`.
+  - Change: `ExplorationScreen.tsx`, `CheckPanel.tsx`, `ActionComposer` and tests.
+  - Do: submit sends `player_text` with a fresh `command_id` (crypto UUID) and the
+    current `expected_revision`; a `pending_check` response opens the check panel; resolve
+    and cancel call their routes; every response refreshes state from
+    `GET /api/v1/saves/{c}/{s}`; 503 `interpreter_not_configured` and
+    `Action interpreter unavailable` render the documented "narrator offline" banner and
+    keep the composer usable; 409 revision conflicts refetch and retry once.
+  - Test: Vitest with a mocked `fetch` returning the real Pydantic JSON shapes (copy them
+    from `tests/integration/api/test_action_routes.py` fixtures).
+  - Accept: a scripted look -> pending check -> resolve flow renders narration and the
+    roll breakdown (die, modifiers, total, DC, outcome) exactly as `docs/ux/exploration-ui.md`
+    specifies.
+
+- [ ] **PLAY-03 — Combat is reachable and the combat screen sends commands**
+  - Depends: PLAY-01
+  - Read: `docs/ux/combat-ui.md`, `docs/game-design/combat-rules.md`,
+    `src/api/routes/combat.py`, `src/api/schemas/combat.py`,
+    `src/engine/combat/use_cases.py` (`get_allowed_actions`), `CombatScreen.tsx`,
+    `CombatCommandBar.tsx`, `CombatEnemyList.tsx`, `CombatTurnTracker.tsx`.
+  - Change: those four components and tests, `ExplorationScreen.tsx` (context rail),
+    `src/ui/src/routes/index.tsx`.
+  - Do: the context rail lists the current area's `encounters` (from the campaign detail)
+    with an "Engage" button that calls `POST /combat/start` and navigates to
+    `/play/{c}/{s}/combat`; the combat route loads `GET /combat/view`; the command bar
+    renders only `allowed_actions` from the response (skill buttons with mana cost and
+    target rule, Defend, Flee/Yield when permitted); executing a skill posts
+    `{command_id, expected_revision, skill_id, target_ids}` and the others their schemas;
+    `logs` append to a visible combat log; `is_terminal` shows the outcome and a
+    "Return to exploration" link; enemy turns arrive in the same response and are shown in
+    order. Disable all commands while a request is in flight.
+  - Test: Vitest with mocked fetch using `CombatResponse` shapes from
+    `scripts/run_smoke_test.py`; assert each button posts the right body.
+  - Accept: start -> skill -> defend -> yield completes against mocked responses and the
+    screen matches `docs/ux/combat-ui.md` mode guards (no exploration input in combat).
+
+- [ ] **PLAY-04 — Progression controls: tokens, loadout, upgrade**
+  - Depends: PLAY-01
+  - Read: `docs/game-design/progression-and-skills.md`, `src/api/routes/progression.py`,
+    `src/api/schemas/progression.py`, `CharacterPanel.tsx`.
+  - Change: `CharacterPanel.tsx` and test; add a small `LoadoutEditor` only if the panel
+    exceeds ~250 lines.
+  - Do: show level, XP to next threshold, upgrade tokens, known skills with level, and the
+    four-slot loadout; "Upgrade" posts `/progression/upgrade`, loadout changes post
+    `/progression/loadout` (disabled while `in_combat`). Fusion stays read-only (list
+    recipes whose conditions are met) in this slice.
+  - Test: Vitest with mocked fetch; typed rejection (`insufficient_tokens`, occupied slot)
+    renders the server message.
+  - Accept: token count decrements and skill level increments from the mocked response;
+    no client-side rule logic.
+
+- [ ] **PLAY-05 — Split generation stage 6 into three model responses**
+  - Depends: BUILD-06
+  - Read: `DEVIATIONS.md` "Stage prompts 2-6", `src/campaign/generation/{stages,orchestrator}.py`,
+    `src/llm/contracts/campaign_generation.py`, `src/llm/prompts/campaign_generation_v1.py`,
+    `src/campaign/builder/{models,review}.py`.
+  - Change: those files, `tests/integration/campaign/test_generation_orchestrator.py`,
+    `tests/unit/campaign/test_schema_hints.py`, `src/ui` builder progress labels.
+  - Do: replace `skills` with three stages `skills`, `items_enemies`, `balance` in
+    `ALL_DRAFT_STAGES`, each with its own contract class (`SkillsStageResponse` keeps
+    `skills` only; `ItemsEnemiesStageResponse` holds `items` and `enemies`;
+    `BalanceStageResponse` holds `balance`), prompt renderer, and `_assemble_draft_files`
+    mapping. The id index already tells later stages which ids earlier ones referenced.
+    Keep existing drafts loadable: a draft whose `skills` artifact contains all four keys
+    is migrated on load into the three stages (documented in `docs/schemas/migration-policy.md`).
+    Add a `ChatOptions(num_predict=...)` bound per stage sized from the skeleton so a cut-off
+    response fails fast instead of at the context limit.
+  - Test: mocked orchestrator run through all stages publishes a pack that `load_campaign`
+    accepts; migration test for the old four-key artifact.
+  - Accept: no model call in tests; `uv run python scripts/generate_campaign.py --help`
+    lists the new stages; builder UI shows nine stages.
+
+- [ ] **PLAY-06 — Final verification with the local model (ask first)**
+  - Depends: PLAY-02, PLAY-03, PLAY-04, PLAY-05
+  - Do: **stop and ask the user for permission before any of this**; it uses the GPU for
+    up to an hour. Then: `STORYMODE_MODEL_TEXT=qwen3.5:9b STORYMODE_OLLAMA_TIMEOUT_SECONDS=1800
+    make live`, then `make generate PREMISE="..."` for one campaign, then `make play` and
+    walk one save through look -> check -> engage encounter -> skill -> yield in the
+    browser. Record the outcome and any failure text in `DEVIATIONS.md`.
+  - Accept: three live tests pass; a generated pack publishes; the browser flow completes
+    without a 404 or 503; evidence recorded.
+
+- [ ] **PLAY-07 — First structured playtest and balance evidence**
+  - Depends: PLAY-06
+  - Read: "Questions intentionally deferred" below, `docs/game-design/difficulty-rules.md`,
+    `campaigns/salt-ledger/balance.json`.
+  - Do: play `salt-ledger` on Normal for one session, keep the JSONL action log, and write
+    `docs/research/playtest-01.md` with observed rolls, damage per round, encounter
+    length, and where the numbers felt wrong. Propose (do not apply) changes to enemy
+    power ratings, encounter targets, and XP thresholds with the evidence beside each.
+  - Accept: the document exists with data, and any balance change lands as its own slice
+    with an ADR if it changes a formula.
+
 ## Milestone gates
 
 After each milestone, stop and report using root `AGENT.md`'s handoff format. A milestone
