@@ -76,6 +76,17 @@ field, deleting hand-invented types.
 - A `CampaignDifficulty` type alias for `DefaultDifficulty` was kept so the out-of-scope
   builder forms compile without edits.
 
+### PLAY-02 — roll "total" equals the die
+
+**Original spec:** the result card shows "raw die, modifiers, total, DC, band".
+
+**Deviation:** the engine (`engine/actions/resolution.py`) compares the raw d20 directly to
+`final_dc`; the situational modifiers are baked into the DC via `difficulty_adjustment`,
+not added to the roll, and `ResolveCheckResponse` exposes only `roll` and `band`. The
+breakdown therefore shows Total = Die, lists the named modifiers (which adjusted the DC),
+and shows Base DC + adjustment = Final DC. This mirrors the actual mechanic rather than
+inventing a roll-side total the contract does not carry.
+
 ### Live model evidence
 
 **Original spec:** No slice ran a prompt against a real model; all 577 tests use `httpx.MockTransport`.
