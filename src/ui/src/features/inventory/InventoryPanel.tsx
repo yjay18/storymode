@@ -1,12 +1,12 @@
 import React from "react";
-import type { RuntimeStateResponse } from "../../api/schema";
+import type { PlayerProgressionView } from "../../api/schema";
 
 interface InventoryPanelProps {
-  runtimeState: RuntimeStateResponse;
+  player: PlayerProgressionView;
 }
 
-export function InventoryPanel({ runtimeState }: InventoryPanelProps): React.JSX.Element {
-  const { inventory } = runtimeState.player;
+export function InventoryPanel({ player }: InventoryPanelProps): React.JSX.Element {
+  const { inventory } = player;
 
   return (
     <section

@@ -6,6 +6,8 @@ Storymode is a local-first, single-player, D&D-style text RPG engine and compani
 
 All 7 milestones (`CORE`, `SAVE`, `LLM`, `API`, `BUILD`, `UI`, `IMAGE/SEC/POLISH`) are fully implemented and verified against the canonical design specifications.
 
+**Milestone 8 (in progress):** the browser play loop is being wired to the real API. The engine, saves, and API are complete and covered by the smoke test; the web client is being pinned to the served routes so exploration, checks, combat, and progression are playable in the browser.
+
 ## Technology Stack
 
 - **Engine Core**: Python 3.12+, FastAPI, Pydantic v2, and Uvicorn

@@ -1,19 +1,28 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { defaultApiClient } from "../../api/client";
 import { createCommandTracker } from "../../api/commands";
-import type { RuntimeStateResponse } from "../../api/schema";
+import type { PendingCheck, SaveSummaryResponse } from "../../api/schema";
 import { ActionComposer } from "./ActionComposer";
 import { CheckPanel, PendingCheckData } from "./CheckPanel";
 import { ContextRail } from "./ContextRail";
 import { LogEntry, NarrativeLog } from "./NarrativeLog";
 import { RollHistory, RollHistoryItem } from "./RollHistory";
 
+function toCheckPanelData(check: PendingCheck): PendingCheckData {
+  return {
+    check_id: check.check_id,
+    skill_or_attribute: check.stat ?? check.skill_id ?? check.semantic_difficulty,
+    dc: check.final_dc,
+    stakes_description: check.stakes,
+    allow_luck_reroll: true,
+  };
+}
+
 export function ExplorationScreen(): React.JSX.Element {
   const { campaignId, saveId } = useParams<{ campaignId: string; saveId: string }>();
-  const navigate = useNavigate();
 
-  const [state, setState] = useState<RuntimeStateResponse | null>(null);
+  const [state, setState] = useState<SaveSummaryResponse | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -29,11 +38,7 @@ export function ExplorationScreen(): React.JSX.Element {
       setLoading(true);
       setError(null);
       try {
-        const runtimeState = await defaultApiClient.getSave(campaignId, saveId);
-        setState(runtimeState);
-        if (runtimeState.in_combat && runtimeState.active_combat_id) {
-          navigate(`/play/${campaignId}/${saveId}/combat/${runtimeState.active_combat_id}`);
-        }
+        setState(await defaultApiClient.getSave(campaignId, saveId));
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to load adventure state");
       } finally {
@@ -42,59 +47,57 @@ export function ExplorationScreen(): React.JSX.Element {
     };
 
     loadState();
-  }, [campaignId, saveId, navigate]);
+  }, [campaignId, saveId]);
 
-  const handleTakeAction = async (rawInput: string) => {
+  const handleTakeAction = async (playerText: string) => {
     if (!campaignId || !saveId || !state) return;
 
-    const intentKey = `action-${state.revision}-${rawInput}`;
+    const intentKey = `action-${state.revision}-${playerText}`;
     const commandId = trackerRef.current.getOrGenerate(intentKey);
 
-    const actionLogId = `user-${Date.now()}`;
     setEntries((prev) => [
       ...prev,
-      { id: actionLogId, type: "player_action", content: rawInput },
+      { id: `user-${Date.now()}`, type: "player_action", content: playerText },
     ]);
 
     setSubmitting(true);
     try {
-      const resp = await defaultApiClient.executeAction(campaignId, saveId, {
+      const resp = await defaultApiClient.submitAction({
+        campaign_id: campaignId,
+        save_id: saveId,
         command_id: commandId,
-        raw_input: rawInput,
         expected_revision: state.revision,
+        player_text: playerText,
       });
 
-      if (resp.status === "check_required" && resp.pending_check) {
-        setPendingCheck({
-          check_id: resp.pending_check.check_id,
-          skill_or_attribute: resp.pending_check.skill_or_attribute,
-          dc: resp.pending_check.dc,
-          stakes_description: resp.pending_check.stakes_description,
-          allow_luck_reroll: resp.pending_check.allow_luck_reroll,
-        });
+      if (resp.rejection_reason) {
+        setEntries((prev) => [
+          ...prev,
+          {
+            id: `res-${Date.now()}`,
+            type: "result",
+            content: "Action rejected",
+            status: "rejected",
+            errorReason: resp.rejection_reason ?? undefined,
+          },
+        ]);
+      } else if (resp.has_pending_check && resp.pending_check) {
+        setPendingCheck(toCheckPanelData(resp.pending_check));
       } else {
-        setPendingCheck(null);
+        setEntries((prev) => [
+          ...prev,
+          {
+            id: `res-${Date.now()}`,
+            type: "result",
+            content: "You take action.",
+            status: "success",
+            narration: resp.narration ?? undefined,
+          },
+        ]);
       }
-
-      setEntries((prev) => [
-        ...prev,
-        {
-          id: `res-${Date.now()}`,
-          type: "result",
-          content: resp.outcome_summary,
-          status: resp.status,
-          narration: resp.narration,
-        },
-      ]);
 
       trackerRef.current.consume(intentKey);
-
-      const updated = await defaultApiClient.getSave(campaignId, saveId);
-      setState(updated);
-
-      if (updated.in_combat && updated.active_combat_id) {
-        navigate(`/play/${campaignId}/${saveId}/combat/${updated.active_combat_id}`);
-      }
+      setState(await defaultApiClient.getSave(campaignId, saveId));
     } catch (err) {
       setEntries((prev) => [
         ...prev,
@@ -119,16 +122,13 @@ export function ExplorationScreen(): React.JSX.Element {
 
     setSubmitting(true);
     try {
-      const resp = await defaultApiClient.resolveCheck(
-        campaignId,
-        saveId,
-        pendingCheck.check_id,
-        {
-          command_id: commandId,
-          use_luck: useLuck,
-          expected_revision: state.revision,
-        },
-      );
+      const resp = await defaultApiClient.resolveCheck({
+        campaign_id: campaignId,
+        save_id: saveId,
+        command_id: commandId,
+        expected_revision: state.revision,
+        use_luck: useLuck,
+      });
 
       setRollHistory((prev) => [
         ...prev,
@@ -137,7 +137,8 @@ export function ExplorationScreen(): React.JSX.Element {
           checkId: pendingCheck.check_id,
           trait: pendingCheck.skill_or_attribute,
           dc: pendingCheck.dc,
-          outcome: resp.status === "success" ? "Passed" : "Failed",
+          total: resp.roll,
+          outcome: resp.band,
           timestamp: new Date().toLocaleTimeString(),
         },
       ]);
@@ -147,17 +148,15 @@ export function ExplorationScreen(): React.JSX.Element {
         {
           id: `res-${Date.now()}`,
           type: "result",
-          content: resp.outcome_summary,
-          status: resp.status,
-          narration: resp.narration,
+          content: `Rolled ${resp.roll} — ${resp.band}`,
+          status: "success",
+          narration: resp.narration ?? undefined,
         },
       ]);
 
       setPendingCheck(null);
       trackerRef.current.consume(intentKey);
-
-      const updated = await defaultApiClient.getSave(campaignId, saveId);
-      setState(updated);
+      setState(await defaultApiClient.getSave(campaignId, saveId));
     } catch (err) {
       setEntries((prev) => [
         ...prev,
@@ -169,6 +168,26 @@ export function ExplorationScreen(): React.JSX.Element {
           errorReason: err instanceof Error ? err.message : "Transport error",
         },
       ]);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleCancelCheck = async () => {
+    if (!campaignId || !saveId || !state || !pendingCheck) return;
+    const commandId = trackerRef.current.getOrGenerate(`cancel-${pendingCheck.check_id}`);
+    setSubmitting(true);
+    try {
+      await defaultApiClient.cancelCheck({
+        campaign_id: campaignId,
+        save_id: saveId,
+        command_id: commandId,
+        expected_revision: state.revision,
+      });
+      setPendingCheck(null);
+      setState(await defaultApiClient.getSave(campaignId, saveId));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to cancel check");
     } finally {
       setSubmitting(false);
     }
@@ -212,13 +231,13 @@ export function ExplorationScreen(): React.JSX.Element {
               check={pendingCheck}
               submitting={submitting}
               onResolve={handleResolveCheck}
-              onCancel={() => setPendingCheck(null)}
+              onCancel={handleCancelCheck}
             />
           )}
 
           {!pendingCheck && (
             <ActionComposer
-              disabled={submitting || state.in_combat}
+              disabled={submitting}
               submitting={submitting}
               onSubmit={handleTakeAction}
             />
@@ -226,7 +245,7 @@ export function ExplorationScreen(): React.JSX.Element {
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
-          <ContextRail runtimeState={state} />
+          <ContextRail save={state} />
           <RollHistory history={rollHistory} />
         </div>
       </div>

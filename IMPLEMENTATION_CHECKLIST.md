@@ -1361,7 +1361,7 @@ Working rules for this milestone, in addition to the global ones:
 - One slice per commit on a branch off `main`; run the full backend and frontend gates
   before each commit.
 
-- [ ] **PLAY-01 — Pin the UI client to the real API and guard against drift**
+- [x] **PLAY-01 — Pin the UI client to the real API and guard against drift**
   - Depends: UI-02, API-06
   - Read: `src/ui/src/api/client.ts`, `src/ui/src/api/schema.d.ts`, every
     `src/api/routes/*.py` router prefix and handler, `src/api/schemas/*.py`,

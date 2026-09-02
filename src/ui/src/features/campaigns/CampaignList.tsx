@@ -170,7 +170,7 @@ export function CampaignList({
                   lineHeight: "1.4",
                 }}
               >
-                {camp.theme}
+                {camp.description}
               </p>
             </div>
 
@@ -186,7 +186,7 @@ export function CampaignList({
               }}
             >
               <span>
-                {camp.default_difficulty} • {camp.campaign_length}
+                {camp.campaign_length} • v{camp.version}
               </span>
               <Link
                 to={`/campaigns/${camp.campaign_id}`}

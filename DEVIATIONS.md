@@ -52,6 +52,30 @@ This file tracks any deviations from the original `IMPLEMENTATION_CHECKLIST.md` 
 
 **Resolution:** The stage runner now appends, from the Pydantic contracts themselves, a JSON skeleton, the field limits, and an index of IDs defined by earlier stages (plus ids referenced but not yet defined). The five templates were reduced to role, rules, and the quoted brief. Chat requests use a 16k context window and disable model thinking. Live evidence (2026-09-02, `qwen3.5:9b`, Apple Silicon): stages 1-5 (meta/style, world, areas, plot, characters) validate on the first attempt. Stage 6 (skills + items + enemies + balance in one response) still fails: two attempts were cut off mid-JSON around 1,600 lines, and the third used `""` where nullable ids must be `null`. The skeleton now renders optional scalars as `null`; the remaining fix is to split stage 6 into three responses, which is a checklist slice of its own. Until then the bundled `campaigns/salt-ledger` pack is hand-authored and validated by the same loader. Resume the evidence run with `make generate` or `scripts/generate_campaign.py --draft <id>`.
 
+### PLAY-01 — no served save-list route; health path; thin save response
+
+**Original spec:** PLAY-01 lists the served play paths and says to mirror them field for
+field, deleting hand-invented types.
+
+**Deviations:**
+- The UI client had `listSaves` → `GET /api/v1/campaigns/{id}/saves`, which the backend
+  never serves (the campaigns router has no `/saves`). `listSaves` and `SaveSlotSummary`
+  were removed and `CampaignDetail` dropped its saved-games list; it now only loads the
+  campaign detail and offers "New Hero" to create a save.
+- `getHealth` targeted `/api/v1/health`, but the health router is mounted at `/health`.
+  Fixed to `/health` (not an `/api/v1` path, so the drift test does not cover it).
+- The real `SaveSummaryResponse` is thin (no HP/mana/attributes/inventory/skills, no
+  `in_combat`/`active_combat_id`). `ContextRail` now renders name/area/difficulty/slot from
+  it; the exploration screen's combat-redirect was removed (PLAY-03 owns combat
+  reachability). `CharacterPanel` and `InventoryPanel` (both unmounted today) were repointed
+  at `PlayerProgressionView` from `GET .../progression`; the real contract has no attribute
+  block, so attribute rendering was dropped.
+- `ExplorationScreen.onCancel` now calls `POST /api/v1/actions/cancel-check` instead of only
+  clearing local state, so the persisted pending check is actually cancelled. The richer
+  error handling (503 banner, 409 refetch/retry, full roll breakdown) remains for PLAY-02.
+- A `CampaignDifficulty` type alias for `DefaultDifficulty` was kept so the out-of-scope
+  builder forms compile without edits.
+
 ### Live model evidence
 
 **Original spec:** No slice ran a prompt against a real model; all 577 tests use `httpx.MockTransport`.

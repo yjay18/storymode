@@ -1,5 +1,9 @@
 /**
- * Resilient typed local fetch client for Storymode API (UI-02).
+ * Resilient typed local fetch client for Storymode API.
+ *
+ * Every play path here is asserted against the served `app.openapi()` paths by
+ * `tests/integration/api/test_ui_client_routes.py`; keep them as `/api/v1/...`
+ * template literals so the drift test can extract and verify them.
  */
 
 import {
@@ -12,22 +16,43 @@ import {
   ApiValidationError,
 } from "./errors";
 import type {
-  ActionRequest,
-  ActionResponse,
   BuilderBrief,
+  CampaignDetail,
   CampaignSummary,
-  CheckResolutionRequest,
-  CombatStateResponse,
+  CancelCheckRequest,
+  CancelCheckResponse,
+  CombatResponse,
+  CombatViewResponse,
   CreateSaveRequest,
+  DefendRequest,
   DraftStage,
   DraftState,
+  FleeRequest,
+  GrantXpRequest,
   HealthResponse,
   ImportBookInput,
+  PartyMutationResponse,
+  PartyViewResponse,
+  PerformFusionRequest,
+  PlotMutationResponse,
+  PlotViewResponse,
+  ProgressionMutationResponse,
+  ProgressionViewResponse,
   PublishResult,
   QuickPromptInput,
-  RuntimeStateResponse,
-  SaveSlotSummary,
+  RecruitCompanionRequest,
+  ResolveCheckRequest,
+  ResolveCheckResponse,
+  ResolveOpportunityRequest,
+  SaveSummaryResponse,
+  SetLoadoutRequest,
+  StartCombatRequest,
+  SubmitActionRequest,
+  SubmitActionResponse,
+  UpgradeSkillRequest,
+  UseSkillRequest,
   ValidationReport,
+  YieldRequest,
 } from "./schema";
 
 const DEFAULT_TIMEOUT_MS = 30000;
@@ -123,9 +148,13 @@ export class ApiClient {
     }
   }
 
+  private post<T>(path: string, body: unknown): Promise<T> {
+    return this.request<T>(path, { method: "POST", body: JSON.stringify(body) });
+  }
+
   // --- Health ---
   getHealth(): Promise<HealthResponse> {
-    return this.request<HealthResponse>("/api/v1/health");
+    return this.request<HealthResponse>("/health");
   }
 
   // --- Campaigns ---
@@ -133,8 +162,8 @@ export class ApiClient {
     return this.request<CampaignSummary[]>("/api/v1/campaigns");
   }
 
-  getCampaign(campaignId: string): Promise<CampaignSummary> {
-    return this.request<CampaignSummary>(`/api/v1/campaigns/${campaignId}`);
+  getCampaign(campaignId: string): Promise<CampaignDetail> {
+    return this.request<CampaignDetail>(`/api/v1/campaigns/${campaignId}`);
   }
 
   // --- Builder ---
@@ -147,37 +176,23 @@ export class ApiClient {
   }
 
   createGuidedDraft(brief: BuilderBrief): Promise<DraftState> {
-    return this.request<DraftState>("/api/v1/builder/drafts/guided", {
-      method: "POST",
-      body: JSON.stringify({ brief }),
-    });
+    return this.post<DraftState>("/api/v1/builder/drafts/guided", { brief });
   }
 
   createQuickDraft(quickInput: QuickPromptInput): Promise<DraftState> {
-    return this.request<DraftState>("/api/v1/builder/drafts/quick", {
-      method: "POST",
-      body: JSON.stringify({ quick_input: quickInput }),
-    });
+    return this.post<DraftState>("/api/v1/builder/drafts/quick", { quick_input: quickInput });
   }
 
   importBook(payload: ImportBookInput): Promise<DraftState> {
-    return this.request<DraftState>("/api/v1/builder/drafts/import", {
-      method: "POST",
-      body: JSON.stringify(payload),
-    });
+    return this.post<DraftState>("/api/v1/builder/drafts/import", payload);
   }
 
   generateDraftStage(draftId: string, stage?: DraftStage): Promise<DraftState> {
-    return this.request<DraftState>(`/api/v1/builder/drafts/${draftId}/generate`, {
-      method: "POST",
-      body: JSON.stringify({ stage }),
-    });
+    return this.post<DraftState>(`/api/v1/builder/drafts/${draftId}/generate`, { stage });
   }
 
   cancelDraft(draftId: string): Promise<DraftState> {
-    return this.request<DraftState>(`/api/v1/builder/drafts/${draftId}/cancel`, {
-      method: "POST",
-    });
+    return this.request<DraftState>(`/api/v1/builder/drafts/${draftId}/cancel`, { method: "POST" });
   }
 
   editStage(
@@ -188,10 +203,7 @@ export class ApiClient {
   ): Promise<DraftState> {
     return this.request<DraftState>(`/api/v1/builder/drafts/${draftId}/stages/${stage}`, {
       method: "PUT",
-      body: JSON.stringify({
-        expected_revision: expectedRevision,
-        artifact_data: artifactData,
-      }),
+      body: JSON.stringify({ expected_revision: expectedRevision, artifact_data: artifactData }),
     });
   }
 
@@ -200,68 +212,171 @@ export class ApiClient {
   }
 
   publishDraft(draftId: string, confirmed: boolean = false): Promise<PublishResult> {
-    return this.request<PublishResult>(`/api/v1/builder/drafts/${draftId}/publish`, {
-      method: "POST",
-      body: JSON.stringify({ confirmed }),
-    });
+    return this.post<PublishResult>(`/api/v1/builder/drafts/${draftId}/publish`, { confirmed });
   }
 
   // --- Saves ---
-  listSaves(campaignId: string): Promise<SaveSlotSummary[]> {
-    return this.request<SaveSlotSummary[]>(`/api/v1/campaigns/${campaignId}/saves`);
+  createSave(payload: CreateSaveRequest): Promise<SaveSummaryResponse> {
+    return this.post<SaveSummaryResponse>("/api/v1/saves", payload);
   }
 
-  createSave(campaignId: string, payload: CreateSaveRequest): Promise<RuntimeStateResponse> {
-    return this.request<RuntimeStateResponse>(`/api/v1/campaigns/${campaignId}/saves`, {
-      method: "POST",
-      body: JSON.stringify(payload),
-    });
-  }
-
-  getSave(campaignId: string, saveId: string): Promise<RuntimeStateResponse> {
-    return this.request<RuntimeStateResponse>(
-      `/api/v1/campaigns/${campaignId}/saves/${saveId}`,
-    );
+  getSave(campaignId: string, saveId: string): Promise<SaveSummaryResponse> {
+    return this.request<SaveSummaryResponse>(`/api/v1/saves/${campaignId}/${saveId}`);
   }
 
   // --- Actions & Exploration ---
-  executeAction(
-    campaignId: string,
-    saveId: string,
-    payload: ActionRequest,
-  ): Promise<ActionResponse> {
-    return this.request<ActionResponse>(
-      `/api/v1/campaigns/${campaignId}/saves/${saveId}/actions`,
-      {
-        method: "POST",
-        body: JSON.stringify(payload),
-      },
-    );
+  submitAction(payload: SubmitActionRequest): Promise<SubmitActionResponse> {
+    return this.post<SubmitActionResponse>("/api/v1/actions/submit", payload);
   }
 
-  resolveCheck(
-    campaignId: string,
-    saveId: string,
-    checkId: string,
-    payload: CheckResolutionRequest,
-  ): Promise<ActionResponse> {
-    return this.request<ActionResponse>(
-      `/api/v1/campaigns/${campaignId}/saves/${saveId}/checks/${checkId}/resolve`,
-      {
-        method: "POST",
-        body: JSON.stringify(payload),
-      },
-    );
+  resolveCheck(payload: ResolveCheckRequest): Promise<ResolveCheckResponse> {
+    return this.post<ResolveCheckResponse>("/api/v1/actions/resolve-check", payload);
+  }
+
+  cancelCheck(payload: CancelCheckRequest): Promise<CancelCheckResponse> {
+    return this.post<CancelCheckResponse>("/api/v1/actions/cancel-check", payload);
   }
 
   // --- Combat ---
-  getCombatState(
+  getCombatView(campaignId: string, saveId: string): Promise<CombatViewResponse> {
+    return this.request<CombatViewResponse>(
+      `/api/v1/combat/view?campaign_id=${campaignId}&save_id=${saveId}`,
+    );
+  }
+
+  startCombat(payload: StartCombatRequest): Promise<CombatResponse> {
+    return this.post<CombatResponse>("/api/v1/combat/start", payload);
+  }
+
+  useSkill(payload: UseSkillRequest): Promise<CombatResponse> {
+    return this.post<CombatResponse>("/api/v1/combat/skill", payload);
+  }
+
+  defend(payload: DefendRequest): Promise<CombatResponse> {
+    return this.post<CombatResponse>("/api/v1/combat/defend", payload);
+  }
+
+  flee(payload: FleeRequest): Promise<CombatResponse> {
+    return this.post<CombatResponse>("/api/v1/combat/flee", payload);
+  }
+
+  yieldCombat(payload: YieldRequest): Promise<CombatResponse> {
+    return this.post<CombatResponse>("/api/v1/combat/yield", payload);
+  }
+
+  // --- Progression ---
+  getProgression(campaignId: string, saveId: string): Promise<ProgressionViewResponse> {
+    return this.request<ProgressionViewResponse>(
+      `/api/v1/saves/${campaignId}/${saveId}/progression`,
+    );
+  }
+
+  grantXp(
     campaignId: string,
     saveId: string,
-    combatId: string,
-  ): Promise<CombatStateResponse> {
-    return this.request<CombatStateResponse>(
-      `/api/v1/campaigns/${campaignId}/saves/${saveId}/combat/${combatId}`,
+    payload: GrantXpRequest,
+  ): Promise<ProgressionMutationResponse> {
+    return this.post<ProgressionMutationResponse>(
+      `/api/v1/saves/${campaignId}/${saveId}/progression/xp`,
+      payload,
+    );
+  }
+
+  upgradeSkill(
+    campaignId: string,
+    saveId: string,
+    payload: UpgradeSkillRequest,
+  ): Promise<ProgressionMutationResponse> {
+    return this.post<ProgressionMutationResponse>(
+      `/api/v1/saves/${campaignId}/${saveId}/progression/upgrade`,
+      payload,
+    );
+  }
+
+  setLoadout(
+    campaignId: string,
+    saveId: string,
+    payload: SetLoadoutRequest,
+  ): Promise<ProgressionMutationResponse> {
+    return this.post<ProgressionMutationResponse>(
+      `/api/v1/saves/${campaignId}/${saveId}/progression/loadout`,
+      payload,
+    );
+  }
+
+  performFusion(
+    campaignId: string,
+    saveId: string,
+    payload: PerformFusionRequest,
+  ): Promise<ProgressionMutationResponse> {
+    return this.post<ProgressionMutationResponse>(
+      `/api/v1/saves/${campaignId}/${saveId}/progression/fusion`,
+      payload,
+    );
+  }
+
+  // --- Party ---
+  getParty(campaignId: string, saveId: string): Promise<PartyViewResponse> {
+    return this.request<PartyViewResponse>(`/api/v1/saves/${campaignId}/${saveId}/party`);
+  }
+
+  recruitCompanion(
+    campaignId: string,
+    saveId: string,
+    payload: RecruitCompanionRequest,
+  ): Promise<PartyMutationResponse> {
+    return this.post<PartyMutationResponse>(
+      `/api/v1/saves/${campaignId}/${saveId}/party/recruit`,
+      payload,
+    );
+  }
+
+  activateCompanion(
+    campaignId: string,
+    saveId: string,
+    payload: RecruitCompanionRequest,
+  ): Promise<PartyMutationResponse> {
+    return this.post<PartyMutationResponse>(
+      `/api/v1/saves/${campaignId}/${saveId}/party/activate`,
+      payload,
+    );
+  }
+
+  deactivateCompanion(
+    campaignId: string,
+    saveId: string,
+    payload: RecruitCompanionRequest,
+  ): Promise<PartyMutationResponse> {
+    return this.post<PartyMutationResponse>(
+      `/api/v1/saves/${campaignId}/${saveId}/party/deactivate`,
+      payload,
+    );
+  }
+
+  leaveCompanion(
+    campaignId: string,
+    saveId: string,
+    payload: RecruitCompanionRequest,
+  ): Promise<PartyMutationResponse> {
+    return this.post<PartyMutationResponse>(
+      `/api/v1/saves/${campaignId}/${saveId}/party/leave`,
+      payload,
+    );
+  }
+
+  // --- Plot ---
+  getPlot(campaignId: string, saveId: string): Promise<PlotViewResponse> {
+    return this.request<PlotViewResponse>(`/api/v1/saves/${campaignId}/${saveId}/plot`);
+  }
+
+  resolveOpportunity(
+    campaignId: string,
+    saveId: string,
+    payload: ResolveOpportunityRequest,
+  ): Promise<PlotMutationResponse> {
+    return this.post<PlotMutationResponse>(
+      `/api/v1/saves/${campaignId}/${saveId}/plot/opportunities/resolve`,
+      payload,
     );
   }
 }

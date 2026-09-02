@@ -1,18 +1,27 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { defaultApiClient } from "../../api/client";
-import type { CampaignSummary, SaveSlotSummary } from "../../api/schema";
+import { generateCommandId } from "../../api/commands";
+import type { CampaignDetail as CampaignDetailData } from "../../api/schema";
+
+// ponytail: fixed prototype point-buy until a character-creation UI slice exists.
+const DEFAULT_STATS: Record<string, number> = {
+  strength: 10,
+  dexterity: 12,
+  constitution: 13,
+  intelligence: 15,
+  wisdom: 14,
+  charisma: 8,
+};
 
 export function CampaignDetail(): React.JSX.Element {
   const { campaignId } = useParams<{ campaignId: string }>();
   const navigate = useNavigate();
 
-  const [campaign, setCampaign] = useState<CampaignSummary | null>(null);
-  const [saves, setSaves] = useState<SaveSlotSummary[]>([]);
+  const [campaign, setCampaign] = useState<CampaignDetailData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  // New Save creation state
   const [showNewSave, setShowNewSave] = useState<boolean>(false);
   const [playerName, setPlayerName] = useState<string>("");
   const [creatingSave, setCreatingSave] = useState<boolean>(false);
@@ -26,8 +35,6 @@ export function CampaignDetail(): React.JSX.Element {
       try {
         const camp = await defaultApiClient.getCampaign(campaignId);
         setCampaign(camp);
-        const saveList = await defaultApiClient.listSaves(campaignId);
-        setSaves(saveList);
       } catch (e) {
         setError(e instanceof Error ? e.message : "Failed to load campaign");
       } finally {
@@ -40,21 +47,18 @@ export function CampaignDetail(): React.JSX.Element {
 
   const handleCreateSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!campaignId || !playerName.trim()) return;
+    if (!campaignId || !campaign || !playerName.trim()) return;
 
     setCreatingSave(true);
     setCreateError(null);
     try {
-      const newSave = await defaultApiClient.createSave(campaignId, {
+      const newSave = await defaultApiClient.createSave({
+        campaign_id: campaignId,
+        slot_name: playerName.trim(),
         player_name: playerName.trim(),
-        background_id: "scout",
-        attributes: {
-          brawn: 2,
-          finesse: 3,
-          wit: 2,
-          resolve: 2,
-          presence: 1,
-        },
+        background_id: campaign.backgrounds[0]?.id ?? "",
+        stats: DEFAULT_STATS,
+        command_id: generateCommandId(),
       });
       navigate(`/play/${campaignId}/${newSave.save_id}`);
     } catch (err) {
@@ -74,7 +78,9 @@ export function CampaignDetail(): React.JSX.Element {
   if (error || !campaign) {
     return (
       <section aria-label="Campaign Details">
-        <h1 style={{ color: "var(--color-danger)", marginBottom: "1rem" }}>Error Loading Campaign</h1>
+        <h1 style={{ color: "var(--color-danger)", marginBottom: "1rem" }}>
+          Error Loading Campaign
+        </h1>
         <p style={{ color: "var(--color-text-secondary)", marginBottom: "1.5rem" }}>{error}</p>
         <Link to="/" style={{ color: "var(--color-accent)", textDecoration: "underline" }}>
           ← Back to Campaign Library
@@ -118,7 +124,7 @@ export function CampaignDetail(): React.JSX.Element {
             marginTop: "0.5rem",
           }}
         >
-          {campaign.theme}
+          {campaign.description}
         </p>
       </div>
 
@@ -144,37 +150,32 @@ export function CampaignDetail(): React.JSX.Element {
           <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
             <div>
               <span style={{ color: "var(--color-text-muted)", fontSize: "var(--font-size-sm)" }}>
-                Difficulty:
-              </span>{" "}
-              <strong>{campaign.default_difficulty}</strong>
-            </div>
-            <div>
-              <span style={{ color: "var(--color-text-muted)", fontSize: "var(--font-size-sm)" }}>
                 Length:
               </span>{" "}
               <strong>{campaign.campaign_length}</strong>
             </div>
             <div>
               <span style={{ color: "var(--color-text-muted)", fontSize: "var(--font-size-sm)" }}>
-                Source:
+                Version:
               </span>{" "}
-              <strong>{campaign.source_type}</strong>
+              <strong>{campaign.version}</strong>
             </div>
-            {campaign.source_summary && (
-              <p
-                style={{
-                  color: "var(--color-text-secondary)",
-                  fontSize: "var(--font-size-sm)",
-                  marginTop: "0.5rem",
-                }}
-              >
-                {campaign.source_summary}
-              </p>
-            )}
+            <div>
+              <span style={{ color: "var(--color-text-muted)", fontSize: "var(--font-size-sm)" }}>
+                Areas:
+              </span>{" "}
+              <strong>{campaign.area_count}</strong>
+            </div>
+            <div>
+              <span style={{ color: "var(--color-text-muted)", fontSize: "var(--font-size-sm)" }}>
+                Backgrounds:
+              </span>{" "}
+              <strong>{campaign.backgrounds.length}</strong>
+            </div>
           </div>
         </div>
 
-        {/* Save Slots */}
+        {/* Start a new hero */}
         <div
           style={{
             padding: "var(--space-4)",
@@ -191,7 +192,7 @@ export function CampaignDetail(): React.JSX.Element {
               marginBottom: "1rem",
             }}
           >
-            <h2 style={{ fontSize: "var(--font-size-lg)" }}>Saved Games</h2>
+            <h2 style={{ fontSize: "var(--font-size-lg)" }}>New Adventure</h2>
             {!showNewSave && (
               <button
                 type="button"
@@ -208,14 +209,13 @@ export function CampaignDetail(): React.JSX.Element {
             )}
           </div>
 
-          {showNewSave && (
+          {showNewSave ? (
             <form
               onSubmit={handleCreateSave}
               style={{
                 padding: "var(--space-3)",
                 backgroundColor: "var(--color-bg-elevated)",
                 borderRadius: "var(--radius-md)",
-                marginBottom: "1rem",
               }}
             >
               <label
@@ -270,54 +270,10 @@ export function CampaignDetail(): React.JSX.Element {
                 </button>
               </div>
             </form>
-          )}
-
-          {saves.length === 0 && !showNewSave ? (
-            <p style={{ color: "var(--color-text-secondary)", fontSize: "var(--font-size-sm)" }}>
-              No save files for this campaign yet. Click "+ New Hero" to start playing!
-            </p>
           ) : (
-            <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
-              {saves.map((s) => (
-                <div
-                  key={s.save_id}
-                  style={{
-                    padding: "var(--space-3)",
-                    backgroundColor: "var(--color-bg-elevated)",
-                    borderRadius: "var(--radius-md)",
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
-                >
-                  <div>
-                    <div style={{ fontWeight: "600" }}>{s.player_name}</div>
-                    <div
-                      style={{
-                        fontSize: "var(--font-size-xs)",
-                        color: "var(--color-text-muted)",
-                      }}
-                    >
-                      Slot {s.slot_number} • Area: {s.current_area_id} • Rev {s.revision}
-                    </div>
-                  </div>
-                  <Link
-                    to={`/play/${campaignId}/${s.save_id}`}
-                    style={{
-                      padding: "var(--space-1) var(--space-3)",
-                      backgroundColor: "var(--color-accent)",
-                      color: "var(--color-bg-base)",
-                      borderRadius: "var(--radius-sm)",
-                      textDecoration: "none",
-                      fontSize: "var(--font-size-xs)",
-                      fontWeight: "600",
-                    }}
-                  >
-                    Continue →
-                  </Link>
-                </div>
-              ))}
-            </div>
+            <p style={{ color: "var(--color-text-secondary)", fontSize: "var(--font-size-sm)" }}>
+              Click "+ New Hero" to create a character and begin playing.
+            </p>
           )}
         </div>
       </div>

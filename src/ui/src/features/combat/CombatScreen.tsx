@@ -1,20 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { defaultApiClient } from "../../api/client";
-import type { CombatStateResponse } from "../../api/schema";
+import type { CombatViewResponse } from "../../api/schema";
 import { CombatCommandBar } from "./CombatCommandBar";
 import { CombatEnemyList } from "./CombatEnemyList";
 import { CombatTurnTracker } from "./CombatTurnTracker";
 
 export function CombatScreen(): React.JSX.Element {
-  const { campaignId, saveId, combatId } = useParams<{
-    campaignId: string;
-    saveId: string;
-    combatId: string;
-  }>();
+  const { campaignId, saveId } = useParams<{ campaignId: string; saveId: string }>();
   const navigate = useNavigate();
 
-  const [combatState, setCombatState] = useState<CombatStateResponse | null>(null);
+  const [view, setView] = useState<CombatViewResponse | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -22,15 +18,19 @@ export function CombatScreen(): React.JSX.Element {
 
   useEffect(() => {
     const fetchCombat = async () => {
-      if (!campaignId || !saveId || !combatId) return;
+      if (!campaignId || !saveId) return;
       setLoading(true);
       setError(null);
       try {
-        const cs = await defaultApiClient.getCombatState(campaignId, saveId, combatId);
-        setCombatState(cs);
-        const firstActive = cs.enemies.find((e) => !e.is_defeated);
-        if (firstActive) {
-          setSelectedTargetId(firstActive.enemy_id);
+        const resp = await defaultApiClient.getCombatView(campaignId, saveId);
+        setView(resp);
+        const firstEnemy = resp.combat
+          ? Object.entries(resp.combat.participants).find(
+              ([, p]) => p.side === "enemy" && p.hp.current > 0,
+            )
+          : undefined;
+        if (firstEnemy) {
+          setSelectedTargetId(firstEnemy[0]);
         }
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to load combat encounter");
@@ -40,18 +40,14 @@ export function CombatScreen(): React.JSX.Element {
     };
 
     fetchCombat();
-  }, [campaignId, saveId, combatId]);
+  }, [campaignId, saveId]);
 
-  const handleCommand = async (_type: "skill" | "defend" | "flee" | "yield", _skillId?: string) => {
-    if (!campaignId || !saveId || !combatId) return;
+  // PLAY-01 loads and renders the combat view; command posting arrives in PLAY-03.
+  const handleCommand = async () => {
+    if (!campaignId || !saveId) return;
     setSubmitting(true);
     try {
-      // Refresh combat state
-      const updated = await defaultApiClient.getCombatState(campaignId, saveId, combatId);
-      setCombatState(updated);
-      if (updated.is_finished) {
-        // Combat concluded
-      }
+      setView(await defaultApiClient.getCombatView(campaignId, saveId));
     } catch (err) {
       setError(err instanceof Error ? err.message : "Command failed");
     } finally {
@@ -67,10 +63,12 @@ export function CombatScreen(): React.JSX.Element {
     );
   }
 
-  if (error || !combatState) {
+  if (error || !view || !view.combat) {
     return (
       <section aria-label="Tactical Combat">
-        <h1 style={{ color: "var(--color-danger)", marginBottom: "1rem" }}>Encounter Error</h1>
+        <h1 style={{ color: "var(--color-danger)", marginBottom: "1rem" }}>
+          {error ? "Encounter Error" : "No Active Combat"}
+        </h1>
         <p style={{ color: "var(--color-text-secondary)", marginBottom: "1.5rem" }}>{error}</p>
         <Link to={`/play/${campaignId}/${saveId}`} style={{ color: "var(--color-accent)" }}>
           ← Return to Exploration
@@ -79,44 +77,36 @@ export function CombatScreen(): React.JSX.Element {
     );
   }
 
-  if (combatState.is_finished) {
-    return (
-      <section
-        aria-label="Combat Concluded"
-        style={{
-          padding: "3rem",
-          backgroundColor: "var(--color-bg-surface)",
-          borderRadius: "var(--radius-lg)",
-          textAlign: "center",
-          maxWidth: "600px",
-          margin: "2rem auto",
-        }}
-      >
-        <h1 style={{ marginBottom: "1rem", color: "var(--color-success)" }}>
-          ⚔️ Combat Concluded
-        </h1>
-        <p style={{ fontSize: "var(--font-size-lg)", marginBottom: "2rem" }}>
-          Outcome: <strong>{combatState.outcome || "Finished"}</strong>
-        </p>
-        <button
-          type="button"
-          onClick={() => navigate(`/play/${campaignId}/${saveId}`)}
-          style={{
-            backgroundColor: "var(--color-accent)",
-            color: "var(--color-bg-base)",
-            fontWeight: "bold",
-            padding: "var(--space-3) var(--space-6)",
-          }}
-        >
-          Resume Exploration →
-        </button>
-      </section>
-    );
-  }
+  const { combat, allowed_actions } = view;
+  const activeEntityId = combat.order[combat.current_index] ?? "";
+  const isPlayerTurn = combat.participants[activeEntityId]?.side === "party";
+
+  const enemies = Object.entries(combat.participants)
+    .filter(([, p]) => p.side === "enemy")
+    .map(([id, p]) => ({
+      enemy_id: id,
+      name: id,
+      hp: p.hp.current,
+      max_hp: p.hp.maximum,
+      is_defeated: p.hp.current <= 0,
+    }));
+
+  const availableSkills = allowed_actions
+    .filter((a) => a.action_kind === "use_skill" && a.skill_id)
+    .map((a) => a.skill_id as string);
+  const canFlee = allowed_actions.some((a) => a.action_kind === "flee");
+  const canYield = allowed_actions.some((a) => a.action_kind === "yield");
 
   return (
     <section aria-label="Tactical Combat" style={{ maxWidth: "900px", margin: "0 auto" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: "1rem",
+        }}
+      >
         <h1>⚔️ Tactical Encounter</h1>
         <span
           style={{
@@ -133,27 +123,33 @@ export function CombatScreen(): React.JSX.Element {
       </div>
 
       <CombatTurnTracker
-        round={combatState.round}
-        turnOrder={combatState.turn_order}
-        activeEntityId={combatState.active_entity_id}
-        isPlayerTurn={combatState.is_player_turn}
+        round={combat.round}
+        turnOrder={combat.order}
+        activeEntityId={activeEntityId}
+        isPlayerTurn={isPlayerTurn}
       />
 
       <CombatEnemyList
-        enemies={combatState.enemies}
+        enemies={enemies}
         selectedTargetId={selectedTargetId}
         onSelectTarget={setSelectedTargetId}
       />
 
       <CombatCommandBar
-        availableSkills={combatState.available_skills}
-        canFlee={combatState.can_flee}
-        canYield={combatState.can_yield}
-        isPlayerTurn={combatState.is_player_turn}
+        availableSkills={availableSkills}
+        canFlee={canFlee}
+        canYield={canYield}
+        isPlayerTurn={isPlayerTurn}
         submitting={submitting}
         selectedTargetId={selectedTargetId}
         onExecuteCommand={handleCommand}
       />
+
+      <div style={{ marginTop: "1rem" }}>
+        <button type="button" onClick={() => navigate(`/play/${campaignId}/${saveId}`)}>
+          Return to exploration
+        </button>
+      </div>
     </section>
   );
 }
