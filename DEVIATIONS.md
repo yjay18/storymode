@@ -235,3 +235,31 @@ field defaulted to `[]`. Backend gates green (588 passed).
 that omits *content* produces a thinner-but-valid draft; cross-file validation at review and
 publish still catches a hollow world, and drafts are editable before publish. It does not
 help when a model omits a required scalar/object — those still fail the stage.
+
+### Follow-up 4 — live generation iteration with qwen3.5:9b (2026-09-02)
+
+User-authorised live generation run (`make generate`, qwen3.5:9b). Iterating stage by stage
+(resuming the same draft, so completed stages are cached), robustness was added until each
+stage passed:
+
+- **Stages 1-4** (meta_style, rules, areas, plot) now validate. `rules` previously stalled on
+  a dropped `relationship_edges` list — fixed by the schema-driven list coercion (Follow-up 3).
+- **areas** truncated mid-JSON under the old skeleton-sized `num_predict` (it capped ~2k tokens
+  while areas needs ~3.5k). The cap was widened.
+- **characters** failed because a companion's `starting_loadout` referenced a skill absent from
+  its `starting_skill_ids`. Added `normalize_stage_semantics`: drop loadout entries a companion
+  does not know (conservative — no fabricated knowledge). Companions now validate.
+- **skills** was the bottleneck: qwen3.5:9b rambled to ~40k chars (a legitimate skills file is
+  ~24.8k), produced unterminated JSON, and the third attempt **timed out** — generating toward
+  a 12,288-token cap at ~6.6 tok/s exceeds a 30-min timeout. Two fixes: (a) recalibrated the cap
+  to `max(4096, min(8192, len(skeleton)*6))` so the largest legitimate stage (~8k tokens) fits
+  under the timeout; (b) tightened the skills prompt (`campaign-skills/1.1.0`) to exactly 4
+  combat + 3 non-combat skills, one base_effect per level, `effect_die` null, small trees —
+  cutting output size sharply. `num_ctx` is 24576 to fit the large late-stage prompt plus output.
+- Added `make generate DRAFT=<id>` to resume a stalled draft without redoing completed stages.
+
+**Not completed to publish:** the user chose to stop before another model run, so items_enemies
+and balance were not exercised live and no pack was published this session. The stalled draft
+(`draft-dc88f606`) has stages 1-5 valid and is resumable with
+`STORYMODE_MODEL_TEXT=qwen3.5:9b STORYMODE_OLLAMA_TIMEOUT_SECONDS=1800 make generate DRAFT=draft-dc88f606`.
+All fixes are covered by mocked tests; backend gates green (588 passed).

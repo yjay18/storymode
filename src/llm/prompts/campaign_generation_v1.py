@@ -21,7 +21,7 @@ WORLD_PROMPT_VERSION = "campaign-world/1.0.0"
 AREAS_PROMPT_VERSION = "campaign-areas/1.0.0"
 PLOT_PROMPT_VERSION = "campaign-plot/1.0.0"
 CHARACTERS_PROMPT_VERSION = "campaign-characters/1.0.0"
-SKILLS_PROMPT_VERSION = "campaign-skills/1.0.0"
+SKILLS_PROMPT_VERSION = "campaign-skills/1.1.0"
 ITEMS_ENEMIES_PROMPT_VERSION = "campaign-items_enemies/1.0.0"
 BALANCE_PROMPT_VERSION = "campaign-balance/1.0.0"
 STAGE_REPAIR_PROMPT_VERSION = "campaign-repair/1.0.0"
@@ -264,14 +264,16 @@ def render_skills_prompt(
         SKILLS_PROMPT_VERSION,
         request_id,
         [
-            "Define every skill- and tree- id that earlier stages reference (see the index) "
-            "plus 4-6 combat skills and 3-5 non-combat skills in total.",
-            "Each combat skill has exactly five levels numbered 1 to 5 with mana_cost 0-10; "
-            "base_effects use kinds damage, heal, buff, debuff, resource_drain, or "
-            "resource_restore with integer magnitude; status_id stays null.",
+            "Define every skill- and tree- id that earlier stages reference (see the index), "
+            "then STOP: provide exactly 4 combat skills and exactly 3 non-combat skills, no "
+            "more. Keep the whole response compact.",
+            "Each combat skill has exactly five levels numbered 1 to 5 with mana_cost 0-10. "
+            "Each level's base_effects has EXACTLY ONE effect (kind: damage, heal, buff, "
+            "debuff, resource_drain, or resource_restore; integer magnitude; status_id null). "
+            "Set effect_die to null for every level. Every string stays under 100 characters.",
             "acquisition_source_ids are background, faction, companion, or milestone ids.",
             "Each skill_tree has an owner_companion_id from the characters stage and nodes "
-            "whose skill_id exist here; edges reference node ids.",
+            "whose skill_id exist here; edges reference node ids. Keep trees small (2-4 nodes).",
             "fusion_recipes is an empty list.",
         ],
         brief,

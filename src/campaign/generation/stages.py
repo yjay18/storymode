@@ -165,6 +165,32 @@ def coerce_to_contract_schema(data: Any, contract_cls: type[BaseModel]) -> Any:
     return data
 
 
+def normalize_stage_semantics(data: Any, contract_cls: type[BaseModel]) -> None:
+    """Best-effort fixes for common small-model cross-field mistakes, in place.
+
+    Unlike the schema-driven list coercion, these target specific contract invariants that
+    local models violate. Each fix is conservative: it removes an invented reference rather
+    than fabricating content, so the strict validation that follows still governs.
+    """
+    if contract_cls.__name__ != "CharactersStageResponse":
+        return
+    if not isinstance(data, dict):
+        return
+    characters = data.get("characters")
+    companions = characters.get("companions") if isinstance(characters, dict) else None
+    if not isinstance(companions, list):
+        return
+    for comp in companions:
+        if not isinstance(comp, dict):
+            continue
+        # A companion's starting_loadout must be a subset of its starting_skill_ids; models
+        # routinely list a loadout skill they never added to known skills. Drop the strays.
+        known = set(comp.get("starting_skill_ids") or [])
+        loadout = comp.get("starting_loadout")
+        if isinstance(loadout, list):
+            comp["starting_loadout"] = [s for s in loadout if s in known]
+
+
 def artifact_id_index(draft: DraftState) -> str:
     """List every `id` defined by valid stages, and ids referenced but not yet defined."""
     defined: dict[str, str] = {}
@@ -255,11 +281,13 @@ class StageRunner:
             + artifact_id_index(updated_draft)
         )
         prompt = prompt_generator() + limits
-        # ponytail: cap generation length from the skeleton size so an oversized or
-        # runaway reply is cut and fails validation fast, rather than grinding to the 16k
-        # context limit (stage 6 used to be cut off mid-JSON around 1,600 lines). Tune the
-        # multiplier if a legitimately large stage response is ever truncated.
-        num_predict = max(2048, min(8192, len(skeleton)))
+        # Bound generation length. The skeleton shows ONE item per list; a real stage expands
+        # every list, so scale above the skeleton — but cap so a slow local model finishes
+        # within the request timeout. The largest legitimate stage (skills) is ~8k tokens; at
+        # ~6-7 tok/s an 8192 cap stays under a 30-min timeout, whereas a higher cap let the
+        # model ramble to ~40k chars and time out mid-JSON.
+        # ponytail: tune the multiplier/cap if a legitimately large stage is ever truncated.
+        num_predict = max(4096, min(8192, len(skeleton) * 6))
         last_raw_response = ""
         last_diagnostics: list[str] = []
 
@@ -270,8 +298,9 @@ class StageRunner:
                     model=self.model_name,
                     messages=[ChatMessage(role="user", content=prompt)],
                     format_json=True,
-                    # Skeleton + limits + id index + brief exceed Ollama's 4k default window.
-                    options=ChatOptions(num_ctx=16384, num_predict=num_predict),
+                    # Skeleton + limits + id index + brief plus a long JSON reply need a wide
+                    # window; 24k leaves room for prompt + num_predict without truncation.
+                    options=ChatOptions(num_ctx=24576, num_predict=num_predict),
                 )
                 last_raw_response = chat_res.message.content
 
@@ -281,6 +310,7 @@ class StageRunner:
                 parsed = json.loads(last_raw_response)
                 if isinstance(parsed, dict):
                     coerce_to_contract_schema(parsed, contract_cls)
+                    normalize_stage_semantics(parsed, contract_cls)
                 validated = contract_cls.model_validate_json(json.dumps(parsed))
 
                 # Success!

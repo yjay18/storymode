@@ -28,8 +28,13 @@ play:
 	uv run python scripts/first_run.py
 
 # Generate and publish a campaign headlessly: make generate PREMISE="..."
+# Resume a stalled draft: make generate DRAFT=<draft-id>
 generate:
+ifdef DRAFT
+	uv run python scripts/generate_campaign.py --draft "$(DRAFT)"
+else
 	uv run python scripts/generate_campaign.py "$(PREMISE)"
+endif
 
 # Opt-in tests against the real local model.
 live:
