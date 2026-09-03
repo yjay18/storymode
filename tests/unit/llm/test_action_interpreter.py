@@ -164,9 +164,15 @@ async def test_interpret_action_fails_after_two_malformed_attempts(
 
 
 @pytest.mark.anyio
-async def test_interpret_action_request_id_mismatch(
+async def test_interpret_action_assigns_server_request_id(
     sample_packet: ActionContextPacketV1,
 ) -> None:
+    """A model that invents its own request_id succeeds; the server id is assigned.
+
+    Small local models do not echo the request_id, so the interpreter overwrites it with the
+    packet's authoritative value instead of rejecting the proposal.
+    """
+
     def handler(request: httpx.Request) -> httpx.Response:
         bad_id_dict = _valid_proposal_dict(request_id="wrong-id-999")
         return httpx.Response(
@@ -180,9 +186,10 @@ async def test_interpret_action_request_id_mismatch(
 
     result = await interpreter.interpret_action(sample_packet)
 
-    assert isinstance(result, InterpretationFailure)
-    assert result.attempts == 2
-    assert result.reason == FailureReason.REQUEST_ID_MISMATCH
+    assert isinstance(result, InterpretationSuccess)
+    assert result.attempts == 1
+    assert result.repaired is False
+    assert result.proposal.request_id == sample_packet.request_id
 
 
 @pytest.mark.anyio

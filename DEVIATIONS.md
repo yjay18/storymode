@@ -152,11 +152,8 @@ User-authorised live run. Results:
     'act-search-room-1'`. The interpreter (`llm/orchestration/action_interpreter.py:100`)
     requires the model to echo `packet.request_id` verbatim, but the interpreter prompt
     (`llm/prompts/action_interpreter_v1.py`) never instructs it to, so qwen3.5:9b invents
-    an id. Pre-existing (LLM-04), outside Milestone 8's changed files; not fixed here and
-    the guard was not weakened. **Recommended follow-up slice:** have the interpreter treat
-    `request_id` as a server-owned correlation field (inject the packet's id before
-    validation) or add an explicit "echo request_id exactly" instruction + few-shot, with
-    contract tests.
+    an id. Pre-existing (LLM-04), outside Milestone 8's changed files. **Fixed as a
+    follow-up (see below).**
 
 - **Full generation (`make generate`): stalls at stage 2.** meta_style validates on the
   first attempt; `rules` (WorldStageResponse) fails all 3 attempts because the model omits
@@ -177,4 +174,21 @@ with correct 503/422 envelopes, stage-1 generation valid, and the split pipeline
 `load_campaign`-valid pack in the mocked all-stages test. The two live failures are
 pre-existing model-compliance gaps outside this milestone's scope; PLAY-06 is left unchecked
 pending either a larger/more-compliant model (e.g. the installed `qwen3.8`) or the
-interpreter/generation follow-up slices above.
+generation follow-up.
+
+### Follow-up fix — interpreter treats request_id as server-owned (small-model support)
+
+**Why:** the PLAY-06 live run showed the action interpreter 422-ing every free-text action
+because the small model (qwen3.5:9b) did not echo the packet's `request_id`, and the prompt
+never asked it to. This made the browser play loop unusable with small local models.
+
+**Change (`src/llm/orchestration/action_interpreter.py`):** `_validate_and_parse_proposal`
+now assigns the packet's authoritative `request_id` to the proposal instead of rejecting on
+mismatch, and the `REQUEST_ID_MISMATCH` failure reason was removed. This is a synchronous
+single-response call, so the reply can only belong to this request; the correlation field is
+server-owned and no longer depends on untrusted model output. Contract-version,
+prompt-version, and candidate-ordinal validations are unchanged — no safety check was
+weakened. Test `test_interpret_action_request_id_mismatch` was rewritten to
+`test_interpret_action_assigns_server_request_id` (asserts success + server id assigned).
+Backend gates green (585 passed). Not weakening: the guard verified nothing the server did
+not already own; the fix makes correlation authoritative rather than advisory.

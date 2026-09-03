@@ -1,7 +1,9 @@
 """Action interpretation orchestration with one-shot repair and typed errors (LLM-05).
 
 Guarantees:
-- Validates contract version, prompt version, request_id, and candidate ordinals.
+- Validates contract version, prompt version, and candidate ordinals.
+- Assigns the server-owned request_id to the proposal (small local models do not reliably
+  echo it), so correlation never depends on untrusted model output.
 - Exactly ONE repair attempt on schema/ordinal/validation failure with identical facts.
 - No repair attempt for timeout or transport unavailability.
 - Returns typed InterpretationSuccess or InterpretationFailure without mutating state.
@@ -34,7 +36,6 @@ class FailureReason(enum.StrEnum):
     SCHEMA_VALIDATION_FAILED = "schema_validation_failed"
     INVALID_ORDINAL = "invalid_ordinal"
     VERSION_MISMATCH = "version_mismatch"
-    REQUEST_ID_MISMATCH = "request_id_mismatch"
     TIMEOUT = "timeout"
     UNAVAILABLE = "unavailable"
     OVERSIZED_RESPONSE = "oversized_response"
@@ -96,13 +97,12 @@ def _validate_and_parse_proposal(
             f"got '{proposal.prompt_version}'",
         )
 
-    # Validate request_id correlation
+    # request_id is a server-owned correlation field. This is a synchronous single-response
+    # call, so the reply can only belong to this request; small local models do not reliably
+    # echo the id (the prompt never asks them to), so assign the authoritative value from the
+    # packet rather than rejecting an otherwise-valid proposal.
     if proposal.request_id != packet.request_id:
-        return (
-            None,
-            FailureReason.REQUEST_ID_MISMATCH,
-            f"Request ID mismatch: expected '{packet.request_id}', got '{proposal.request_id}'",
-        )
+        proposal = proposal.model_copy(update={"request_id": packet.request_id})
 
     # Validate candidate ordinals
     max_ordinal = len(packet.candidates)
