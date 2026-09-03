@@ -1,10 +1,12 @@
 """Schema-derived prompt material: constraint hints, JSON skeletons, and the id index."""
 
 import json
+from typing import Any
 
 from campaign.builder.models import BuilderBrief, DraftStage, DraftStageState, DraftState
 from campaign.generation.stages import (
     artifact_id_index,
+    coerce_to_contract_schema,
     schema_constraint_hints,
     schema_skeleton,
 )
@@ -71,6 +73,26 @@ def test_meta_style_hints_state_lengths_enums_and_item_bounds() -> None:
     assert "meta.default_difficulty: one of story|normal|hard" in hints
     assert "style.style_bible.examples: list, 1-5 items" in hints
     assert len(hints) == len(set(hints))
+
+
+def test_coerce_fills_missing_and_wraps_scalar_nested_lists() -> None:
+    # A faction missing relationship_edges (the live stage-2 stall) and a scalar list field.
+    data: dict[str, Any] = {
+        "contract_version": 1,
+        "prompt_version": "campaign-rules/1.0.0",
+        "request_id": "req-1",
+        "stage": "rules",
+        "world": {
+            "world": {
+                "factions": [
+                    {"id": "guild-salt", "name": "Salt Guild"},  # no relationship_edges
+                ],
+            },
+        },
+    }
+    coerce_to_contract_schema(data, WorldStageResponse)
+    faction = data["world"]["world"]["factions"][0]
+    assert faction["relationship_edges"] == []  # missing required list -> []
 
 
 def test_hints_follow_refs_lists_and_nested_models() -> None:

@@ -3,6 +3,7 @@
 import datetime
 import json
 from pathlib import Path
+from typing import Any
 
 import httpx
 import pytest
@@ -29,8 +30,8 @@ from llm.ollama_client import OllamaClient
 _SALT_LEDGER = Path(__file__).resolve().parents[3] / "campaigns" / "salt-ledger"
 
 
-def _salt(name: str) -> dict[str, object]:
-    data: dict[str, object] = json.loads((_SALT_LEDGER / name).read_text(encoding="utf-8"))
+def _salt(name: str) -> dict[str, Any]:
+    data: dict[str, Any] = json.loads((_SALT_LEDGER / name).read_text(encoding="utf-8"))
     return data
 
 
@@ -281,3 +282,30 @@ def test_legacy_four_key_skills_artifact_migrates_on_load(tmp_path: Path) -> Non
     assert "enemies" in migrated.stages["items_enemies"].artifact_data
     assert migrated.stages["balance"].artifact_data is not None
     assert "balance" in migrated.stages["balance"].artifact_data
+
+
+@pytest.mark.anyio
+async def test_stage_validates_when_model_drops_a_required_nested_list(tmp_path: Path) -> None:
+    """Robustness: a dropped required list (the live stage-2 stall) no longer fails the stage."""
+    draft_repo = DraftRepository(tmp_path)
+    brief = BuilderBrief(title="Salt", premise="A salt city.")
+    draft_repo.save_draft(create_initial_draft_state(EntityId("draft-coerce"), brief))
+
+    world = _salt("world.json")
+    # Simulate the small-model omission observed live: a faction without relationship_edges.
+    world["world"]["factions"][0].pop("relationship_edges", None)
+    response = _wrap("rules", world=world)
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        return httpx.Response(200, json={"message": {"role": "assistant", "content": response}})
+
+    http_client = httpx.AsyncClient(transport=httpx.MockTransport(handler))
+    ollama_client = OllamaClient(base_url="http://127.0.0.1:11434", client=http_client)
+    orchestrator = GenerationOrchestrator(StageRunner(ollama_client, draft_repo), draft_repo)
+
+    result = await orchestrator.generate_stage("draft-coerce", "rules")
+
+    stage = result.stages["rules"]
+    assert stage.status == "valid", [d.message[:200] for d in stage.diagnostics]
+    assert stage.artifact_data is not None
+    assert stage.artifact_data["world"]["world"]["factions"][0]["relationship_edges"] == []

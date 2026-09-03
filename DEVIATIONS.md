@@ -213,3 +213,25 @@ separate slice, not a small-model or interpreter issue.
 **Generation** still stalls at stage 2 with qwen3.5:9b (model omits a required WorldFile
 field); unchanged by these interpreter fixes and still recommended for a bigger model
 (`qwen3.8`) or a generation-robustness slice.
+
+### Follow-up 3 — generation robustness: schema-driven list coercion
+
+**Why:** the PLAY-06 generation run stalled at stage 2 because qwen3.5:9b dropped the
+required `world.factions[].relationship_edges` list on one faction, failing all 3 attempts.
+Same class as the interpreter quirks — small models drop or scalarize list fields.
+
+**Change (`src/campaign/generation/stages.py`):** `coerce_to_contract_schema` walks the
+stage contract's JSON schema and, before strict validation, fills every missing/null
+array-typed field with `[]` and wraps a scalar into a one-element list — at any nesting
+depth. Only arrays are touched: missing required scalars/objects still fail (no content is
+fabricated beyond empty lists), and the result is still validated with
+`model_validate_json`, so the strict contract still governs. Applied in `execute_stage`
+before validation. Not run against a live model (user deferred that); verified with mocks:
+a unit test on the coercion and a stage-runner test that feeds `world.json` with a
+faction's `relationship_edges` removed and asserts the `rules` stage now validates with the
+field defaulted to `[]`. Backend gates green (588 passed).
+
+**Ceiling:** this makes a dropped list an empty list rather than a hard failure, so a model
+that omits *content* produces a thinner-but-valid draft; cross-file validation at review and
+publish still catches a hollow world, and drafts are editable before publish. It does not
+help when a model omits a required scalar/object — those still fail the stage.

@@ -123,6 +123,48 @@ def schema_skeleton(contract_cls: type[BaseModel]) -> str:
     return json.dumps(build(schema, "root", 0), indent=1)
 
 
+def coerce_to_contract_schema(data: Any, contract_cls: type[BaseModel]) -> Any:
+    """Best-effort normalization of small-model stage output before strict validation.
+
+    Local models routinely drop a required list field or emit a scalar where a list is
+    expected (live runs stalled at stage 2 when a faction omitted `relationship_edges`).
+    Using the contract's own JSON schema, this walks the data and, for every array-typed
+    field, fills a missing/null one with `[]` and wraps a scalar into a one-element list.
+    Only arrays are touched — missing scalars/objects still fail validation, and the caller
+    still validates strictly afterward, so this never fabricates content beyond empty lists.
+    """
+    schema = contract_cls.model_json_schema()
+    defs: dict[str, Any] = schema.get("$defs", {})
+
+    def resolve(node: dict[str, Any]) -> dict[str, Any]:
+        if "$ref" in node:
+            target: dict[str, Any] = defs[node["$ref"].rsplit("/", 1)[-1]]
+            return target
+        for option in node.get("anyOf", []):
+            if option.get("type") != "null":
+                return resolve(option)
+        return node
+
+    def walk(node: dict[str, Any], value: Any) -> None:
+        node = resolve(node)
+        kind = node.get("type")
+        if kind == "object" and isinstance(value, dict):
+            for name, prop in node.get("properties", {}).items():
+                if resolve(prop).get("type") == "array":
+                    if value.get(name) is None:
+                        value[name] = []
+                    elif not isinstance(value[name], list):
+                        value[name] = [value[name]]
+                if name in value:
+                    walk(prop, value[name])
+        elif kind == "array" and isinstance(value, list) and "items" in node:
+            for item in value:
+                walk(node["items"], item)
+
+    walk(schema, data)
+    return data
+
+
 def artifact_id_index(draft: DraftState) -> str:
     """List every `id` defined by valid stages, and ids referenced but not yet defined."""
     defined: dict[str, str] = {}
@@ -233,8 +275,13 @@ class StageRunner:
                 )
                 last_raw_response = chat_res.message.content
 
-                # Validate JSON directly against stage contract
-                validated = contract_cls.model_validate_json(last_raw_response)
+                # Best-effort normalize small-model quirks (dropped/scalarized lists), then
+                # validate strictly against the stage contract. Re-serialize so validation
+                # keeps model_validate_json's lax JSON coercion (e.g. enum strings).
+                parsed = json.loads(last_raw_response)
+                if isinstance(parsed, dict):
+                    coerce_to_contract_schema(parsed, contract_cls)
+                validated = contract_cls.model_validate_json(json.dumps(parsed))
 
                 # Success!
                 stage_data: dict[str, Any] = validated.model_dump(mode="json")
