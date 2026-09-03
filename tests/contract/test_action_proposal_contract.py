@@ -34,6 +34,30 @@ def test_parse_valid_json_block() -> None:
     assert proposal.operation == "inspect"
 
 
+def test_parse_coerces_scalar_list_fields_from_small_models() -> None:
+    # Small local models often emit a bare scalar where a one-item list is expected.
+    text = """```json
+{
+  "contract_version": 1,
+  "prompt_version": "1.0",
+  "request_id": "req-1",
+  "status": "valid",
+  "operation": "search",
+  "verb": "search",
+  "entity_mentions": {"text": "the room", "role": "target", "candidate_ordinal": 1},
+  "capability_mentions": "skill-1",
+  "intended_effect": "Search the room",
+  "challenge_label": "standard",
+  "stakes": "You might be noticed"
+}
+```"""
+    proposal = parse_llm_response(text)
+    assert proposal.capability_mentions == ["skill-1"]
+    assert proposal.stakes == ["You might be noticed"]
+    assert len(proposal.entity_mentions) == 1
+    assert proposal.entity_mentions[0].text == "the room"
+
+
 def test_parse_missing_block() -> None:
     text = "Just some text, no JSON."
     with pytest.raises(ValueError, match="No JSON block found"):

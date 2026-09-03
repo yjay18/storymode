@@ -2,10 +2,24 @@
 
 import json
 import re
+from typing import Any
 
 from llm.contracts.action import ActionProposal
 
 _JSON_BLOCK_RE = re.compile(r"```(?:json)?\s*(\{.*?\})\s*```", re.DOTALL)
+
+# ActionProposal fields that are lists but which small local models often emit as a bare
+# scalar (a single string/object). Wrapping them keeps small models usable; the result is
+# still validated strictly against the contract below.
+_LIST_FIELDS = ("entity_mentions", "capability_mentions", "stakes")
+
+
+def _coerce_scalar_lists(data: dict[str, Any]) -> None:
+    """Wrap a scalar into a one-element list for known list-typed fields, in place."""
+    for field in _LIST_FIELDS:
+        value = data.get(field)
+        if value is not None and not isinstance(value, list):
+            data[field] = [value]
 
 
 def parse_llm_response(text: str) -> ActionProposal:
@@ -36,4 +50,5 @@ def parse_llm_response(text: str) -> ActionProposal:
     if not isinstance(data, dict):
         raise ValueError("Parsed JSON is not an object")
 
+    _coerce_scalar_lists(data)
     return ActionProposal.model_validate(data)
