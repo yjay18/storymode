@@ -192,3 +192,24 @@ weakened. Test `test_interpret_action_request_id_mismatch` was rewritten to
 `test_interpret_action_assigns_server_request_id` (asserts success + server id assigned).
 Backend gates green (585 passed). Not weakening: the guard verified nothing the server did
 not already own; the fix makes correlation authoritative rather than advisory.
+
+**Follow-up 2 — scalar→list coercion in `parse_llm_response`.** With request_id fixed, the
+live round trip surfaced the next small-model quirk: qwen3.5:9b emitted
+`capability_mentions: "skill-1"` (a bare string) where the contract wants a list. The parser
+now wraps a scalar into a one-element list for the proposal's list fields (`entity_mentions`,
+`capability_mentions`, `stakes`) before strict validation; the result is still validated, so
+genuinely malformed output still fails. Contract test added.
+
+**Live re-verification (qwen3.5:9b): all three live tests pass** (`3 passed in ~131s`). The
+interpret → resolve → narrate round trip completes with a small model. The live test's
+free-text prompt was also corrected to reference the `Object` that exists in the
+`minimal-campaign` fixture — the previous "search the room" prompt referenced an entity
+absent from the fixture, which the engine's world-reference validation correctly rejects
+(`No candidate found for 'room'`) regardless of model size. That rejection surfaced as a
+`422 validation_error`; whether an unresolvable entity reference should instead degrade to
+an in-world redirect (per `docs/ux/exploration-ui.md`) is an engine/route concern for a
+separate slice, not a small-model or interpreter issue.
+
+**Generation** still stalls at stage 2 with qwen3.5:9b (model omits a required WorldFile
+field); unchanged by these interpreter fixes and still recommended for a bigger model
+(`qwen3.8`) or a generation-robustness slice.

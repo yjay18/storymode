@@ -100,8 +100,10 @@ def test_interpreter_and_narrator_round_trip(settings: Settings, ollama: OllamaC
             "campaign_id": "minimal-campaign",
             "save_id": save_id,
             "command_id": "cmd-live-1",
+            # Reference the Object that actually exists in the minimal-campaign fixture so
+            # the engine's world-reference validation can resolve the mention.
             "expected_revision": 1,
-            "player_text": "I search the room carefully for anything unusual.",
+            "player_text": "I carefully inspect the Object for anything unusual.",
         },
     )
     assert submitted.status_code == 200, submitted.text
