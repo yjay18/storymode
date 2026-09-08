@@ -3,6 +3,7 @@ import { defaultApiClient } from "../../api/client";
 import { generateCommandId } from "../../api/commands";
 import { ApiClientError } from "../../api/errors";
 import type { FusionRecipeView, ProgressionViewResponse } from "../../api/schema";
+import { InventoryPanel } from "../inventory/InventoryPanel";
 
 interface CharacterPanelProps {
   campaignId: string;
@@ -232,6 +233,9 @@ export function CharacterPanel({
           </ul>
         )}
       </div>
+
+      {/* Same progression payload, so it needs no fetch of its own. */}
+      <InventoryPanel player={player} />
     </section>
   );
 }

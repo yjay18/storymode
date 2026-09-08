@@ -1557,7 +1557,7 @@ full backend and frontend gates before each.
   - Accept: the Fusion section renders served data, and no eligibility rule is
     duplicated in the route or the client.
 
-- [ ] **PLAY-11 — Mount the inventory panel in the play screen**
+- [x] **PLAY-11 — Mount the inventory panel in the play screen**
   - Depends: PLAY-01
   - Read: `src/ui/src/features/inventory/InventoryPanel.tsx`,
     `src/ui/src/features/exploration/ExplorationScreen.tsx`,

@@ -58,7 +58,7 @@ const progression: ProgressionViewResponse = {
     mana_maximum: 10,
     combat_loadout: [],
     known_skills: [{ skill_id: "quiet_step", current_level: 1 }],
-    inventory: [],
+    inventory: [{ item_id: "rope", quantity: 2 }],
   },
 };
 
@@ -204,6 +204,8 @@ describe("ExplorationScreen", () => {
     const panel = screen.getByLabelText("Character Sheet");
     expect(panel).toHaveTextContent("1 token");
     expect(panel).toHaveTextContent("quiet_step (Lv 1)");
+    // Inventory rides the same progression payload and is reachable in the play screen.
+    expect(screen.getByLabelText("Inventory & Bag")).toHaveTextContent("rope");
 
     progressionSpy.mockClear();
     fireEvent.change(screen.getByLabelText(/What do you want to do\?/i), {

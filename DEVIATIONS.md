@@ -331,3 +331,22 @@ a failure leaves the section empty rather than blanking the character sheet, sin
 sheet's primary data is progression.
 
 `salt-ledger` authoring real fusion recipes is campaign content, not a code slice.
+
+### PLAY-11 — the inventory panel is presentational, so it is nested, not mounted beside
+
+**Original spec:** the slice says to mount `InventoryPanel` in the utility rail beside the
+character sheet, keyed on the save revision, "matching how `CharacterPanel` is mounted".
+
+**Deviation:** that assumed `InventoryPanel` was a self-fetching container like
+`CharacterPanel`. It is not — it takes a `player: PlayerProgressionView` prop and renders it.
+Mounting it in the rail would have meant either a second fetch of the same `progression`
+endpoint or new plumbing in `ExplorationScreen` to fetch and refresh progression for it.
+
+`CharacterPanel` already holds exactly that payload, so it renders
+`<InventoryPanel player={player} />` at the end of its own section instead: one import and
+one line, no extra request, and it inherits the revision keying that already keeps the
+character sheet fresh. Both panels keep their own `aria-label`, so they remain separately
+addressable; `InventoryPanel` and its test are untouched.
+
+Consequence: the inventory is not shown when progression fails to load. They are the same
+payload, so there is nothing to show in that case anyway.
