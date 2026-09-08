@@ -4,6 +4,7 @@ import { defaultApiClient } from "../../api/client";
 import { generateCommandId } from "../../api/commands";
 import { ApiConflictError, ApiHttpError } from "../../api/errors";
 import type { EncounterView, PendingCheck, SaveSummaryResponse } from "../../api/schema";
+import { CharacterPanel } from "../character/CharacterPanel";
 import { ActionComposer } from "./ActionComposer";
 import { CheckPanel } from "./CheckPanel";
 import { ContextRail } from "./ContextRail";
@@ -292,7 +293,7 @@ export function ExplorationScreen(): React.JSX.Element {
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "1fr 280px",
+          gridTemplateColumns: "1fr 340px",
           gap: "2rem",
           alignItems: "flex-start",
         }}
@@ -325,6 +326,10 @@ export function ExplorationScreen(): React.JSX.Element {
             engaging={engaging}
             onEngage={handleEngage}
           />
+          {campaignId && saveId && (
+            // Keyed on revision so a committed action re-reads progression (XP, HP, tokens).
+            <CharacterPanel key={state.revision} campaignId={campaignId} saveId={saveId} />
+          )}
           <RollHistory history={rollHistory} />
         </div>
       </div>

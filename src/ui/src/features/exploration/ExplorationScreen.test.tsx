@@ -5,6 +5,7 @@ import { defaultApiClient } from "../../api/client";
 import { ApiHttpError } from "../../api/errors";
 import type {
   PendingCheck,
+  ProgressionViewResponse,
   ResolveCheckResponse,
   SaveSummaryResponse,
   SubmitActionResponse,
@@ -41,7 +42,29 @@ const pendingCheck: PendingCheck = {
   allowed_outcomes: { natural_1: [], low: [], standard: [], strong: [], natural_20: [] },
 };
 
+const progression: ProgressionViewResponse = {
+  save_id: "save-1",
+  revision: 1,
+  player: {
+    id: "player-1",
+    name: "Eldrin",
+    level: 2,
+    xp: 40,
+    upgrade_tokens: 1,
+    hp_current: 18,
+    hp_maximum: 22,
+    mana_current: 6,
+    mana_maximum: 10,
+    combat_loadout: [],
+    known_skills: [{ skill_id: "quiet_step", current_level: 1 }],
+    inventory: [],
+  },
+};
+
 function mockNoCombatAndCampaign() {
+  const progressionSpy = vi
+    .spyOn(defaultApiClient, "getProgression")
+    .mockResolvedValue(progression);
   vi.spyOn(defaultApiClient, "getCombatView").mockResolvedValue({
     save_id: "save-1",
     campaign_id: "world-1",
@@ -61,6 +84,7 @@ function mockNoCombatAndCampaign() {
     area_count: 0,
     has_valid_point_buy: true,
   });
+  return progressionSpy;
 }
 
 function renderScreen() {
@@ -103,7 +127,7 @@ describe("ExplorationScreen", () => {
 
     renderScreen();
 
-    await waitFor(() => expect(screen.getByText("Eldrin")).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText("forgotten_library")).toBeInTheDocument());
 
     fireEvent.change(screen.getByLabelText(/What do you want to do\?/i), {
       target: { value: "pick the lock" },
@@ -139,7 +163,7 @@ describe("ExplorationScreen", () => {
 
     renderScreen();
 
-    await waitFor(() => expect(screen.getByText("Eldrin")).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText("forgotten_library")).toBeInTheDocument());
 
     fireEvent.change(screen.getByLabelText(/What do you want to do\?/i), {
       target: { value: "look around" },
@@ -151,5 +175,37 @@ describe("ExplorationScreen", () => {
     });
     // Composer remains available.
     expect(screen.getByLabelText(/What do you want to do\?/i)).toBeInTheDocument();
+  });
+
+  it("mounts the character sheet and re-reads it when the save revision changes", async () => {
+    const progressionSpy = mockNoCombatAndCampaign();
+    const getSaveSpy = vi.spyOn(defaultApiClient, "getSave");
+    getSaveSpy.mockResolvedValueOnce(baseSave); // initial load (rev 1)
+    getSaveSpy.mockResolvedValue({ ...baseSave, revision: 2 }); // refresh after the action
+    vi.spyOn(defaultApiClient, "submitAction").mockResolvedValue({
+      save_id: "save-1",
+      campaign_id: "world-1",
+      revision: 2,
+      has_pending_check: false,
+      narration: "You scan the shelves.",
+    });
+
+    renderScreen();
+
+    await waitFor(() =>
+      expect(screen.getByLabelText("Character Sheet")).toHaveTextContent("Level 2"),
+    );
+    const panel = screen.getByLabelText("Character Sheet");
+    expect(panel).toHaveTextContent("1 token");
+    expect(panel).toHaveTextContent("quiet_step (Lv 1)");
+
+    progressionSpy.mockClear();
+    fireEvent.change(screen.getByLabelText(/What do you want to do\?/i), {
+      target: { value: "look around" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: /Take Action/i }));
+
+    // The committed revision changed, so the panel refetches rather than showing stale XP/HP.
+    await waitFor(() => expect(progressionSpy).toHaveBeenCalled());
   });
 });

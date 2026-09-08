@@ -263,3 +263,38 @@ and balance were not exercised live and no pack was published this session. The 
 (`draft-dc88f606`) has stages 1-5 valid and is resumable with
 `STORYMODE_MODEL_TEXT=qwen3.5:9b STORYMODE_OLLAMA_TIMEOUT_SECONDS=1800 make generate DRAFT=draft-dc88f606`.
 All fixes are covered by mocked tests; backend gates green (588 passed).
+
+### Follow-up 5 — mount the character panel in the play screen (2026-09-08)
+
+**Why:** the PLAY-04 entry above records that `CharacterPanel` was built but "not yet mounted
+in a play screen — that wiring is outside PLAY-04's listed files". It stayed unreachable in
+the browser, so progression (level, XP, tokens, loadout, upgrade) could not be exercised in
+the PLAY-06 walk even though `docs/ux/exploration-ui.md` lists character among the screen's
+utility panels. User-requested; not a checklist slice.
+
+**Change (`src/ui/src/features/exploration/ExplorationScreen.tsx`):** the panel is rendered
+in the right-hand utility rail beside `ContextRail` and `RollHistory` (the rail already hosts
+one utility panel, and the doc lists both there). It is a self-contained container, so it
+needs only `campaignId`/`saveId`. Two consequences:
+
+- `key={state.revision}` — every committed action bumps the save revision, which remounts the
+  panel and re-reads `GET .../progression`. Without it the panel would show mount-time HP, XP,
+  and tokens forever while the narrative log reported damage and rewards. React's own remount
+  key rather than new refresh plumbing; the cost is one loopback GET and a brief "Loading
+  character..." per committed action.
+- The rail widened from 280px to 340px so a skill row (`name (Lv n)` plus Upgrade and Equip)
+  fits without wrapping. The shell is 1400px, so the narrative column keeps ~1020px.
+
+`ContextRail` was left untouched, so the player name now appears twice in the rail — once in
+the save block (name/difficulty/slot/revision) and once as the character sheet heading. Two
+framed cards with different subjects; deduplicating means editing a PLAY-03 file for
+cosmetics, so it was not done.
+
+`InventoryPanel` is still unmounted — the request was the character panel only.
+
+**Test:** `ExplorationScreen.test.tsx` gains "mounts the character sheet and re-reads it when
+the save revision changes" (asserts the panel renders level/tokens/skill from the mocked
+progression, then that a committed action triggers a second `getProgression`). Verified it
+fails with the `key` removed. The two existing tests now wait on the area id instead of the
+player name, which the mounted panel made ambiguous. Gates green: backend 588 passed,
+3 skipped; UI lint/typecheck/48 tests/build.
