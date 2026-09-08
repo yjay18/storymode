@@ -56,6 +56,26 @@ class InventoryItemView(StrictModel):
     quantity: int
 
 
+class FusionRecipeView(StrictModel):
+    """An authored fusion recipe and whether the protagonist can perform it now."""
+
+    recipe_id: EntityId
+    source_skill_ids: list[EntityId]
+    result_skill_id: EntityId
+    catalyst_item_id: EntityId
+    catalyst_quantity: int
+    blocked_reason: str | None
+    """The first unmet prerequisite, or null when the recipe is eligible."""
+
+
+class FusionRecipeListResponse(StrictModel):
+    """Every authored fusion recipe, with eligibility evaluated against this save."""
+
+    save_id: EntityId
+    revision: int
+    recipes: list[FusionRecipeView]
+
+
 class ProgressionReceiptView(StrictModel):
     """Receipt for progression command."""
 

@@ -119,6 +119,72 @@ def _consume_inventory_items(
     return updated_inventory
 
 
+def player_fusion_blocker(
+    state: RuntimeState,
+    recipe: FusionRecipe,
+    skills_by_id: dict[EntityId, CombatSkill],
+) -> str | None:
+    """Return why the protagonist cannot perform this fusion, or None if they can.
+
+    Checks the same seven prerequisites, in the same order and with the same messages,
+    that ``execute_player_fusion`` enforces. Callers that only need to display
+    eligibility use this; the executor raises on whatever it returns.
+    """
+    # 1. Combat check
+    if state.combat is not None:
+        return "Cannot perform skill fusion during combat"
+
+    # 2. Result skill check
+    result_id = recipe.result_skill_id
+    if any(k.skill_id == result_id for k in state.player.known_combat_skills):
+        return f"Result skill {result_id} is already known by protagonist"
+
+    if result_id not in skills_by_id:
+        return f"Result skill {result_id} is not defined in campaign skills"
+
+    # 3 & 4. Source skills presence and level 5 check
+    sources = recipe.source_skill_ids
+    if len(sources) != 2:
+        return f"Fusion recipe must have exactly 2 source skills, got {len(sources)}"
+
+    src_map: dict[EntityId, KnownCombatSkill] = {
+        k.skill_id: k for k in state.player.known_combat_skills
+    }
+    for src_id in sources:
+        if src_id not in src_map:
+            return f"Protagonist does not know source skill {src_id}"
+        if src_map[src_id].level != 5:
+            return (
+                f"Source skill {src_id} must be at level 5 "
+                f"(currently level {src_map[src_id].level})"
+            )
+
+    # 5. Location / Specialist check
+    if not _check_location_or_specialist(recipe.location_or_specialist_ids, state):
+        return (
+            f"Protagonist is not at an authorized fusion location or specialist:"
+            f" {recipe.location_or_specialist_ids}"
+        )
+
+    # 6. Unlock conditions check
+    for cond in recipe.unlock_conditions:
+        if not _evaluate_fusion_condition(cond, state):
+            return f"Fusion unlock condition not met: '{cond}'"
+
+    # 7. Catalyst inventory check
+    catalyst_id = recipe.catalyst_item_id
+    total_catalyst = sum(
+        entry.quantity for entry in state.player.inventory if entry.item_id == catalyst_id
+    )
+    if total_catalyst < recipe.catalyst_quantity:
+        return (
+            f"Insufficient catalyst {catalyst_id}: requires {recipe.catalyst_quantity},"
+            f" has {total_catalyst}"
+        )
+
+    return None
+
+
 def execute_player_fusion(
     state: RuntimeState,
     recipe: FusionRecipe,
@@ -126,7 +192,8 @@ def execute_player_fusion(
 ) -> tuple[RuntimeState, PlayerFusionResult]:
     """Execute an atomic player skill fusion transaction.
 
-    Validates all 7 prerequisites:
+    Raises ValueError with the first unmet prerequisite reported by
+    ``player_fusion_blocker``, which checks all 7:
     1. No active combat
     2. Result skill not already known
     3. Both source skills known by protagonist
@@ -138,57 +205,13 @@ def execute_player_fusion(
     Consumes source skills and catalyst, updates loadout, grants result skill,
     records fusion history, and returns updated state.
     """
-    # 1. Combat check
-    if state.combat is not None:
-        raise ValueError("Cannot perform skill fusion during combat")
+    blocker = player_fusion_blocker(state, recipe, skills_by_id)
+    if blocker is not None:
+        raise ValueError(blocker)
 
-    # 2. Result skill check
-    result_id = recipe.result_skill_id
-    if any(k.skill_id == result_id for k in state.player.known_combat_skills):
-        raise ValueError(f"Result skill {result_id} is already known by protagonist")
-
-    if result_id not in skills_by_id:
-        raise ValueError(f"Result skill {result_id} is not defined in campaign skills")
-
-    # 3 & 4. Source skills presence and level 5 check
     sources = recipe.source_skill_ids
-    if len(sources) != 2:
-        raise ValueError(f"Fusion recipe must have exactly 2 source skills, got {len(sources)}")
-
-    src_map: dict[EntityId, KnownCombatSkill] = {
-        k.skill_id: k for k in state.player.known_combat_skills
-    }
-    for src_id in sources:
-        if src_id not in src_map:
-            raise ValueError(f"Protagonist does not know source skill {src_id}")
-        if src_map[src_id].level != 5:
-            raise ValueError(
-                f"Source skill {src_id} must be at level 5 "
-                f"(currently level {src_map[src_id].level})"
-            )
-
-    # 5. Location / Specialist check
-    if not _check_location_or_specialist(recipe.location_or_specialist_ids, state):
-        raise ValueError(
-            f"Protagonist is not at an authorized fusion location or specialist:"
-            f" {recipe.location_or_specialist_ids}"
-        )
-
-    # 6. Unlock conditions check
-    for cond in recipe.unlock_conditions:
-        if not _evaluate_fusion_condition(cond, state):
-            raise ValueError(f"Fusion unlock condition not met: '{cond}'")
-
-    # 7. Catalyst inventory check
+    result_id = recipe.result_skill_id
     catalyst_id = recipe.catalyst_item_id
-    total_catalyst = sum(
-        entry.quantity for entry in state.player.inventory if entry.item_id == catalyst_id
-    )
-    if total_catalyst < recipe.catalyst_quantity:
-        raise ValueError(
-            f"Insufficient catalyst {catalyst_id}: requires {recipe.catalyst_quantity},"
-            f" has {total_catalyst}"
-        )
 
     # All validations passed -> execute atomic mutation
     # A. Consume catalyst

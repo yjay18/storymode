@@ -73,6 +73,11 @@ function mockNoCombatAndCampaign() {
     combat: null,
     allowed_actions: [],
   });
+  vi.spyOn(defaultApiClient, "listFusionRecipes").mockResolvedValue({
+    save_id: "save-1",
+    revision: 1,
+    recipes: [],
+  });
   vi.spyOn(defaultApiClient, "getCampaign").mockResolvedValue({
     campaign_id: "world-1",
     title: "World",

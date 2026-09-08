@@ -479,6 +479,22 @@ export interface ProgressionViewResponse {
   player: PlayerProgressionView;
 }
 
+export interface FusionRecipeView {
+  recipe_id: string;
+  source_skill_ids: string[];
+  result_skill_id: string;
+  catalyst_item_id: string;
+  catalyst_quantity: number;
+  /** The first unmet prerequisite, or null when the recipe is eligible. */
+  blocked_reason: string | null;
+}
+
+export interface FusionRecipeListResponse {
+  save_id: string;
+  revision: number;
+  recipes: FusionRecipeView[];
+}
+
 export interface ProgressionMutationResponse {
   save_id: string;
   revision: number;

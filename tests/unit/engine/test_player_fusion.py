@@ -20,7 +20,7 @@ from domain.models.skill import (
     TargetRule,
 )
 from domain.models.world_state import LocationState, NpcOverride
-from engine.progression.fusion import execute_player_fusion
+from engine.progression.fusion import execute_player_fusion, player_fusion_blocker
 
 # ---------------------------------------------------------------------------
 # Test Helpers
@@ -461,3 +461,51 @@ def test_fusion_input_unchanged_on_failure() -> None:
     # Validate state not mutated
     assert len(state.player.known_combat_skills) == 2
     assert state.player.inventory[0].quantity == 2
+
+
+def test_blocker_returns_none_when_the_executor_succeeds() -> None:
+    recipe = _make_recipe(sources=("slash", "fireball"), result="flame_strike")
+    skills_map = {
+        EntityId("slash"): _make_skill("slash"),
+        EntityId("fireball"): _make_skill("fireball"),
+        EntityId("flame_strike"): _make_skill("flame_strike"),
+    }
+    known = [
+        KnownCombatSkill(
+            skill_id=EntityId("slash"), level=5, acquisition_source_id=EntityId("src")
+        ),
+        KnownCombatSkill(
+            skill_id=EntityId("fireball"), level=5, acquisition_source_id=EntityId("src")
+        ),
+    ]
+    state = _make_state(known_skills=known, inventory=[("fire_gem", 3)])
+
+    assert player_fusion_blocker(state, recipe, skills_map) is None
+    execute_player_fusion(state, recipe, skills_map)  # does not raise
+
+
+def test_blocker_message_matches_what_the_executor_raises() -> None:
+    """The predicate and the executor must not drift: same reason, same wording."""
+    recipe = _make_recipe(sources=("slash", "fireball"), result="flame_strike")
+    skills_map = {
+        EntityId("slash"): _make_skill("slash"),
+        EntityId("fireball"): _make_skill("fireball"),
+        EntityId("flame_strike"): _make_skill("flame_strike"),
+    }
+    known = [
+        KnownCombatSkill(
+            skill_id=EntityId("slash"), level=5, acquisition_source_id=EntityId("src")
+        ),
+        KnownCombatSkill(
+            skill_id=EntityId("fireball"), level=4, acquisition_source_id=EntityId("src")
+        ),
+    ]
+    state = _make_state(known_skills=known, inventory=[("fire_gem", 3)])
+
+    blocker = player_fusion_blocker(state, recipe, skills_map)
+    assert blocker is not None
+    assert "must be at level 5" in blocker
+
+    with pytest.raises(ValueError) as exc:
+        execute_player_fusion(state, recipe, skills_map)
+    assert str(exc.value) == blocker

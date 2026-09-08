@@ -28,6 +28,7 @@ import type {
   DraftStage,
   DraftState,
   FleeRequest,
+  FusionRecipeListResponse,
   GrantXpRequest,
   HealthResponse,
   ImportBookInput,
@@ -268,6 +269,12 @@ export class ApiClient {
   getProgression(campaignId: string, saveId: string): Promise<ProgressionViewResponse> {
     return this.request<ProgressionViewResponse>(
       `/api/v1/saves/${campaignId}/${saveId}/progression`,
+    );
+  }
+
+  listFusionRecipes(campaignId: string, saveId: string): Promise<FusionRecipeListResponse> {
+    return this.request<FusionRecipeListResponse>(
+      `/api/v1/saves/${campaignId}/${saveId}/progression/fusion`,
     );
   }
 

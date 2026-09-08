@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { defaultApiClient } from "../../api/client";
 import { generateCommandId } from "../../api/commands";
 import { ApiClientError } from "../../api/errors";
-import type { ProgressionViewResponse } from "../../api/schema";
+import type { FusionRecipeView, ProgressionViewResponse } from "../../api/schema";
 
 interface CharacterPanelProps {
   campaignId: string;
@@ -17,6 +17,7 @@ export function CharacterPanel({
   inCombat = false,
 }: CharacterPanelProps): React.JSX.Element {
   const [view, setView] = useState<ProgressionViewResponse | null>(null);
+  const [recipes, setRecipes] = useState<FusionRecipeView[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
@@ -27,7 +28,14 @@ export function CharacterPanel({
       setLoading(true);
       setError(null);
       try {
-        setView(await defaultApiClient.getProgression(campaignId, saveId));
+        const [progression, fusion] = await Promise.all([
+          defaultApiClient.getProgression(campaignId, saveId),
+          // Fusion is supplementary: a failure here leaves the section empty rather
+          // than blanking the whole sheet.
+          defaultApiClient.listFusionRecipes(campaignId, saveId).catch(() => null),
+        ]);
+        setView(progression);
+        setRecipes(fusion?.recipes ?? []);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to load progression");
       } finally {
@@ -193,9 +201,36 @@ export function CharacterPanel({
 
       <div>
         <h3 style={sectionHeading}>Fusion</h3>
-        <p style={{ color: "var(--color-text-muted)", fontSize: "var(--font-size-xs)" }}>
-          No eligible fusion recipes. {/* read-only until recipe data is served */}
-        </p>
+        {recipes.length === 0 ? (
+          <p style={{ color: "var(--color-text-muted)", fontSize: "var(--font-size-xs)" }}>
+            No fusion recipes in this campaign.
+          </p>
+        ) : (
+          <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+            {/* Eligible first; the server decides eligibility, this only orders it. */}
+            {[...recipes]
+              .sort((a, b) => Number(a.blocked_reason !== null) - Number(b.blocked_reason !== null))
+              .map((recipe) => (
+                <li
+                  key={recipe.recipe_id}
+                  style={{
+                    fontSize: "var(--font-size-xs)",
+                    color: recipe.blocked_reason
+                      ? "var(--color-text-muted)"
+                      : "var(--color-text-primary)",
+                  }}
+                >
+                  <div>
+                    {recipe.source_skill_ids.join(" + ")} → {recipe.result_skill_id}
+                  </div>
+                  <div style={{ color: "var(--color-text-muted)" }}>
+                    {recipe.blocked_reason ??
+                      `Ready — needs ${recipe.catalyst_quantity} ${recipe.catalyst_item_id}`}
+                  </div>
+                </li>
+              ))}
+          </ul>
+        )}
       </div>
     </section>
   );

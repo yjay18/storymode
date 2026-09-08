@@ -2,7 +2,11 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { defaultApiClient } from "../../api/client";
 import { ApiValidationError } from "../../api/errors";
-import type { PlayerProgressionView, ProgressionViewResponse } from "../../api/schema";
+import type {
+  FusionRecipeView,
+  PlayerProgressionView,
+  ProgressionViewResponse,
+} from "../../api/schema";
 import { CharacterPanel } from "./CharacterPanel";
 
 function player(
@@ -34,9 +38,34 @@ const initialView: ProgressionViewResponse = {
   player: player(3, 2, 2),
 };
 
+function mockFusion(recipes: FusionRecipeView[] = []) {
+  return vi
+    .spyOn(defaultApiClient, "listFusionRecipes")
+    .mockResolvedValue({ save_id: "s1", revision: 1, recipes });
+}
+
+const eligible: FusionRecipeView = {
+  recipe_id: "r-ready",
+  source_skill_ids: ["slash", "fireball"],
+  result_skill_id: "flame_strike",
+  catalyst_item_id: "fire_gem",
+  catalyst_quantity: 2,
+  blocked_reason: null,
+};
+
+const blocked: FusionRecipeView = {
+  recipe_id: "r-blocked",
+  source_skill_ids: ["guard", "shout"],
+  result_skill_id: "bulwark",
+  catalyst_item_id: "iron_core",
+  catalyst_quantity: 1,
+  blocked_reason: "Protagonist does not know source skill guard",
+};
+
 describe("CharacterPanel", () => {
   it("upgrades a skill: token count decrements and skill level increments", async () => {
     vi.spyOn(defaultApiClient, "getProgression").mockResolvedValue(initialView);
+    mockFusion();
     const upgradeSpy = vi.spyOn(defaultApiClient, "upgradeSkill").mockResolvedValue({
       save_id: "s1",
       revision: 2,
@@ -70,6 +99,7 @@ describe("CharacterPanel", () => {
 
   it("renders the server message on a typed rejection", async () => {
     vi.spyOn(defaultApiClient, "getProgression").mockResolvedValue(initialView);
+    mockFusion();
     vi.spyOn(defaultApiClient, "upgradeSkill").mockRejectedValue(
       new ApiValidationError("insufficient upgrade tokens"),
     );
@@ -90,11 +120,42 @@ describe("CharacterPanel", () => {
       revision: 1,
       player: player(10, 0, 5, null),
     });
+    mockFusion();
 
     render(<CharacterPanel campaignId="w1" saveId="s1" />);
 
     await waitFor(() => expect(screen.getByText(/120 XP/)).toBeInTheDocument());
     // No "120 / N XP" progress form when the server carries no threshold.
     expect(screen.queryByText(/120 \/ /)).not.toBeInTheDocument();
+  });
+
+  it("lists served fusion recipes, eligible first, with the server's reason", async () => {
+    vi.spyOn(defaultApiClient, "getProgression").mockResolvedValue(initialView);
+    mockFusion([blocked, eligible]);
+
+    render(<CharacterPanel campaignId="w1" saveId="s1" />);
+
+    await waitFor(() => expect(screen.getByText("slash + fireball → flame_strike")).toBeInTheDocument());
+    expect(screen.getByText("Ready — needs 2 fire_gem")).toBeInTheDocument();
+    expect(
+      screen.getByText("Protagonist does not know source skill guard"),
+    ).toBeInTheDocument();
+
+    // The eligible recipe is ordered ahead of the blocked one.
+    const rendered = screen.getAllByRole("listitem").map((li) => li.textContent ?? "");
+    const readyAt = rendered.findIndex((t) => t.includes("flame_strike"));
+    const blockedAt = rendered.findIndex((t) => t.includes("bulwark"));
+    expect(readyAt).toBeLessThan(blockedAt);
+  });
+
+  it("says so when the campaign authors no fusion recipes", async () => {
+    vi.spyOn(defaultApiClient, "getProgression").mockResolvedValue(initialView);
+    mockFusion([]);
+
+    render(<CharacterPanel campaignId="w1" saveId="s1" />);
+
+    await waitFor(() =>
+      expect(screen.getByText("No fusion recipes in this campaign.")).toBeInTheDocument(),
+    );
   });
 });

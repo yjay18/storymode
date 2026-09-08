@@ -311,3 +311,23 @@ deleted. No other test covered the rejection status.
 The `campaign_integrity` branch (the save's area missing from the pack) keeps `422` and has
 no dedicated route test — reaching it needs a save and pack that disagree, which no fixture
 builds. The engine-level branch is covered by the existing use-case tests.
+
+### PLAY-10 — no packed campaign authors a fusion recipe
+
+**Original spec:** the slice's route contract test asserts eligibility against the served
+pack.
+
+**Deviation:** neither `tests/fixtures/campaigns/valid-minimal` nor the bundled
+`campaigns/salt-ledger` authors a single `fusion_recipes` entry, so a test against the
+shared fixture would have looped over nothing and asserted only the envelope. The slice
+adds a second client fixture (`client_with_recipe`) that copies the minimal campaign and
+injects three combat skills, a catalyst reference, and one valid recipe — enough to pass
+cross-file reference validation — and asserts the served `blocked_reason`. The shared
+fixture was left alone so no other test's counts shift, and it keeps a test asserting the
+empty case.
+
+The panel treats the fusion list as supplementary: it is fetched alongside progression but
+a failure leaves the section empty rather than blanking the character sheet, since the
+sheet's primary data is progression.
+
+`salt-ledger` authoring real fusion recipes is campaign content, not a code slice.

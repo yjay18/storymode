@@ -8,6 +8,8 @@ from fastapi import APIRouter, Depends, HTTPException, status
 
 from api.routes.campaigns import _resolve_campaign_dir
 from api.schemas.progression import (
+    FusionRecipeListResponse,
+    FusionRecipeView,
     GrantXpRequest,
     InventoryItemView,
     KnownSkillView,
@@ -28,6 +30,7 @@ from domain.models.pack import CampaignPack
 from domain.models.runtime_state import RuntimeState
 from domain.models.save_meta import SaveMeta
 from engine.campaign import load_campaign
+from engine.progression.fusion import player_fusion_blocker
 from engine.progression.use_cases import ProgressionUseCases
 from engine.state.errors import IdempotentCommandError, StaleRevisionError
 
@@ -227,6 +230,33 @@ def set_loadout(
             safe_result_summary=receipt.safe_result_summary,
         ),
         player=_build_progression_view(new_state, pack),
+    )
+
+
+@router.get("/fusion", response_model=FusionRecipeListResponse)
+def list_fusion_recipes(
+    campaign_id: EntityId,
+    save_id: EntityId,
+    settings: Annotated[Settings, Depends(get_settings)],
+) -> FusionRecipeListResponse:
+    """List authored fusion recipes with the first prerequisite each one fails."""
+    pack, state, _, _ = _load_campaign_and_save(settings, campaign_id, save_id)
+    skills_by_id = {s.id: s for s in pack.skills.combat_skills}
+    return FusionRecipeListResponse(
+        save_id=state.save_id,
+        revision=state.revision,
+        recipes=[
+            FusionRecipeView(
+                recipe_id=recipe.id,
+                source_skill_ids=recipe.source_skill_ids,
+                result_skill_id=recipe.result_skill_id,
+                catalyst_item_id=recipe.catalyst_item_id,
+                catalyst_quantity=recipe.catalyst_quantity,
+                # The engine owns eligibility; the handler only maps it.
+                blocked_reason=player_fusion_blocker(state, recipe, skills_by_id),
+            )
+            for recipe in pack.skills.fusion_recipes
+        ],
     )
 
 

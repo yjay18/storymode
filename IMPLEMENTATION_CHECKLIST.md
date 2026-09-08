@@ -1533,7 +1533,7 @@ full backend and frontend gates before each.
   - Accept: the panel shows progress toward the next level with no client-side
     threshold arithmetic.
 
-- [ ] **PLAY-10 — List fusion recipes with their eligibility**
+- [x] **PLAY-10 — List fusion recipes with their eligibility**
   - Depends: PLAY-09
   - Read: `src/engine/progression/fusion.py` (`execute_player_fusion`'s seven
     prerequisites), `src/engine/progression/use_cases.py`,
