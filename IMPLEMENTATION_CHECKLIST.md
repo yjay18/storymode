@@ -1484,6 +1484,92 @@ Working rules for this milestone, in addition to the global ones:
   - Accept: the document exists with data, and any balance change lands as its own slice
     with an ADR if it changes a formula.
 
+## Milestone 9 — Close the play-loop gaps found in verification
+
+Context (2026-09-08): Milestone 8 wired the browser to the served API, but three gaps
+surfaced while verifying it (see `DEVIATIONS.md` "Post-v1.0.0"). Free-text actions that
+name something absent from the area return an error instead of the documented in-world
+redirect; the character panel has no threshold or fusion data to render because the
+contract carries neither; and the inventory panel is still unmounted.
+
+The same working rules as Milestone 8 apply: no model runs, `httpx.MockTransport` or the
+in-memory harness only, backend routes are the contract, one slice per commit with the
+full backend and frontend gates before each.
+
+- [ ] **PLAY-08 — Unresolvable mentions degrade to an in-world rejection, not a 422**
+  - Depends: PLAY-02
+  - Read: `docs/ux/exploration-ui.md` ("Partial and invalid intent"),
+    `src/api/routes/actions.py` (the `rejection_reason` branch),
+    `src/engine/actions/use_cases.py` (`SubmitResult`, `submit_action`),
+    `src/api/schemas/actions.py` (`SubmitActionResponse.rejection_reason`).
+  - Change: `src/engine/actions/use_cases.py`, `src/api/routes/actions.py`,
+    `tests/integration/api/test_action_routes.py`.
+  - Do: `SubmitResult` gains a `rejection_kind` discriminating a player-visible
+    `in_world` rejection (unresolved mention, failed operation/capability validation)
+    from a `campaign_integrity` fault (the save's area is absent from the pack). The
+    submit route returns `200` with `rejection_reason` populated and state unchanged for
+    `in_world`, and keeps `422` for `campaign_integrity`. No narration is attached to a
+    rejection and nothing is persisted. The UI branch that renders `rejection_reason`
+    already exists and is currently unreachable.
+  - Test: submit an action naming an entity absent from the area; assert `200`,
+    `rejection_reason` set, `revision` unchanged, and no pending check.
+  - Accept: a mistyped or off-script noun keeps the composer usable and appends a
+    rejected result card instead of surfacing a transport error.
+
+- [ ] **PLAY-09 — Serve the XP threshold the character panel needs**
+  - Depends: PLAY-04
+  - Read: `src/api/schemas/progression.py`, `src/api/routes/progression.py`
+    (`_build_progression_view`), `src/domain/models/balance.py`
+    (`level_xp_thresholds`), `docs/game-design/progression-and-skills.md`.
+  - Change: `src/api/schemas/progression.py`, `src/api/routes/progression.py`,
+    `src/ui/src/api/schema.d.ts`, `src/ui/src/features/character/CharacterPanel.tsx`
+    and its test, `tests/integration/api/test_progression_routes.py`.
+  - Do: `PlayerProgressionView` gains `xp_for_next_level: int | None` — the authored
+    total from `balance.level_xp_thresholds` at `level + 1`, `null` at the top level.
+    It is an authored-data lookup in the handler, not a formula. The panel renders
+    `{xp} / {xp_for_next_level} XP` and falls back to raw XP when `null`.
+  - Test: contract test for a mid-table level and for the maximum level (`null`);
+    Vitest asserts both renderings.
+  - Accept: the panel shows progress toward the next level with no client-side
+    threshold arithmetic.
+
+- [ ] **PLAY-10 — List fusion recipes with their eligibility**
+  - Depends: PLAY-09
+  - Read: `src/engine/progression/fusion.py` (`execute_player_fusion`'s seven
+    prerequisites), `src/engine/progression/use_cases.py`,
+    `src/api/routes/progression.py` (`POST /fusion`),
+    `docs/game-design/progression-and-skills.md`.
+  - Change: `src/engine/progression/fusion.py`, `src/api/schemas/progression.py`,
+    `src/api/routes/progression.py`, `src/ui/src/api/{client.ts,schema.d.ts}`,
+    `src/ui/src/features/character/CharacterPanel.tsx` and its test,
+    `tests/unit/engine/progression/test_fusion.py`,
+    `tests/integration/api/test_progression_routes.py`.
+  - Do: extract the seven prerequisite checks from `execute_player_fusion` into
+    `player_fusion_blocker(state, recipe, skills_by_id) -> str | None`, returning the
+    first unmet prerequisite's message or `None`; the executor calls it and raises with
+    the same message, so behaviour and messages are unchanged. Add
+    `GET /saves/{c}/{s}/progression/fusion` (the path `POST /fusion` already uses)
+    returning every authored recipe with `blocked_reason: str | None`. The panel
+    replaces its hard-coded placeholder with the served list: eligible recipes first,
+    blocked ones shown with their reason. Read-only — no execute button in this slice.
+  - Test: engine test that the predicate and the executor agree on a blocked recipe and
+    an eligible one; route contract test; Vitest for both list states and the empty case.
+  - Accept: the Fusion section renders served data, and no eligibility rule is
+    duplicated in the route or the client.
+
+- [ ] **PLAY-11 — Mount the inventory panel in the play screen**
+  - Depends: PLAY-01
+  - Read: `src/ui/src/features/inventory/InventoryPanel.tsx`,
+    `src/ui/src/features/exploration/ExplorationScreen.tsx`,
+    `docs/ux/exploration-ui.md` ("Utility panels").
+  - Change: `ExplorationScreen.tsx` and its test.
+  - Do: mount `InventoryPanel` in the utility rail beside the character sheet, keyed on
+    the save revision so a committed action re-reads it, matching how `CharacterPanel`
+    is mounted.
+  - Test: Vitest asserts the panel renders the mocked inventory and re-reads after a
+    committed action.
+  - Accept: inventory is reachable in the browser without a route change.
+
 ## Milestone gates
 
 After each milestone, stop and report using root `AGENT.md`'s handoff format. A milestone
