@@ -8,6 +8,7 @@ commits the resulting state atomically.  Returns a safe result object.
 from __future__ import annotations
 
 import dataclasses
+from typing import Literal
 
 from domain.models.area import AreaDefinition
 from domain.models.check_state import CheckOutcomes
@@ -38,6 +39,15 @@ class SubmitResult:
 
     rejection_reason: str | None
     """Non-None when the proposal was rejected (state unchanged)."""
+
+    rejection_kind: Literal["in_world", "campaign_integrity"] | None = None
+    """Set alongside rejection_reason.
+
+    ``in_world`` is a rejection the player can act on (they named something that is not
+    here, or asked for something they cannot do) and is surfaced as an in-world redirect.
+    ``campaign_integrity`` is a fault in the save/campaign pairing that no player action
+    can clear.
+    """
 
 
 @dataclasses.dataclass(frozen=True)
@@ -107,6 +117,7 @@ class ExplorationUseCases:
                 state=state,
                 has_pending_check=False,
                 rejection_reason=f"Area '{state.location.area_id}' not found in campaign",
+                rejection_kind="campaign_integrity",
             )
 
         # 1. Build bounded candidate set
@@ -122,6 +133,7 @@ class ExplorationUseCases:
                     state=state,
                     has_pending_check=False,
                     rejection_reason=str(exc),
+                    rejection_kind="in_world",
                 )
 
         # 3. Validate operation
@@ -140,6 +152,7 @@ class ExplorationUseCases:
                 state=state,
                 has_pending_check=False,
                 rejection_reason=str(exc),
+                rejection_kind="in_world",
             )
 
         # 4. Decide check necessity

@@ -170,9 +170,23 @@ async def submit_action(
     submit_result = use_cases.submit_action(state, proposal, request.command_id)
 
     if submit_result.rejection_reason is not None:
-        raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail=submit_result.rejection_reason,
+        if submit_result.rejection_kind == "campaign_integrity":
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail=submit_result.rejection_reason,
+            )
+        # In-world rejection (docs/ux/exploration-ui.md, "Partial and invalid intent"):
+        # the player named something that is not here, or asked for something they cannot
+        # do. Nothing is committed and no narration is invented; the client renders the
+        # reason as a redirect and keeps the composer usable.
+        return SubmitActionResponse(
+            save_id=state.save_id,
+            campaign_id=state.campaign_id,
+            revision=state.revision,
+            has_pending_check=False,
+            rejection_reason=submit_result.rejection_reason,
+            pending_check=None,
+            narration=None,
         )
 
     # Record receipt

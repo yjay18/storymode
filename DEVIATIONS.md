@@ -298,3 +298,16 @@ progression, then that a committed action triggers a second `getProgression`). V
 fails with the `key` removed. The two existing tests now wait on the area id instead of the
 player name, which the mounted panel made ambiguous. Gates green: backend 588 passed,
 3 skipped; UI lint/typecheck/48 tests/build.
+
+### PLAY-08 — one existing test asserted the old status
+
+**Original spec:** the slice lists `test_action_routes.py` under Change.
+
+**Deviation:** `test_invalid_target_returns_422` asserted exactly the behaviour this slice
+reverses. It was renamed to `test_unresolvable_mention_returns_in_world_rejection` and
+rewritten to assert `200` + `rejection_reason` + an unchanged revision, rather than being
+deleted. No other test covered the rejection status.
+
+The `campaign_integrity` branch (the save's area missing from the pack) keeps `422` and has
+no dedicated route test — reaching it needs a save and pack that disagree, which no fixture
+builds. The engine-level branch is covered by the existing use-case tests.

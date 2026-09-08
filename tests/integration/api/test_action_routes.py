@@ -292,7 +292,7 @@ def test_stale_revision_returns_409(
     assert resp.json()["error"]["code"] == "conflict"
 
 
-def test_invalid_target_returns_422(
+def test_unresolvable_mention_returns_in_world_rejection(
     client_and_save: tuple[TestClient, str, str, FastAPI],
 ) -> None:
     client, campaign_id, save_id, app = client_and_save
@@ -325,8 +325,21 @@ def test_invalid_target_returns_422(
             "player_text": "look",
         },
     )
-    assert resp.status_code == 422
-    assert resp.json()["error"]["code"] == "validation_error"
+    # Naming something absent from the area is an in-world rejection, not a transport
+    # error: the player keeps playing and nothing is committed.
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["rejection_reason"] is not None
+    assert "NonExistentMonster" in data["rejection_reason"]
+    assert data["has_pending_check"] is False
+    assert data["pending_check"] is None
+    assert data["narration"] is None
+    assert data["revision"] == 1
+
+    # State is untouched, so the same revision is still current.
+    state = client.get(f"/api/v1/saves/{campaign_id}/{save_id}")
+    assert state.status_code == 200
+    assert state.json()["revision"] == 1
 
 
 def test_resolve_check_without_pending_returns_422(

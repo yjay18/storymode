@@ -1496,7 +1496,7 @@ The same working rules as Milestone 8 apply: no model runs, `httpx.MockTransport
 in-memory harness only, backend routes are the contract, one slice per commit with the
 full backend and frontend gates before each.
 
-- [ ] **PLAY-08 — Unresolvable mentions degrade to an in-world rejection, not a 422**
+- [x] **PLAY-08 — Unresolvable mentions degrade to an in-world rejection, not a 422**
   - Depends: PLAY-02
   - Read: `docs/ux/exploration-ui.md` ("Partial and invalid intent"),
     `src/api/routes/actions.py` (the `rejection_reason` branch),
