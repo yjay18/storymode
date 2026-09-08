@@ -9,6 +9,7 @@ function makePlayer(inventory: PlayerProgressionView["inventory"]): PlayerProgre
     name: "Aria",
     level: 1,
     xp: 0,
+  xp_for_next_level: 50,
     upgrade_tokens: 0,
     hp_current: 10,
     hp_maximum: 10,

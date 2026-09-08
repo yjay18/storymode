@@ -72,6 +72,9 @@ class PlayerProgressionView(StrictModel):
     name: DisplayString
     level: int
     xp: int
+    xp_for_next_level: int | None
+    """Authored total XP at which the next level triggers; null at the top level."""
+
     upgrade_tokens: int
     hp_current: int
     hp_maximum: int

@@ -461,6 +461,8 @@ export interface PlayerProgressionView {
   name: string;
   level: number;
   xp: number;
+  /** Authored total XP at which the next level triggers; null at the top level. */
+  xp_for_next_level: number | null;
   upgrade_tokens: number;
   hp_current: number;
   hp_maximum: number;

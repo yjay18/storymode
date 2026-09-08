@@ -1516,7 +1516,7 @@ full backend and frontend gates before each.
   - Accept: a mistyped or off-script noun keeps the composer usable and appends a
     rejected result card instead of surfacing a transport error.
 
-- [ ] **PLAY-09 — Serve the XP threshold the character panel needs**
+- [x] **PLAY-09 — Serve the XP threshold the character panel needs**
   - Depends: PLAY-04
   - Read: `src/api/schemas/progression.py`, `src/api/routes/progression.py`
     (`_build_progression_view`), `src/domain/models/balance.py`

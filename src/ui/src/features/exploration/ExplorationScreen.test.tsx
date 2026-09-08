@@ -50,6 +50,7 @@ const progression: ProgressionViewResponse = {
     name: "Eldrin",
     level: 2,
     xp: 40,
+    xp_for_next_level: 100,
     upgrade_tokens: 1,
     hp_current: 18,
     hp_maximum: 22,

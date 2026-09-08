@@ -108,7 +108,11 @@ export function CharacterPanel({
       <div style={{ marginBottom: "1rem" }}>
         <h2 style={{ fontSize: "var(--font-size-xl)" }}>{player.name}</h2>
         <p style={{ color: "var(--color-text-secondary)", fontSize: "var(--font-size-sm)" }}>
-          Level {player.level} • {player.xp} XP •{" "}
+          Level {player.level} •{" "}
+          {player.xp_for_next_level === null
+            ? `${player.xp} XP`
+            : `${player.xp} / ${player.xp_for_next_level} XP`}{" "}
+          •{" "}
           <span aria-label="Upgrade tokens">
             {player.upgrade_tokens} token{player.upgrade_tokens === 1 ? "" : "s"}
           </span>

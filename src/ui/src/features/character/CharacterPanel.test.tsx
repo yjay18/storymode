@@ -5,12 +5,18 @@ import { ApiValidationError } from "../../api/errors";
 import type { PlayerProgressionView, ProgressionViewResponse } from "../../api/schema";
 import { CharacterPanel } from "./CharacterPanel";
 
-function player(level: number, tokens: number, skillLevel: number): PlayerProgressionView {
+function player(
+  level: number,
+  tokens: number,
+  skillLevel: number,
+  xpForNextLevel: number | null = 200,
+): PlayerProgressionView {
   return {
     id: "player-1",
     name: "Theron",
     level,
     xp: 120,
+    xp_for_next_level: xpForNextLevel,
     upgrade_tokens: tokens,
     hp_current: 25,
     hp_maximum: 25,
@@ -47,6 +53,7 @@ describe("CharacterPanel", () => {
 
     await waitFor(() => expect(screen.getByText("2 tokens")).toBeInTheDocument());
     expect(screen.getByText("heavy_cleave (Lv 2)")).toBeInTheDocument();
+    expect(screen.getByText(/120 \/ 200 XP/)).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("button", { name: "Upgrade" }));
 
@@ -75,5 +82,19 @@ describe("CharacterPanel", () => {
     await waitFor(() =>
       expect(screen.getByRole("alert")).toHaveTextContent("insufficient upgrade tokens"),
     );
+  });
+
+  it("shows raw XP when the server reports no next-level threshold", async () => {
+    vi.spyOn(defaultApiClient, "getProgression").mockResolvedValue({
+      save_id: "s1",
+      revision: 1,
+      player: player(10, 0, 5, null),
+    });
+
+    render(<CharacterPanel campaignId="w1" saveId="s1" />);
+
+    await waitFor(() => expect(screen.getByText(/120 XP/)).toBeInTheDocument());
+    // No "120 / N XP" progress form when the server carries no threshold.
+    expect(screen.queryByText(/120 \/ /)).not.toBeInTheDocument();
   });
 });

@@ -59,6 +59,8 @@ def test_progression_flow(client: TestClient) -> None:
     data = res.json()
     assert data["player"]["level"] == 1
     assert data["player"]["upgrade_tokens"] == 0
+    # Fixture thresholds are {1: 0, 2: 10}, so level 2 costs 10 XP.
+    assert data["player"]["xp_for_next_level"] == 10
 
     # 2. Grant 100 XP -> player levels up to 2, gets 1 upgrade token (revision 1 -> 2)
     res = client.post(
@@ -74,6 +76,8 @@ def test_progression_flow(client: TestClient) -> None:
     assert data["revision"] == 2
     assert data["player"]["level"] == 2
     assert data["player"]["upgrade_tokens"] == 1
+    # Level 2 is the top of this fixture's table, so there is no next threshold.
+    assert data["player"]["xp_for_next_level"] is None
 
     # 3. Upgrade skill-1 from level 1 to level 2 (revision 2 -> 3)
     res = client.post(

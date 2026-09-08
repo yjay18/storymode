@@ -66,7 +66,7 @@ def _load_campaign_and_save(
     return pack, load_result.state, load_result.meta, root_dir
 
 
-def _build_progression_view(state: RuntimeState) -> PlayerProgressionView:
+def _build_progression_view(state: RuntimeState, pack: CampaignPack) -> PlayerProgressionView:
     p = state.player
     known = [
         KnownSkillView(skill_id=k.skill_id, current_level=k.level) for k in p.known_combat_skills
@@ -77,6 +77,8 @@ def _build_progression_view(state: RuntimeState) -> PlayerProgressionView:
         name=p.name,
         level=p.level,
         xp=p.xp,
+        # Authored threshold lookup, not a formula: the balance file owns the table.
+        xp_for_next_level=pack.balance.level_xp_thresholds.get(p.level + 1),
         upgrade_tokens=p.upgrade_tokens,
         hp_current=p.hp.current,
         hp_maximum=p.hp.maximum,
@@ -95,11 +97,11 @@ def get_progression(
     settings: Annotated[Settings, Depends(get_settings)],
 ) -> ProgressionViewResponse:
     """Get player progression status, skills, and loadout."""
-    _, state, _, _ = _load_campaign_and_save(settings, campaign_id, save_id)
+    pack, state, _, _ = _load_campaign_and_save(settings, campaign_id, save_id)
     return ProgressionViewResponse(
         save_id=state.save_id,
         revision=state.revision,
-        player=_build_progression_view(state),
+        player=_build_progression_view(state, pack),
     )
 
 
@@ -140,7 +142,7 @@ def grant_xp(
             result_kind=receipt.result_kind,
             safe_result_summary=receipt.safe_result_summary,
         ),
-        player=_build_progression_view(new_state),
+        player=_build_progression_view(new_state, pack),
     )
 
 
@@ -182,7 +184,7 @@ def upgrade_skill(
             result_kind=receipt.result_kind,
             safe_result_summary=receipt.safe_result_summary,
         ),
-        player=_build_progression_view(new_state),
+        player=_build_progression_view(new_state, pack),
     )
 
 
@@ -224,7 +226,7 @@ def set_loadout(
             result_kind=receipt.result_kind,
             safe_result_summary=receipt.safe_result_summary,
         ),
-        player=_build_progression_view(new_state),
+        player=_build_progression_view(new_state, pack),
     )
 
 
@@ -266,5 +268,5 @@ def perform_fusion(
             result_kind=receipt.result_kind,
             safe_result_summary=receipt.safe_result_summary,
         ),
-        player=_build_progression_view(new_state),
+        player=_build_progression_view(new_state, pack),
     )
