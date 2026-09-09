@@ -350,3 +350,56 @@ addressable; `InventoryPanel` and its test are untouched.
 
 Consequence: the inventory is not shown when progression fails to load. They are the same
 payload, so there is nothing to show in that case anyway.
+
+### PLAY-06 — live verification run 2 (2026-09-09, qwen3.5:9b, Apple Silicon)
+
+User-authorised. Ollama was not running and was started for this run.
+
+- **Live tests (`make live`): 3 passed** (29m52s — the earlier 131s figure was a warm model;
+  this run paid a cold load). PLAY-06's first Accept line is met.
+
+- **Generation (`make generate DRAFT=draft-dc88f606`): still not publish-ready.** Stages 1-5
+  were cached valid, so only `skills` onward ran.
+  - Attempt at the documented `STORYMODE_OLLAMA_TIMEOUT_SECONDS=1800`: transport timeout, one
+    attempt, pipeline halted.
+  - Attempt at 3600: all three attempts *completed* and all three were cut mid-string at the
+    same offset — `Unterminated string starting at: line 1132 column 23 (char 25447/25468)`.
+
+  Diagnosis: the skills stage requests `num_predict = max(4096, min(8192, len(skeleton)*6))`,
+  and `len(skeleton)*6 = 19260` clamps to the 8192 ceiling. 8192 tokens x ~3.11 chars/token is
+  ~25,450 chars, which is exactly where all three responses stopped — and the hand-authored
+  `campaigns/salt-ledger/skills.json` is 24,780 chars. The ceiling was truncating a legitimate
+  stage, which is the case the `ponytail:` comment on that line named. Not a compliance failure:
+  the model was producing well-formed JSON and ran out of budget.
+
+  **Fix:** ceiling raised 8192 -> 12288 (`src/campaign/generation/stages.py`). At the ~7.6 tok/s
+  measured here that is ~27 min per attempt, so it needs a timeout above the 1800 default.
+  Unverified against a live model — the tune is arithmetic plus the three matching cut offsets;
+  the next authorised run is what confirms it.
+
+- **Browser walk: not attempted.** It needs a published pack.
+
+PLAY-06 stays unchecked: one of its three Accept lines is met.
+
+### PLAY-07 — combat unreachable through the API, so the playtest is engine-driven
+
+**Original spec:** "play `salt-ledger` on Normal for one session, keep the JSONL action log".
+
+**Deviation:** combat in `salt-ledger` cannot be reached from a new save. A save starts at
+`areas[0]` = `area-customs-hall`, which authors zero encounters; all three encounters are in
+other areas; `POST /combat/start` only accepts an encounter in the current area; and nothing
+served changes the player's area. The engine validates a `travel` operation, but
+`_build_candidates` offers only the area's objects and residents, never connected areas, so a
+travel mention cannot resolve and no path outside combat consequences writes `state.location`.
+
+`docs/research/playtest-01.md` therefore reports a session driven directly against
+`CombatUseCases` with the production `SecureRandomSource` — real rolls, 270 combats over 3
+encounters x 3 policies x 30 runs — and says so in its opening section. Faithful for balance
+numbers, unfaithful for reachability; the reachability gap is written up as the first finding
+and the first proposal.
+
+The committed log (`docs/research/playtest-01.jsonl`, 270 rows) is a trimmed projection: the raw
+capture with full prose combat logs was 737K, so the committed rows keep the per-combat metrics,
+outcome, and every d20 drawn, and drop the narration. The scratch driver is not committed; the
+document records how to rebuild it, including that player HP must be read from the combat logs
+because `state.player.hp` is restored on resolution and otherwise reports zero damage taken.

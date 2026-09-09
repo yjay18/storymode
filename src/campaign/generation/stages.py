@@ -283,11 +283,17 @@ class StageRunner:
         prompt = prompt_generator() + limits
         # Bound generation length. The skeleton shows ONE item per list; a real stage expands
         # every list, so scale above the skeleton — but cap so a slow local model finishes
-        # within the request timeout. The largest legitimate stage (skills) is ~8k tokens; at
-        # ~6-7 tok/s an 8192 cap stays under a 30-min timeout, whereas a higher cap let the
-        # model ramble to ~40k chars and time out mid-JSON.
-        # ponytail: tune the multiplier/cap if a legitimately large stage is ever truncated.
-        num_predict = max(4096, min(8192, len(skeleton) * 6))
+        # within the request timeout.
+        #
+        # Raised from 8192 on PLAY-06 evidence (2026-09-09, qwen3.5:9b): the skills stage
+        # requested exactly 8192 and all three attempts were cut mid-string at ~25,450 chars
+        # (8192 x ~3.11 chars/token), while the hand-authored salt-ledger skills.json is
+        # 24,780 chars — so the ceiling, not the model, was truncating a legitimate stage.
+        # At the ~7.6 tok/s measured on that run, 12288 tokens is ~27 min, which needs
+        # STORYMODE_OLLAMA_TIMEOUT_SECONDS above the 1800 default.
+        # ponytail: still a fail-fast bound, not a tuned budget; raise again if a stage
+        # truncates rather than failing validation.
+        num_predict = max(4096, min(12288, len(skeleton) * 6))
         last_raw_response = ""
         last_diagnostics: list[str] = []
 

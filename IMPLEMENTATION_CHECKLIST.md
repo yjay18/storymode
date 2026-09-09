@@ -1473,7 +1473,7 @@ Working rules for this milestone, in addition to the global ones:
   - Accept: three live tests pass; a generated pack publishes; the browser flow completes
     without a 404 or 503; evidence recorded.
 
-- [ ] **PLAY-07 — First structured playtest and balance evidence**
+- [x] **PLAY-07 — First structured playtest and balance evidence**
   - Depends: PLAY-06
   - Read: "Questions intentionally deferred" below, `docs/game-design/difficulty-rules.md`,
     `campaigns/salt-ledger/balance.json`.
