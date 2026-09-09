@@ -403,3 +403,45 @@ capture with full prose combat logs was 737K, so the committed rows keep the per
 outcome, and every d20 drawn, and drop the narration. The scratch driver is not committed; the
 document records how to rebuild it, including that player HP must be read from the combat logs
 because `state.player.hp` is restored on resolution and otherwise reports zero damage taken.
+
+### PLAY-06 — live verification run 3 (2026-09-09, qwen3.5:9b): cap fix verified, new blocker
+
+User-authorised. `make generate DRAFT=draft-dc88f606` with the raised 12288 ceiling and
+`STORYMODE_OLLAMA_TIMEOUT_SECONDS=3600`. Ran ~70 min, three attempts, no timeouts.
+
+**The num_predict fix from run 2 is confirmed working.** Output length per attempt grew well past
+the old 8192-token bound:
+
+| Attempt | Failure | Chars produced |
+|---|---|---|
+| 1 | 15 validation errors (see below) | — |
+| 2 | `Expecting ',' delimiter: line 1396 column 34` | 31,513 |
+| 3 | `Unterminated string: line 1714 column 10` | 38,764 |
+
+Run 2 cut every attempt at ~25,450 chars (the 8192 ceiling). Attempt 3 here stopped at 38,764 =
+12,288 x 3.15 chars/token, i.e. exactly the new ceiling. The bound is no longer 8192, so that
+commit is verified against a live model rather than inferred.
+
+**New root cause, different from the cap.** `PointBuyDefinition.cost_map` is `dict[int, int]` —
+stat score to point cost, e.g. `{"8": 0, ... "15": 9}` in the bundled pack. `schema_skeleton`
+renders any mapping as `{"<key>": 1}`, and the stage prompt appends an "IDs defined by earlier
+stages" index immediately after the skeleton. The model read `<key>` as "put ids here" and filled
+`cost_map` with fifteen of them — `damage-health`, `enemy-brine-beast`, `milestone-abandoned-dock`,
+`tree-survival`, and so on. That is both attempt 1's validation failure and the bloat that pushes
+attempts 2 and 3 past any ceiling: a legitimate skills file is ~24.8k chars and these reached 38.7k.
+
+A schema-driven fix is not a one-liner: Pydantic emits no `propertyNames` for `dict[int, int]`
+(the node is just `{"type": "object", "additionalProperties": {"type": "integer"}}`), so the key
+type is absent from the JSON schema the skeleton walks. Making mapping placeholders key-type-aware
+needs annotation walking, which is a slice of its own.
+
+**Status:** PLAY-06 remains 1 of 3 Accept lines met — live tests pass, no pack published, browser
+walk not attempted. Three runs, three distinct failures (transport timeout, output-cap truncation,
+mapping mis-fill); each fix was correct and surfaced the next defect.
+
+**Also relevant to the third Accept line:** the generated draft's areas have the same shape as
+`salt-ledger` — `areas[0]` (`safe-harbor-entrance`) authors zero encounters, and the encounters sit
+in `corrosion-market`, `brine-pit-deep` and `abandoned-dock`. Publishing a pack therefore would not
+by itself let the browser walk reach combat; the travel gap recorded under PLAY-07 blocks it either
+way. Both packs are one hop from combat (`safe-harbor-entrance -> corrosion-market`,
+`area-customs-hall -> area-marrow-quay`), and `AreaDefinition.connected_area_ids` already exists.
